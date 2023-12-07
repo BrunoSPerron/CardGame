@@ -1,0 +1,25 @@
+# Godot 4+ specific ignores
+# .godot/
+
+# Godot-specific ignores
+.import/
+export.cfg
+export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mono-specific ignores -> would usually just add .mono/ but we want to keep .mono/temp/bin/Debug/JsonMods/
+.mono/assemblies/
+.mono/metadata/
+.mono/temp/obj/
+.mono/temp/bin/ExportDebug/
+.mono/temp/bin/ExportRelease/
+.mono/temp/bin/debug/CardGame.dll
+.mono/temp/bin/debug/CardGame.pdb
+.mono/temp/bin/debug/Newtonsoft.Json.dll
+
+data_*/
+mono_crash.*.json
+
+.vs/

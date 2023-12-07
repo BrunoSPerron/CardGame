@@ -1,0 +1,28 @@
+{
+	"StartingLocation": "Forest",
+	"StartingCharacters": [
+		"BaseCharacter",
+		"BaseCharacter",
+		"BaseCharacter"
+	],
+	"UnlockedLocations": [
+	{
+		"Name": "Camp",
+		"Destinations":	[
+			{ "Name": "Forest", "TravelCost": 0 },
+			{ "Name": "Chasm", "TravelCost": 0 }
+		]
+	},
+	{
+		"Name": "Forest",
+		"Destinations":	[
+			{ "Name": "Camp", "TravelCost": 0 }
+		]
+	},
+	{
+		"Name": "Chasm",
+		"Destinations":	[
+			{ "Name": "Camp", "TravelCost": 0 }
+		]
+	}]
+}

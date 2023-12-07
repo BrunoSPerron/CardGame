@@ -1,0 +1,6 @@
+{
+	"Name": "hunting knife",
+	"Image": "knife.png",
+	"CombatCards": ["stab"],
+	"FieldCards": ["sharpen"]
+}

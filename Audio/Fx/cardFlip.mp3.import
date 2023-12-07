@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/cardFlip.mp3-66ef565e245d6510d5f938dd815b5b55.mp3str"
+
+[deps]
+
+source_file="res://Audio/Fx/cardFlip.mp3"
+dest_files=[ "res://.import/cardFlip.mp3-66ef565e245d6510d5f938dd815b5b55.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

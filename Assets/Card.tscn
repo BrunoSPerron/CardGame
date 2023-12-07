@@ -1,0 +1,71 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Art/cards/images/Characters/survivor.png" type="Texture" id=1]
+[ext_resource path="res://Art/cards/card_background.png" type="Texture" id=2]
+[ext_resource path="res://Scripts/Game/Cards/Card.cs" type="Script" id=3]
+[ext_resource path="res://Art/Cards/card_background_down.png" type="Texture" id=4]
+[ext_resource path="res://Assets/IconCounter.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Assets/UI/PixelText.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Audio/Fx/cardFlip.mp3" type="AudioStream" id=7]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 43, 62 )
+
+[node name="Card" type="Area2D"]
+z_index = 4096
+z_as_relative = false
+collision_layer = 4
+collision_mask = 4
+input_pickable = false
+script = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -0.333333 )
+z_as_relative = false
+shape = SubResource( 1 )
+
+[node name="Front" type="Node2D" parent="."]
+
+[node name="Background" type="Sprite" parent="Front"]
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 90, 128 )
+
+[node name="CombatDeckPosition" type="Position2D" parent="Front"]
+position = Vector2( 26.6667, -31.3333 )
+
+[node name="RestDeckPosition" type="Position2D" parent="Front"]
+position = Vector2( -26.6667, -30.6667 )
+
+[node name="CardTitle" parent="Front" instance=ExtResource( 6 )]
+position = Vector2( -36, -55 )
+
+[node name="Image" type="Sprite" parent="Front"]
+position = Vector2( -42, -48 )
+texture = ExtResource( 1 )
+centered = false
+
+[node name="LifeCounter" parent="Front" instance=ExtResource( 5 )]
+position = Vector2( -36, 20 )
+
+[node name="PowerCounter" parent="Front" instance=ExtResource( 5 )]
+position = Vector2( -36, 29 )
+icon = 1
+
+[node name="ActionCounter" parent="Front" instance=ExtResource( 5 )]
+position = Vector2( -36, 38 )
+icon = 2
+
+[node name="Back" type="Node2D" parent="."]
+visible = false
+
+[node name="CardBackgroundDown" type="Sprite" parent="Back"]
+texture = ExtResource( 4 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+pitch_scale = 0.65
+autoplay = true
+
+[connection signal="area_entered" from="." to="." method="OnCardOverlap"]
+[connection signal="area_exited" from="." to="." method="OnOverlapEnd"]

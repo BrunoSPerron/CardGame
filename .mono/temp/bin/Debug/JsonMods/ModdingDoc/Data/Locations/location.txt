@@ -1,0 +1,8 @@
+The Json filenames in this folder are used as locations_id.
+ i.e. this is how they are referenced when you need them.
+
+Note: Once your mod is published, your files nay be referenced by
+	other mods. It's proper etiquette not to rename your files and
+	keep them in the mod even if you're no longer using them, for
+	compatibility purposes.
+	(It doesn't affect anything in-game anyway)
