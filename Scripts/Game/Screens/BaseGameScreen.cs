@@ -1,8 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 public abstract class BaseGameScreen : Node2D
 {
