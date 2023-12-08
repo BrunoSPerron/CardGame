@@ -17,22 +17,23 @@ public class ExplorationScreen : BaseGameScreen
     {
         if (Location.Model.ExplorationDeck.Length != 0)
             AddExploreOption();
+        StackSurvivors();
     }
 
     private void AddExploreOption()
     {
         ExploreTarget = CardFactory.CreateExploreCard();
-        DealOnBoard(ExploreTarget, new Vector2(300, 198));
+
+        //TODO Placement based on window size
+        DealOnBoard(ExploreTarget, new Vector2(450, 200), 0, true);
     }
 
     public void AddSurvivor(CharacterWrapper cardWrapper)
     {
-        Vector2 reservePosition = new Vector2(200, 200); //TODO - Better
-
         cardWrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
         cardWrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
         survivors.Add(cardWrapper);
-        DealOnBoard(cardWrapper.Card, reservePosition);
+        DealOnBoard(cardWrapper.Card, Vector2.Zero);
     }
 
     public override void Destroy()
@@ -60,7 +61,7 @@ public class ExplorationScreen : BaseGameScreen
             survivors.Add(survivorDragged);
             survivorDragged = null;
             CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
-            //TODO PROCESS EXPLORE
+            //TODO PROCESS EXPLORE LOCATION
         }
         else
         {
@@ -82,13 +83,13 @@ public class ExplorationScreen : BaseGameScreen
         if (Location != null)
             RemoveChild(Location.Card);
         Location = location;
-        DealOnBoard(Location.Card, new Vector2(180, 180));
+        DealOnBoard(Location.Card, new Vector2(338, 200));
     }
 
     public void StackSurvivors()
     {
         List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
-        CardManager.StackCards(cards, Location.Card.Position);
+        CardManager.StackCards(cards, Location.Card.Target);
     }
 
     protected override void UpdateButtons()

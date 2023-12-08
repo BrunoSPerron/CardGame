@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 public abstract class BaseGameScreen : Node2D
 {
@@ -30,7 +31,8 @@ public abstract class BaseGameScreen : Node2D
         return button;
     }
 
-    public void DealOnBoard(Card card, Vector2 target, int zIndex = -1)
+    public void DealOnBoard(
+        Card card, Vector2 target, int zIndex = -1, Boolean priority = false)
     {
         card.MoveToPosition(target);
         if (cardDealer == null || cardDealer.IsQueuedForDeletion())
@@ -46,7 +48,11 @@ public abstract class BaseGameScreen : Node2D
         }
         else
         {
-            cardDealer.cards.Add(card);
+
+            if (priority)
+                cardDealer.cards.Insert(0, card);
+            else
+                cardDealer.cards.Add(card);
         }
     }
 
