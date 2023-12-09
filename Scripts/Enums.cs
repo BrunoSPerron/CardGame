@@ -8,15 +8,29 @@ public enum CombatAction
     ATTACK
 }
 
-/// <summary> Note: These keys are the resource names. </summary>
+/// <summary> Note: These keys are also the resource names. </summary>
 public enum CardIcon
 {
-    HEART, SWORD, TIME
+    HEART,
+    SWORD,
+    TIME
+}
+
+public enum HexLink
+{
+    TOP_LEFT,
+    TOP_RIGHT,
+    LEFT,
+    RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT, 
 }
 
 public enum MouseButton
 {
-    LEFT = 1, RIGHT = 2, MIDDLE = 3
+    LEFT = 1,
+    RIGHT = 2,
+    MIDDLE = 3
 }
 
 public enum Phase
@@ -33,6 +47,6 @@ public enum Phase
 public enum PressableState
 {
     STAND_BY = 0,
-    MOUSE_OVER = 1,
+    OVER = 1,
     DOWN = 2
 }

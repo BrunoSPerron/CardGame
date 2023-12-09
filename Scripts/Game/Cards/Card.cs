@@ -200,7 +200,7 @@ public class Card : Area2D
     public void SetBackgroundState(PressableState state)
     {
         Vector2 oldSize = Background.RegionRect.Size;
-        float xOffset = DownStateOnHover & state == PressableState.MOUSE_OVER
+        float xOffset = DownStateOnHover & state == PressableState.OVER
           ? (int)PressableState.DOWN * oldSize.x
           : (int)state * oldSize.x;
         Background.RegionRect = new Rect2(xOffset, 0, oldSize);

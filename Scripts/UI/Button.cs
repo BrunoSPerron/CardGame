@@ -121,7 +121,7 @@ public class Button : UIElement
                 }
                 else if (!enteredDown)
                 {
-                    SetButtonImage(PressableState.MOUSE_OVER);
+                    SetButtonImage(PressableState.OVER);
                     EmitSignal("OnClick");
                 }
             }
@@ -130,7 +130,7 @@ public class Button : UIElement
 
     public void OnMouseEnter()
     {
-        SetButtonImage(PressableState.MOUSE_OVER);
+        SetButtonImage(PressableState.OVER);
         enteredDown = Input.IsMouseButtonPressed((int)MouseButton.LEFT);
     }
 

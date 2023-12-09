@@ -8,16 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-// IMPORTANT NOTES:
-//      - Methods with lowercase names here may be invoked via json files.
-//      - Arguments are limited to string.
 public static class CharacterCreator
 {
 
     /// <summary>
     /// Create a character by calling 'factory' methods name in an array of strings.
+    /// Arguments are limited to string arguments
     /// </summary>
-    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.."</param>
+    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.." (limited to string arguments)</param>
     /// <returns></returns>
     public static CharacterModel CreateFromInstructions(string[] instructions)
     {
@@ -56,7 +54,7 @@ public static class CharacterCreator
 
 
     #pragma warning disable IDE1006
-    // Methods in this Factory class must by public and use lowercase
+    // Methods in this class must be public and use lowercase
     //  names to be invokable.
     public class Factory
     {

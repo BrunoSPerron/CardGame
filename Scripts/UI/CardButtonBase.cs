@@ -94,7 +94,7 @@ public abstract class CardButtonBase : Area2D
         }
         else if (!isDisabled)
         {
-            currentButtonState = PressableState.MOUSE_OVER;
+            currentButtonState = PressableState.OVER;
             UpdateSpriteRect();
             EmitSignal("OnClick");
         }
@@ -104,7 +104,7 @@ public abstract class CardButtonBase : Area2D
     {
         if (!isDisabled)
         {
-            currentButtonState = PressableState.MOUSE_OVER;
+            currentButtonState = PressableState.OVER;
             UpdateSpriteRect();
             mouseEnteredDown = mouseMotion.IsPressed();
         }

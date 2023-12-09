@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Game : Node2D
 {
-    [Export]
-    public PackedScene CampScene { get; set; } //DELETE ME
     public TurnCounter TurnCounter { get; private set; }
 
     private BaseGameScreen currentScene;
@@ -26,8 +24,12 @@ public class Game : Node2D
 
     public void InitializeScenario(string mod, string scenario)
     {
-        State = new GameStateModel() { Turn = 0 };
-        State.Scenario = mod;
+        State = new GameStateModel
+        {
+            Turn = 0,
+            Scenario = mod
+            //Map = TODO
+        };
         OutsetModel outsetInfo = JsonLoader.GetOnsetModel(mod, scenario);
         LocationWrapper startingLocation = null;
 
@@ -92,23 +94,6 @@ public class Game : Node2D
     public void StartFieldPhase()
     {
         currentScene?.Destroy();
-    }
-
-
-    //DELETE ME
-    public void MoveToCamp()
-    {
-        currentScene?.Destroy();
-
-        DispatchScreen campScene = CampScene.Instance<DispatchScreen>();
-        currentScene = campScene;
-        campScene.Game = this;
-        AddChild(campScene);
-
-        foreach (LocationWrapper location in locations)
-            campScene.AddLocation(location);
-        foreach (CharacterWrapper survivor in survivors)
-            campScene.AddSurvivor(survivor);
     }
 
     public void NextPhase()

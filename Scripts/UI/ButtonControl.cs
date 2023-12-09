@@ -103,7 +103,7 @@ public class ButtonControl : Node
                 }
                 else if (!mouseEnteredDown)
                 {
-                    currentButtonState = PressableState.MOUSE_OVER;
+                    currentButtonState = PressableState.OVER;
                     Update();
                     EmitSignal("OnClick");
                 }
@@ -113,7 +113,7 @@ public class ButtonControl : Node
 
     public void OnMouseEnter()
     {
-        currentButtonState = PressableState.MOUSE_OVER;
+        currentButtonState = PressableState.OVER;
         Update();
         mouseEnteredDown = Input.IsMouseButtonPressed((int)MouseButton.LEFT);
     }

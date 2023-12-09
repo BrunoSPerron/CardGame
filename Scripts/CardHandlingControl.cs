@@ -208,7 +208,7 @@ public class CardHandlingControl : Node
             foreach (Card card in stackTargets)
             {
                 card.SetBackgroundState(card == nearestCard
-                    ? PressableState.MOUSE_OVER
+                    ? PressableState.OVER
                     : PressableState.STAND_BY);
             }
             currentStackTarget = nearestCard;

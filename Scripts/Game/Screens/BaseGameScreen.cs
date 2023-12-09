@@ -38,7 +38,7 @@ public abstract class BaseGameScreen : Node2D
             cardDealer = new CardDealer()
             {
                 cardsParent = this,
-                Position = Position - new Vector2(card.GetSize().x / 2, 300)
+                Position = new Vector2(-card.GetSize().x / 2, card.GetSize().y / 2)
             };
 
             cardDealer.cards.Add(card);
