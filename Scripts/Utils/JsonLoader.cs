@@ -17,25 +17,36 @@ public static class JsonLoader
     private const string fileNotFoundMessage
         = "JsonLoader error: File not found at ";
 
+
     // ===== Getters =====
 
-    public static string[] GetCharacterCreationInstructions(string modName, string jsonFileName)
+
+    public static CharacterCreationModel GetCharacterCreationModel(
+        string modName, string jsonFileName)
     {
-        //TODO Put this into a model to use cache
         string path = Path.Combine(PATHS.ModFolderPath,
             modName + "\\Data\\CharacterCreation\\" + jsonFileName);
-        return GetOfType<string[]>.FromJson(path) ?? new string[0];
+        CharacterCreationModel model =
+            GetOfType<CharacterCreationModel>.FromJson(path)
+            ?? new CharacterCreationModel();
+        model.ID = modName
+            + '_' + jsonFileName.Split('.')[0]
+            + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
+        return model;
     }
 
     public static CombatCardModel GetCombatCardModel(string modName, string jsonFileName)
     {
         string path = Path.Combine(PATHS.ModFolderPath,
             modName + "\\Data\\CombatCards\\" + jsonFileName);
-        CombatCardModel model = GetOfType<CombatCardModel>.FromJson(
-            path) ?? new CombatCardModel();
+        CombatCardModel model =
+            GetOfType<CombatCardModel>.FromJson(path)
+            ?? new CombatCardModel();
         model.ID = modName
             + '_' + jsonFileName.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
         return model;
     }
 
@@ -43,11 +54,13 @@ public static class JsonLoader
     {
         string path = Path.Combine(PATHS.ModFolderPath,
             modName + "\\Data\\FieldCards\\" + jsonFileName);
-        FieldCardModel model = GetOfType<FieldCardModel>.FromJson(
-            path) ?? new FieldCardModel();
+        FieldCardModel model =
+            GetOfType<FieldCardModel>.FromJson(path)
+            ?? new FieldCardModel();
         model.ID = modName
             + '_' + jsonFileName.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
         return model;
     }
 
@@ -59,6 +72,7 @@ public static class JsonLoader
         model.ID = modName
             + '_' + jsonFileName.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
         return model;
     }
 
@@ -66,10 +80,13 @@ public static class JsonLoader
     {
         string path = Path.Combine(PATHS.ModFolderPath,
             modName + "\\Data\\Locations\\" + jsonFileName);
-        LocationModel model = GetOfType<LocationModel>.FromJson(path) ?? new LocationModel();
+        LocationModel model =
+            GetOfType<LocationModel>.FromJson(path)
+            ?? new LocationModel();
         model.ID = modName
             + '_' + jsonFileName.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
         return model;
     }
 
@@ -81,10 +98,27 @@ public static class JsonLoader
         model.ID = modName
             + '_' + scenario.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
         return model;
     }
 
+    public static WorldCreationModel GetWorldCreationModel(string modName, string jsonFileName)
+    {
+        string path = Path.Combine(PATHS.ModFolderPath,
+            modName + "\\Data\\World\\" + jsonFileName);
+        WorldCreationModel model =
+            GetOfType<WorldCreationModel>.FromJson(path)
+            ?? new WorldCreationModel();
+        model.ID = modName
+            + '_' + jsonFileName.Split('.')[0]
+            + '_' + Guid.NewGuid().ToString();
+        model.Mod = modName;
+        return model;
+    }
+    
+
     // ===== helper class =====
+
 
     private static class GetOfType<T>
     {

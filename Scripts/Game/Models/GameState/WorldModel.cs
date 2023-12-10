@@ -18,8 +18,8 @@ using System.Collections.Generic;
 
 public class WorldModel : BaseModel
 {
-    public List<HexLocation> locations = new List<HexLocation>();
-    public List<Tuple<Vector2, Vector2>> links = new List<Tuple<Vector2, Vector2>>();
+    public List<HexLocation> Locations = new List<HexLocation>();
+    public List<Tuple<Vector2, Vector2>> Links = new List<Tuple<Vector2, Vector2>>();
 }
 
 public struct HexLocation

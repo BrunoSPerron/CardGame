@@ -31,18 +31,23 @@ public class Game : Node2D
             //Map = TODO
         };
         OutsetModel outsetInfo = JsonLoader.GetOnsetModel(mod, scenario);
+
+        WorldCreationModel worldCreationModel = JsonLoader.GetWorldCreationModel(
+            mod, outsetInfo.World);
+        State.Map = WorldCreator.CreateFromInstructions(worldCreationModel);
+
         LocationWrapper startingLocation = null;
 
-        foreach (UnlockedLocationModel unlockedLocation in outsetInfo.UnlockedLocations)
+        foreach (HexLocation hexLocation in State.Map.Locations)
         {
-            LocationModel location = JsonLoader.GetLocationModel(
-                State.Scenario, unlockedLocation.Name);
+            LocationModel location = hexLocation.Location;
             LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
                 State.Scenario, location);
-            if (location.ID.StartsWith(mod + '_' +outsetInfo.StartingLocation))
+            if (location.ID.StartsWith(mod + '_' + outsetInfo.StartingLocation))
                 startingLocation = wrapper;
             locations.Add(wrapper);
         }
+
         if (startingLocation == null)
         {
             LocationModel location = JsonLoader.GetLocationModel(
@@ -65,9 +70,9 @@ public class Game : Node2D
 
         foreach (string characterCreatorLogic in outsetInfo.StartingCharacters)
         {
-            string[] instructions = JsonLoader.GetCharacterCreationInstructions(
+            CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(
                 State.Scenario, characterCreatorLogic);
-            CharacterModel info = CharacterCreator.CreateFromInstructions(instructions);
+            CharacterModel info = CharacterCreator.CreateFromInstructions(model.Instructions);
             info.CurrentActionPoint = Mathf.Clamp(
                 info.CurrentActionPoint, 1, info.ActionPoint);
             info.CurrentHitPoint = Mathf.Clamp(info.CurrentHitPoint, 1, info.HitPoint);
