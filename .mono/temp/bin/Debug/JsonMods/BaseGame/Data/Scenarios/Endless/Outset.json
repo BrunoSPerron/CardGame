@@ -2,7 +2,6 @@
 	"StartingLocation": "Forest",
 	"StartingCharacters": [
 		"BaseCharacter",
-		"BaseCharacter",
 		"BaseCharacter"
 	],
 	"World": "Endless"

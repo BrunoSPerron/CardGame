@@ -23,13 +23,13 @@ public class WorldModel : BaseModel
 
 public struct HexLocation
 {
-    public List<HexLink> Openings;
+    public HashSet<HexLink> Openings;
     public LocationModel Location;
     public Vector2Int HexPosition;
 
     public HexLocation(LocationModel location, Vector2Int position) 
     { 
-        Openings = new List<HexLink>();
+        Openings = new HashSet<HexLink>();
         Location = location;
         HexPosition = position;
     }

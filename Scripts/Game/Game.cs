@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 
 public class Game : Node2D
 {
@@ -43,13 +44,18 @@ public class Game : Node2D
         foreach (HexLocation hexLocation in State.Map.Locations)
         {
             LocationModel location = hexLocation.Location;
-            LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
-                State.Scenario, location);
-            if (location.ID.StartsWith(mod + '_' + outsetInfo.StartingLocation))
-                startingLocation = wrapper;
-
-            Locations.Add(wrapper);
-            LocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
+            if (location != null)
+            {
+                LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
+                    State.Scenario, location);
+                if (location.ID.StartsWith(mod + '_' + outsetInfo.StartingLocation))
+                    startingLocation = wrapper;
+                Locations.Add(wrapper);
+            }
+            if (LocationsByPosition.ContainsKey(hexLocation.HexPosition))
+                LocationsByPosition[hexLocation.HexPosition] = hexLocation;
+            else
+                LocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
         }
 
         if (startingLocation == null)

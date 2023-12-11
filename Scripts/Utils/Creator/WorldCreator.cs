@@ -1,5 +1,6 @@
 ﻿using Godot;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 
@@ -11,7 +12,6 @@ public static class WorldCreator
     /// Arguments are limited to string arguments
     /// </summary>
     /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.." (limited to string arguments)</param>
-    /// <returns></returns>
     public static WorldModel CreateFromModel(WorldCreationModel model)
     {
         Factory factory = new Factory();
@@ -29,20 +29,23 @@ public static class WorldCreator
                 : "";
             string[] splittedArguments = arguments?.Split('/') ?? new string[0];
 
+            for (int i = 0; i < splittedArguments.Length; i++)
+                splittedArguments[i] = splittedArguments[i].Trim();
             try
             {
-                for (int i = 0; i < splittedArguments.Length; i++)
-                    splittedArguments[i] = splittedArguments[i].Trim();
-
                 MethodInfo theMethod = factoryType.GetMethod(name);
                 theMethod.Invoke(factory, new[] { splittedArguments });
             }
             catch
             {
                 GD.PrintErr(
-                    "World creator error: Invalid instruction from json." + model.Mod
-                    + " \"" + instruction + "\"");
+                    "World creator error: Invalid instruction from json. "
+                    + model.Mod + " \"" + instruction + "\"");
             }
+
+
+            /*MethodInfo theMethod = factoryType.GetMethod(name);
+            theMethod.Invoke(factory, new[] { splittedArguments });*/
         }
 
         return factory.model;
@@ -57,21 +60,79 @@ public static class WorldCreator
 
         /// <param name="args">
         /// 0: Location Name
-        /// 1: x
-        /// 2: y
+        /// 1: x = 0
+        /// 2: y = 0
         /// </param>
         public void addlocation(string[] args)
         {
-            string locationName = args.Length > 0 ? args[0]: "random";
+            string locationName = args.Length > 0 ? args[0] : null;
             int x = args.Length > 1 ? int.Parse(args[1]) : 0;
             int y = args.Length > 2 ? int.Parse(args[2]) : 0;
 
-            var hexLocation = new HexLocation
+
+            Vector2Int positionVector = new Vector2Int(x, y);
+            bool newLocation = true;
+            for (int i = 0; i < model.Locations.Count; i++)
             {
-                Location = JsonLoader.GetLocationModel(model.Mod, locationName),
-                HexPosition = new Vector2Int(x, y)
-            };
-            model.Locations.Add(hexLocation);
+                HexLocation location = model.Locations[i];
+                if (location.HexPosition == positionVector)
+                {
+                    location.Location = JsonLoader.GetLocationModel(model.Mod, locationName);
+                    newLocation = false;
+                    break;
+                }
+            }
+
+            if (newLocation)
+            {
+                model.Locations.Add(new HexLocation()
+                {
+                    HexPosition = positionVector,
+                    Location = JsonLoader.GetLocationModel(model.Mod, locationName)
+                });
+            }
+        }
+
+        /// <param name="args">
+        /// 0: x = 0
+        /// 1: y = 0
+        /// </param>
+        public void openposition(string[] args)
+        {
+            int x = args.Length > 0 ? int.Parse(args[0]) : 0;
+            int y = args.Length > 1 ? int.Parse(args[1]) : 0;
+
+            Vector2Int positionVector = new Vector2Int(x, y);
+            HexLocation hexlocation = new HexLocation(null, positionVector);
+            bool newLocation = true;
+            foreach (HexLocation location in model.Locations)
+            {
+                if (location.HexPosition == positionVector)
+                {
+                    hexlocation = location;
+                    newLocation = false;
+                    break;
+                }
+            }
+
+            if (args.Length == 0)
+            {
+                foreach (HexLink link in Enum.GetValues(typeof(HexLink)))
+                    if (!hexlocation.Openings.Contains(link))
+                        hexlocation.Openings.Add(link);
+            }
+            else
+            {
+                foreach (string arg in args)
+                {
+                    HexLink link = (HexLink)Enum.Parse(typeof(HexLink), arg);
+                    if (!hexlocation.Openings.Contains(link))
+                        hexlocation.Openings.Add(link);
+                }
+            }
+
+            if (newLocation)
+                model.Locations.Add(hexlocation);
         }
     }
 }
