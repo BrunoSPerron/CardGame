@@ -1,11 +1,6 @@
 ﻿using Godot;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 
 public static class CharacterCreator
@@ -17,12 +12,13 @@ public static class CharacterCreator
     /// </summary>
     /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.." (limited to string arguments)</param>
     /// <returns></returns>
-    public static CharacterModel CreateFromInstructions(string[] instructions)
+    public static CharacterModel CreateFromModel(CharacterCreationModel model)
     {
         Factory factory = new Factory();
+        factory.model.Mod = model.Mod;
         Type factoryType = factory.GetType();
 
-        foreach (string instruction in instructions)
+        foreach (string instruction in model.Instructions)
         {
             string[] splittedInstruction = instruction.Split(
                 new string[] { "->" }, StringSplitOptions.None);
@@ -30,16 +26,14 @@ public static class CharacterCreator
             string name = splittedInstruction[0].Replace(" ", "").ToLowerInvariant();
             string arguments = splittedInstruction.Length > 1
                 ? splittedInstruction[1].ToLowerInvariant()
-                : "";
-            string[] splittedArguments = arguments.Split('/');
-
+                : null;
+            string[] splittedArguments = arguments?.Split('/') ?? new string[0];
+            for (int i = 0; i < splittedArguments.Length; i++)
+                splittedArguments[i] = splittedArguments[i].Trim();
             try
             {
-                for (int i = 0; i < splittedArguments.Length; i++)
-                    splittedArguments[i] = splittedArguments[i].Trim();
-
                 MethodInfo theMethod = factoryType.GetMethod(name);
-                theMethod.Invoke(factory, splittedArguments);
+                theMethod.Invoke(factory, new[] { splittedArguments });
             }
             catch
             {
@@ -49,7 +43,7 @@ public static class CharacterCreator
             }
         }
 
-        return factory.characterInfo;
+        return factory.model;
     }
 
 
@@ -58,23 +52,27 @@ public static class CharacterCreator
     //  names to be invokable.
     public class Factory
     {
-        public CharacterModel characterInfo = new CharacterModel();
+        public CharacterModel model = new CharacterModel();
 
-        public void rename(string newName = "random")
+        /// <param name="args">
+        /// 0: New name
+        /// </param>
+        public void rename(string[] args)
         {
+            string newName = args.Length > 0 ? args[0] : "random";
             switch (newName)
             {
                 case "random":
-                    characterInfo.Name = NameGenerator.GetRandomName();
+                    model.Name = NameGenerator.GetRandomName();
                     break;
                 case "random female":
-                    characterInfo.Name = NameGenerator.GetRandomFemaleName();
+                    model.Name = NameGenerator.GetRandomFemaleName();
                     break;
                 case "random male":
-                    characterInfo.Name = NameGenerator.GetRandomMaleName();
+                    model.Name = NameGenerator.GetRandomMaleName();
                     break;
                 default:
-                    characterInfo.Name = newName;
+                    model.Name = newName;
                     break;
             }
         }

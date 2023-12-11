@@ -125,9 +125,8 @@ public static class JsonLoader
         //TODO Manage cache
         private static readonly Dictionary<string, T> cache
             = new Dictionary<string, T>();
-        private static string GetJSONStringFromFile(string path)
+        private static string GetJSONStringFromFile(string pathWithExtension)
         {
-            string pathWithExtension = Path.ChangeExtension(path, "json");
 
             if (!File.Exists(pathWithExtension))
             {
@@ -139,9 +138,10 @@ public static class JsonLoader
 
         public static T FromJson(string path)
         {
-            if (!cache.ContainsKey(path))
+            string pathWithExtension = Path.ChangeExtension(path, "json");
+            if (!cache.ContainsKey(pathWithExtension))
             {
-                string jsonString = GetJSONStringFromFile(path);
+                string jsonString = GetJSONStringFromFile(pathWithExtension);
                 if (jsonString == null)
                     return default;
 
@@ -152,16 +152,16 @@ public static class JsonLoader
                 }
                 catch
                 {
-                    Godot.GD.PrintErr(invalidJsonMessage + path);
-                    cache[path] = default;
+                    Godot.GD.PrintErr(invalidJsonMessage + pathWithExtension);
+                    cache[pathWithExtension] = default;
                     return default;
                 }
 
-                cache.Add(path, deserialized);
+                cache.Add(pathWithExtension, deserialized);
                 return deserialized;
 
             }
-            return cache[path];
+            return cache[pathWithExtension];
         }
     }
 }

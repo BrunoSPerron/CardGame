@@ -10,8 +10,11 @@ public class Game : Node2D
 
     public GameStateModel State { get; private set; }
 
-    private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
-    private readonly List<LocationWrapper> locations = new List<LocationWrapper>();
+    public readonly List<CharacterWrapper> Survivors = new List<CharacterWrapper>();
+    public readonly List<LocationWrapper> Locations = new List<LocationWrapper>();
+    public readonly Dictionary<Vector2Int, HexLocation> LocationsByPosition
+        = new Dictionary<Vector2Int, HexLocation>();
+
 
     // ===== GD Methods Override =====
 
@@ -28,13 +31,12 @@ public class Game : Node2D
         {
             Turn = 0,
             Scenario = mod
-            //Map = TODO
         };
         OutsetModel outsetInfo = JsonLoader.GetOnsetModel(mod, scenario);
 
         WorldCreationModel worldCreationModel = JsonLoader.GetWorldCreationModel(
             mod, outsetInfo.World);
-        State.Map = WorldCreator.CreateFromInstructions(worldCreationModel);
+        State.Map = WorldCreator.CreateFromModel(worldCreationModel);
 
         LocationWrapper startingLocation = null;
 
@@ -45,7 +47,9 @@ public class Game : Node2D
                 State.Scenario, location);
             if (location.ID.StartsWith(mod + '_' + outsetInfo.StartingLocation))
                 startingLocation = wrapper;
-            locations.Add(wrapper);
+
+            Locations.Add(wrapper);
+            LocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
         }
 
         if (startingLocation == null)
@@ -56,15 +60,15 @@ public class Game : Node2D
             {
                 LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
                     State.Scenario, location);
-                locations.Add(wrapper);
+                Locations.Add(wrapper);
                 startingLocation = wrapper;
             }
         }
 
-        if (locations.Count == 0)
+        if (Locations.Count == 0)
         {
             LocationWrapper locationWrapper = CardFactory.CreateDefaultWrappedLocation();
-            locations.Add(locationWrapper);
+            Locations.Add(locationWrapper);
             startingLocation = locationWrapper;
         }
 
@@ -72,12 +76,12 @@ public class Game : Node2D
         {
             CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(
                 State.Scenario, characterCreatorLogic);
-            CharacterModel info = CharacterCreator.CreateFromInstructions(model.Instructions);
+            CharacterModel info = CharacterCreator.CreateFromModel(model);
             info.CurrentActionPoint = Mathf.Clamp(
                 info.CurrentActionPoint, 1, info.ActionPoint);
             info.CurrentHitPoint = Mathf.Clamp(info.CurrentHitPoint, 1, info.HitPoint);
             info.CurrentLocationID = startingLocation.Model.ID;
-            survivors.Add(CardFactory.CreateCardFromCharacter(info));
+            Survivors.Add(CardFactory.CreateCardFromCharacter(info));
         }
 
         TurnCounter = GetNode<TurnCounter>("TurnCounter");
@@ -88,9 +92,9 @@ public class Game : Node2D
     {
         currentScene?.Destroy();
         ExplorationManager explorationManager = new ExplorationManager();
-        foreach (CharacterWrapper character in survivors)
+        foreach (CharacterWrapper character in Survivors)
             explorationManager.AddSurvivor(character);
-        foreach (LocationWrapper location in locations)
+        foreach (LocationWrapper location in Locations)
             explorationManager.AddLocation(location);
         currentScene = explorationManager;
         AddChild(explorationManager);
@@ -134,7 +138,7 @@ public class Game : Node2D
     public void OnDispatch()
     {
         List<LocationWrapper> locationsWithSurvivors = new List<LocationWrapper>();
-        foreach (LocationWrapper location in locations)
+        foreach (LocationWrapper location in Locations)
         {
             if (location.Characters.Count > 0)
             {
