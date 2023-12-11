@@ -42,10 +42,6 @@ public static class WorldCreator
                     "World creator error: Invalid instruction from json. "
                     + model.Mod + " \"" + instruction + "\"");
             }
-
-
-            /*MethodInfo theMethod = factoryType.GetMethod(name);
-            theMethod.Invoke(factory, new[] { splittedArguments });*/
         }
 
         return factory.model;
@@ -68,7 +64,6 @@ public static class WorldCreator
             string locationName = args.Length > 0 ? args[0] : null;
             int x = args.Length > 1 ? int.Parse(args[1]) : 0;
             int y = args.Length > 2 ? int.Parse(args[2]) : 0;
-
 
             Vector2Int positionVector = new Vector2Int(x, y);
             bool newLocation = true;
@@ -96,6 +91,7 @@ public static class WorldCreator
         /// <param name="args">
         /// 0: x = 0
         /// 1: y = 0
+        /// 2+: hex links
         /// </param>
         public void openposition(string[] args)
         {
@@ -115,7 +111,7 @@ public static class WorldCreator
                 }
             }
 
-            if (args.Length == 0)
+            if (args.Length < 3)
             {
                 foreach (HexLink link in Enum.GetValues(typeof(HexLink)))
                     if (!hexlocation.Openings.Contains(link))
@@ -123,11 +119,15 @@ public static class WorldCreator
             }
             else
             {
-                foreach (string arg in args)
+
+                for (int i = 2; i < args.Length; i++)
                 {
-                    HexLink link = (HexLink)Enum.Parse(typeof(HexLink), arg);
-                    if (!hexlocation.Openings.Contains(link))
-                        hexlocation.Openings.Add(link);
+                    string arg = args[i].Replace(" ", "_").ToUpperInvariant(); ;
+                    if (Enum.TryParse(arg, out HexLink link))
+                    {
+                        if (!hexlocation.Openings.Contains(link))
+                            hexlocation.Openings.Add(link);
+                    }
                 }
             }
 
