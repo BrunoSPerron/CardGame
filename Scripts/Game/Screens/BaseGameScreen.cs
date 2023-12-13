@@ -54,7 +54,7 @@ public abstract class BaseGameScreen : Node2D
         }
     }
 
-    public void OpenDeckModificationPanel(DeckWrapper deck)
+    public void OpenDeckModificationPanel(BaseDeckWrapper deck)
     {
         DisableScreen();
         deckPanel = DeckPanel.Instance<DeckPanel>();

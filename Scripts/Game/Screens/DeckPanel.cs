@@ -16,7 +16,7 @@ public class DeckPanel : Node2D
     [Export]
     public PackedScene PixelTextScene;
 
-    public DeckWrapper DeckWrapper;
+    public BaseDeckWrapper DeckWrapper;
     public BaseGameScreen GameScreen;
 
     private readonly List<Button> buttons = new List<Button>();
@@ -60,8 +60,8 @@ public class DeckPanel : Node2D
 
         Vector2 panelSize = panel.GetSize() - new Vector2(
             INNER_PADDING_X * 2, INNER_PADDING_Y * 2);
-
-        BaseCardWrapper[] deck = DeckWrapper.GenerateBaseDeck();
+        DeckWrapper.GenerateBaseDeck();
+        BaseCardWrapper[] deck = new BaseCardWrapper[0]; //TODO Fix this
 
         Vector2 cardSize = deck[0].Card.GetSize() * mult;
 

@@ -33,6 +33,7 @@ public static class JsonLoader
             + '_' + jsonFileName.Split('.')[0]
             + '_' + Guid.NewGuid().ToString();
         model.Mod = modName;
+        model.JsonFilePath = path;
         return model;
     }
 
@@ -153,8 +154,11 @@ public static class JsonLoader
                 catch
                 {
                     Godot.GD.PrintErr(invalidJsonMessage + pathWithExtension);
-                    cache[pathWithExtension] = default;
-                    return default;
+                    T instance = default;
+                    if (instance is BaseModel model)
+                        model.JsonFilePath = pathWithExtension;
+                    cache[pathWithExtension] = instance;
+                    return instance;
                 }
 
                 cache.Add(pathWithExtension, deserialized);

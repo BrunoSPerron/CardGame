@@ -49,7 +49,7 @@ public static class WorldCreator
 
 #pragma warning disable IDE1006
     // Methods in this class must be public and use lowercase names to be invokable.
-    // They must receive a single argument, which is an array of string.
+    // They must take a single argument, which is an array of string.
     public class Factory
     {
         public WorldModel model = new WorldModel();
@@ -69,7 +69,7 @@ public static class WorldCreator
             bool newLocation = true;
             for (int i = 0; i < model.Locations.Count; i++)
             {
-                HexLocation location = model.Locations[i];
+                HexLocationModel location = model.Locations[i];
                 if (location.HexPosition == positionVector)
                 {
                     location.Location = JsonLoader.GetLocationModel(model.Mod, locationName);
@@ -80,10 +80,10 @@ public static class WorldCreator
 
             if (newLocation)
             {
-                model.Locations.Add(new HexLocation()
+                model.Locations.Add(new HexLocationModel
                 {
-                    HexPosition = positionVector,
-                    Location = JsonLoader.GetLocationModel(model.Mod, locationName)
+                    Location = JsonLoader.GetLocationModel(model.Mod, locationName),
+                    HexPosition = positionVector
                 });
             }
         }
@@ -91,7 +91,7 @@ public static class WorldCreator
         /// <param name="args">
         /// 0: x = 0
         /// 1: y = 0
-        /// 2+: hex links
+        /// 2+: hex links (enum key)
         /// </param>
         public void openposition(string[] args)
         {
@@ -99,9 +99,9 @@ public static class WorldCreator
             int y = args.Length > 1 ? int.Parse(args[1]) : 0;
 
             Vector2Int positionVector = new Vector2Int(x, y);
-            HexLocation hexlocation = new HexLocation(null, positionVector);
+            HexLocationModel hexlocation = new HexLocationModel() { HexPosition = positionVector };
             bool newLocation = true;
-            foreach (HexLocation location in model.Locations)
+            foreach (HexLocationModel location in model.Locations)
             {
                 if (location.HexPosition == positionVector)
                 {
@@ -119,14 +119,19 @@ public static class WorldCreator
             }
             else
             {
-
                 for (int i = 2; i < args.Length; i++)
                 {
-                    string arg = args[i].Replace(" ", "_").ToUpperInvariant(); ;
-                    if (Enum.TryParse(arg, out HexLink link))
+                    string arg = args[i].Replace(" ", "");
+
+                    if (Enum.TryParse(arg, true, out HexLink link))
                     {
                         if (!hexlocation.Openings.Contains(link))
                             hexlocation.Openings.Add(link);
+                    }
+                    else
+                    {
+                        GD.PrintErr("World creation warning: Unreconized link \""
+                            + arg + "\" from: " + model.Mod); //TODO log file
                     }
                 }
             }

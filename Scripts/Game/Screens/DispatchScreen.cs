@@ -33,9 +33,9 @@ public class DispatchScreen : BaseGameScreen
 
     public void AddLocation(LocationModel location)
     {
-        LocationWrapper locationWrapper = CardFactory.CreateCardFromLocation(
-            Game.State.Scenario, location);
-        AddLocation(locationWrapper);
+        /*LocationWrapper locationWrapper = CardFactory.CreateCardFromLocation(
+            Game.State.Scenario, location);*/
+        //AddLocation(locationWrapper);
     }
 
     public void AddSurvivor(CharacterWrapper cardWrapper)
@@ -91,7 +91,7 @@ public class DispatchScreen : BaseGameScreen
             CharacterWrapper character = charactersByCardId[OriginCard.GetInstanceId()];
             //character.Location?.Characters.Remove(character);
             //character.Location = location;
-            location.Characters.Add(character);
+            //location.Characters.Add(character);
             UpdateButtons();
         }
     }
@@ -107,12 +107,12 @@ public class DispatchScreen : BaseGameScreen
 
     public void OnClickProceed()
     {
-        Game.OnDispatch();
+        //Game.OnDispatch();
     }
 
     public void OnCombatDeckClick(Card card)
     {
-        OpenDeckModificationPanel(charactersByCardId[card.GetInstanceId()].CombatDeck);
+        //OpenDeckModificationPanel(charactersByCardId[card.GetInstanceId()].CombatDeck);
     }
     
     public void OnFieldDeckClick(Card card)

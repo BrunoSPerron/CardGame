@@ -7,10 +7,10 @@ public class CharacterModel : BaseModel
     public int ActionPoint = 2;
     public int CurrentActionPoint = 2;
 
-    public string CurrentLocationID;
+    public Vector2Int WorldPosition;
 
-    public DeckModel CombatDeck = new DeckModel();
-    public DeckModel FieldDeck = new DeckModel();
+    public CombatDeckModel CombatDeck = new CombatDeckModel();
+    public FieldDeckModel FieldDeck = new FieldDeckModel();
 
     public ItemModel[] items = new ItemModel[0];
 }

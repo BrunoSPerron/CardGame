@@ -10,20 +10,55 @@ public class Game : Node2D
 
     public GameStateModel State { get; private set; }
 
+    // ===== Wrappers Storage =====
+
     public readonly List<CharacterWrapper> Survivors = new List<CharacterWrapper>();
     public readonly List<LocationWrapper> Locations = new List<LocationWrapper>();
-    public readonly Dictionary<Vector2Int, HexLocation> LocationsByPosition
-        = new Dictionary<Vector2Int, HexLocation>();
 
+    public readonly Dictionary<Vector2Int, LocationWrapper> LocationsByPosition
+        = new Dictionary<Vector2Int, LocationWrapper>();
+    public readonly Dictionary<Vector2Int, HexLocationModel> HexLocationsByPosition
+        = new Dictionary<Vector2Int, HexLocationModel>();
 
-    // ===== GD Methods Override =====
+    public Dictionary<ulong, CharacterWrapper> charactersByCardId
+        = new Dictionary<ulong, CharacterWrapper>();
 
-    public override void _Ready()
+    public Dictionary<ulong, LocationWrapper> locationsByCardId
+        = new Dictionary<ulong, LocationWrapper>();
+
+    // ===== Methods =====
+
+    public void AddSurvivor(CharacterModel survivor)
     {
-        //GD.Print(JsonLoader.GetCombatCardInfo("BaseGame", "Stab").Serialize());
+        CharacterWrapper character = CardFactory.CreateCardFromCharacter(survivor);
+        Survivors.Add(character);
+        charactersByCardId.Add(character.Card.GetInstanceId(), character);
     }
 
-    // ===== Methods unique to this class =====
+    public void AddLocation(HexLocationModel hexLocation)
+    {
+        LocationModel location = hexLocation.Location;
+        LocationWrapper wrapper = null;
+        if (location != null)
+        {
+            wrapper = CardFactory.CreateCardFromLocation(State.Scenario, hexLocation);
+            Locations.Add(wrapper);
+            ulong instanceId = wrapper.Card.GetInstanceId();
+            if (!locationsByCardId.ContainsKey(instanceId))
+                locationsByCardId.Add(instanceId, wrapper);
+        }
+
+        if (LocationsByPosition.ContainsKey(hexLocation.HexPosition))
+        {
+            HexLocationsByPosition[hexLocation.HexPosition] = hexLocation;
+            LocationsByPosition[hexLocation.HexPosition] = wrapper;
+        }
+        else
+        {
+            HexLocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
+            LocationsByPosition.Add(hexLocation.HexPosition, wrapper);
+        }
+    }
 
     public void InitializeScenario(string mod, string scenario)
     {
@@ -38,76 +73,26 @@ public class Game : Node2D
             mod, outsetInfo.World);
         State.Map = WorldCreator.CreateFromModel(worldCreationModel);
 
-        LocationWrapper startingLocation = null;
-
-        foreach (HexLocation hexLocation in State.Map.Locations)
-        {
-            LocationModel location = hexLocation.Location;
-            if (location != null)
-            {
-                LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
-                    State.Scenario, location);
-                if (location.ID.StartsWith(mod + '_' + outsetInfo.StartingLocation))
-                    startingLocation = wrapper;
-                Locations.Add(wrapper);
-            }
-            if (LocationsByPosition.ContainsKey(hexLocation.HexPosition))
-                LocationsByPosition[hexLocation.HexPosition] = hexLocation;
-            else
-                LocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
-        }
-
-        if (startingLocation == null)
-        {
-            LocationModel location = JsonLoader.GetLocationModel(
-                State.Scenario, outsetInfo.StartingLocation);
-            if (location.ID != "core_desolation")
-            {
-                LocationWrapper wrapper = CardFactory.CreateCardFromLocation(
-                    State.Scenario, location);
-                Locations.Add(wrapper);
-                startingLocation = wrapper;
-            }
-        }
-
-        if (Locations.Count == 0)
-        {
-            LocationWrapper locationWrapper = CardFactory.CreateDefaultWrappedLocation();
-            Locations.Add(locationWrapper);
-            startingLocation = locationWrapper;
-        }
+        foreach (HexLocationModel hexLocation in State.Map.Locations)
+            AddLocation(hexLocation);
 
         foreach (string characterCreatorLogic in outsetInfo.StartingCharacters)
         {
             CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(
                 State.Scenario, characterCreatorLogic);
-            CharacterModel info = CharacterCreator.CreateFromModel(model);
-            info.CurrentActionPoint = Mathf.Clamp(
-                info.CurrentActionPoint, 1, info.ActionPoint);
-            info.CurrentHitPoint = Mathf.Clamp(info.CurrentHitPoint, 1, info.HitPoint);
-            info.CurrentLocationID = startingLocation.Model.ID;
-            Survivors.Add(CardFactory.CreateCardFromCharacter(info));
+            CharacterModel character = CharacterCreator.CreateFromModel(model);
+            character.CurrentActionPoint = Mathf.Clamp(
+                character.CurrentActionPoint, 1, character.ActionPoint);
+            character.CurrentHitPoint = Mathf.Clamp(
+                character.CurrentHitPoint, 1, character.HitPoint);
+
+            //TODO from x / y instead
+            character.WorldPosition = outsetInfo.StartingPosition;
+            AddSurvivor(character);
         }
 
         TurnCounter = GetNode<TurnCounter>("TurnCounter");
         TurnCounter.UpdateFromGameState(State);
-    }
-
-    public void StartExplorationPhase()
-    {
-        currentScene?.Destroy();
-        ExplorationManager explorationManager = new ExplorationManager();
-        foreach (CharacterWrapper character in Survivors)
-            explorationManager.AddSurvivor(character);
-        foreach (LocationWrapper location in Locations)
-            explorationManager.AddLocation(location);
-        currentScene = explorationManager;
-        AddChild(explorationManager);
-    }
-
-    public void StartFieldPhase()
-    {
-        currentScene?.Destroy();
     }
 
     public void NextPhase()
@@ -140,20 +125,21 @@ public class Game : Node2D
         TurnCounter.UpdateFromGameState(State);
     }
 
-    public void OnDispatch()
+    public void StartExplorationPhase()
     {
-        List<LocationWrapper> locationsWithSurvivors = new List<LocationWrapper>();
-        foreach (LocationWrapper location in Locations)
-        {
-            if (location.Characters.Count > 0)
-            {
-                locationsWithSurvivors.Add(location);
-            }
-        }
+        currentScene?.Destroy();
+        ExplorationManager explorationManager = new ExplorationManager() { Game = this };
+        currentScene = explorationManager;
+        AddChild(explorationManager);
     }
 
-    public void StartNew() 
-    { 
+    public void StartFieldPhase()
+    {
+        currentScene?.Destroy();
+    }
+
+    public void StartNew()
+    {
         InitializeScenario("BaseGame", "Endless");
         NextPhase();
     }

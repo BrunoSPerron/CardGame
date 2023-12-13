@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class CharacterWrapper : BaseCardWrapper
 {
-    private DeckWrapper combatDeck;
-    public DeckWrapper CombatDeck
+    private CombatDeckWrapper combatDeck;
+    public CombatDeckWrapper CombatDeck
     {
         get
         {
@@ -16,8 +16,8 @@ public class CharacterWrapper : BaseCardWrapper
         set => combatDeck = value;
     }
 
-    private DeckWrapper fieldDeck;
-    public DeckWrapper FieldDeck
+    private FieldDeckWrapper fieldDeck;
+    public FieldDeckWrapper FieldDeck
     {
         get
         {
@@ -28,15 +28,15 @@ public class CharacterWrapper : BaseCardWrapper
         set => fieldDeck = value;
     }
 
-    private CharacterModel info;
-    public CharacterModel Info
+    private CharacterModel model;
+    public CharacterModel Model
     {
-        get => info;
+        get => model;
         private set
         {
-            info = value;
+            model = value;
             ActionPoint = value.ActionPoint;
-            CombatDeck = new DeckWrapper(value.CombatDeck);
+            CombatDeck = new CombatDeckWrapper(value.CombatDeck);
             HitPoint = value.CurrentHitPoint;
             Power = value.Power;
             Card.SetLabel(value.Name);
@@ -92,20 +92,20 @@ public class CharacterWrapper : BaseCardWrapper
     public CharacterWrapper(Card card, CharacterModel character)
     {
         Card = card;
-        Info = character;
+        Model = character;
     }
 
-    private DeckWrapper CreateNewCombatDeck()
+    private CombatDeckWrapper CreateNewCombatDeck()
     {
         GD.PrintErr("Character wrapper error: No combat deck for character '"
-            + info.Name + "'. Received bad generic deck.");
+            + model.Name + "'. Received bad generic deck.");
         return DeckFactory.CreateNewCombatDeckWrapper();
     }
 
-    private DeckWrapper CreateNewFieldDeck()
+    private FieldDeckWrapper CreateNewFieldDeck()
     {
         GD.PrintErr("Character wrapper error: No field deck for character '"
-            + info.Name + "'. Received bad generic deck.");
+            + model.Name + "'. Received bad generic deck.");
         return DeckFactory.CreateNewFieldDeckWrapper();
     }
 }

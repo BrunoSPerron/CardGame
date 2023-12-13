@@ -4,33 +4,13 @@ using System.Collections.Generic;
 
 /*
  * World use an hexagonal grid
- * Hex coord are stored in a Vector2 corresponding to a 2d table with
- *  these possible connexions:
- *  | |X|X|  \ \X\X\
- *  |X|O|X|   \X\X\X\
- *  |X|X| |    \X\X\ \
- *  
- *  y
- *  |
- *  o--x
- *  
+ * Hex coord are stored in 2d table graph with these possible connexions:
+ *  | |X|X|  \ \X\X\     y
+ *  |X|O|X|   \X\O\X\    |
+ *  |X|X| |    \X\X\ \   o--x
  */
 
 public class WorldModel : BaseModel
 {
-    public List<HexLocation> Locations = new List<HexLocation>();
-}
-
-public struct HexLocation
-{
-    public HashSet<HexLink> Openings;
-    public LocationModel Location;
-    public Vector2Int HexPosition;
-
-    public HexLocation(LocationModel location, Vector2Int position) 
-    { 
-        Openings = new HashSet<HexLink>();
-        Location = location;
-        HexPosition = position;
-    }
+    public List<HexLocationModel> Locations = new List<HexLocationModel>();
 }

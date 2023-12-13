@@ -1,6 +1,8 @@
 {
 	"Instructions": [
-		"o penPoSi T ion -> 0 / 0 ",
-		"Add Location -> camp"
+		"add location -> camp",
+		"addlocation -> forest / 1 / 1",
+		"open position -> 0 / 0 / top right",
+		"Open Position -> 1 / 1 "
 	]
 }

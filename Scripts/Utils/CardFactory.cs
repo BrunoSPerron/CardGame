@@ -84,9 +84,9 @@ public static class CardFactory
     }
 
     public static LocationWrapper CreateCardFromLocation(
-        string scenario, LocationModel location)
+        string scenario, HexLocationModel location)
     {
-        if (location.ImageFileName == null)
+        if (location.Location.ImageFileName == null)
             return CreateDefaultWrappedLocation();
 
         Card card = CardScene.Instance<Card>();
@@ -96,7 +96,7 @@ public static class CardFactory
 
         //TODO, check if file exists
         string path = System.IO.Path.Combine(PATHS.ModFolderPath,
-            scenario + "\\Images\\Cards\\Full\\" + location.ImageFileName);
+            scenario + "\\Images\\Cards\\Full\\" + location.Location.ImageFileName);
         if (System.IO.File.Exists(path))
         {
             card.Front.GetNode<Sprite>("Image").Texture
@@ -110,16 +110,6 @@ public static class CardFactory
 
         LocationWrapper locationWrapper = new LocationWrapper(card, location);
         return locationWrapper;
-    }
-
-    public static BaseCardWrapper CreateCardFromDeckCardModel(DeckCardModel deckCardModel)
-    {
-        if (deckCardModel is CombatCardModel combatCardModel)
-            return CreateCardFromCombatCardModel(combatCardModel);
-        else if (deckCardModel is FieldCardModel fieldCardModel)
-            return CreateCardFromFieldCardModel(fieldCardModel);
-        GD.PrintErr("Card factory error: deck card type not found.");
-        return null;
     }
 
     public static CombatCardWrapper CreateCardFromCombatCardModel(CombatCardModel model)
@@ -162,7 +152,10 @@ public static class CardFactory
                 "Image").Texture = ResourceLoader.Load<Texture>(path);
         else
             GD.PrintErr("Card factory error: Resource missing at " + path);
-        LocationWrapper locationWrapper = new LocationWrapper(card, location);
+        HexLocationModel hexlocation = new HexLocationModel() {
+            Location=location
+        };
+        LocationWrapper locationWrapper = new LocationWrapper(card, hexlocation);
         return locationWrapper;
     }
 

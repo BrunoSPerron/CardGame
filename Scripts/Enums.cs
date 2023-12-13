@@ -18,12 +18,12 @@ public enum CardIcon
 
 public enum HexLink
 {
-    TOP_LEFT,
-    TOP_RIGHT,
+    TOPLEFT,
+    TOPRIGHT,
     LEFT,
     RIGHT,
-    BOTTOM_LEFT,
-    BOTTOM_RIGHT, 
+    BOTTOMLEFT,
+    BOTTOMRIGHT, 
 }
 
 public enum MouseButton

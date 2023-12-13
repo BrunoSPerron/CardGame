@@ -1,4 +1,4 @@
-﻿public class CombatCardModel : DeckCardModel
+﻿public class CombatCardModel : BaseCardModel
 {
     public new string Name = "Punch";
     public new string ImageFileName = "punch.png";

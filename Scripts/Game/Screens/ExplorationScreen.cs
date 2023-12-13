@@ -8,14 +8,13 @@ public class ExplorationScreen : BaseGameScreen
 
     private CharacterWrapper survivorDragged;
 
-    public ExplorationManager Parent;
-    public LocationWrapper Location;
+    public LocationWrapper LocationWrapper;
 
     public Card ExploreTarget;
 
     public override void _Ready()
     {
-        if (Location.Model.ExplorationDeck.Length != 0)
+        if (LocationWrapper.HexLocation.Location.ExplorationDeck.Length != 0)
             AddExploreOption();
         StackSurvivors();
     }
@@ -40,7 +39,7 @@ public class ExplorationScreen : BaseGameScreen
     {
         foreach (CharacterWrapper character in survivors)
             RemoveChild(character.Card);
-        RemoveChild(Location.Card);
+        RemoveChild(LocationWrapper.Card);
         QueueFree();
     }
 
@@ -56,12 +55,15 @@ public class ExplorationScreen : BaseGameScreen
 
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
-        if (StackTarget == ExploreTarget)
+        if (StackTarget != null)
         {
-            survivors.Add(survivorDragged);
-            survivorDragged = null;
-            CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
-            //TODO PROCESS EXPLORE LOCATION
+            if (StackTarget == ExploreTarget)
+            {
+                survivors.Add(survivorDragged);
+                survivorDragged = null;
+                CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
+                //TODO PROCESS EXPLORE LOCATION
+            }
         }
         else
         {
@@ -73,42 +75,27 @@ public class ExplorationScreen : BaseGameScreen
 
     public void OnCarddragStart(Card card)
     {
-        survivorDragged = Parent.charactersByCardId[card.GetInstanceId()];
+        survivorDragged = Game.charactersByCardId[card.GetInstanceId()];
         survivors.Remove(survivorDragged);
         StackSurvivors();
     }
 
     public void SetLocation(LocationWrapper location)
     {
-        if (Location != null)
-            RemoveChild(Location.Card);
-        Location = location;
-        DealOnBoard(Location.Card, new Vector2(338, 200));
+        if (LocationWrapper != null)
+            RemoveChild(LocationWrapper.Card);
+        LocationWrapper = location;
+        DealOnBoard(LocationWrapper.Card, new Vector2(338, 200));
     }
 
     public void StackSurvivors()
     {
         List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
-        CardManager.StackCards(cards, Location.Card.Target);
+        CardManager.StackCards(cards, LocationWrapper.Card.Target);
     }
 
     protected override void UpdateButtons()
     {
         //throw new NotImplementedException();
-    }
-
-    private void RepositionTargets()
-    {
-        Vector2 rootSize = GetTree().Root.GetVisibleRect().Size;
-        GetNode<Position2D>("CharacterReserve").Position = new Vector2(
-            rootSize.x / 2,
-            rootSize.y - rootSize.y / 3);
-
-        /*
-        Vector2 testposition = GetNode<Node2D>("testposition").Position;
-        for (int i = 0; i < locations.Count; i++)
-        {
-            locations[i].Card.MoveToPosition(testposition + Vector2.Right * i * 100);
-        }*/
     }
 }

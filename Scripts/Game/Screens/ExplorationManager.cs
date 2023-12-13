@@ -4,66 +4,43 @@ using System.Collections.Generic;
 
 public class ExplorationManager : BaseGameScreen
 {
-    private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
-    private readonly List<LocationWrapper> locations = new List<LocationWrapper>();
-
-    private readonly Dictionary<string, ExplorationScreen> subscreens
-        = new Dictionary<string, ExplorationScreen>();
-
-    public Dictionary<ulong, CharacterWrapper> charactersByCardId
-        = new Dictionary<ulong, CharacterWrapper>();
-
-    public Dictionary<ulong, LocationWrapper> locationsByCardId
-        = new Dictionary<ulong, LocationWrapper>();
+    private readonly Dictionary<Vector2Int, ExplorationScreen> subscreens
+        = new Dictionary<Vector2Int, ExplorationScreen>();
 
     public override void _Ready()
     {
-        foreach (LocationWrapper location in locations)
-            foreach (CharacterWrapper character in survivors)
-                if (character.Info.CurrentLocationID == location.Model.ID)
-                {
-                    AddSubScreen(location);
-                    break;
-                }
-
-        foreach (CharacterWrapper character in survivors)
+        foreach (CharacterWrapper character in Game.Survivors)
         {
-            if (subscreens.ContainsKey(character.Info.CurrentLocationID))
-                subscreens[character.Info.CurrentLocationID].AddSurvivor(character);
+            Vector2Int position = character.Model.WorldPosition;
+
+            if (!subscreens.ContainsKey(position))
+                AddSubScreen(position, Game.LocationsByPosition[position]);
+
+            subscreens[position].AddSurvivor(character);
         }
-        AddChild(subscreens[survivors[0].Info.CurrentLocationID]);
-        //TODO Introduce screen priority logic
+
+        if (Game.Survivors.Count > 0)
+        {
+            //TODO screen priority logic
+            AddChild(subscreens[Game.Survivors[0].Model.WorldPosition]);
+        }
+        else
+        {
+            GD.PrintErr("Exploration Manager Error: No survivors in game.");
+        }
     }
 
-    public void AddSubScreen(LocationWrapper location)
+    public void AddSubScreen(Vector2Int position, LocationWrapper location)
     {
-        ExplorationScreen screen = new ExplorationScreen { Parent = this };
+        ExplorationScreen screen = new ExplorationScreen { Game = Game };
         screen.SetLocation(location);
-        subscreens.Add(location.Model.ID, screen);
-    }
-
-    public void AddLocation(LocationWrapper cardWrapper)
-    {
-        locations.Add(cardWrapper);
-        locationsByCardId.Add(cardWrapper.Card.GetInstanceId(), cardWrapper);
-    }
-
-    public void AddSurvivor(CharacterWrapper cardWrapper)
-    {
-        survivors.Add(cardWrapper);
-        charactersByCardId.Add(cardWrapper.Card.GetInstanceId(), cardWrapper);
+        subscreens.Add(position, screen);
     }
 
     public override void Destroy()
     {
-        foreach (KeyValuePair<string, ExplorationScreen> kvp in subscreens)
+        foreach (KeyValuePair<Vector2Int, ExplorationScreen> kvp in subscreens)
             kvp.Value.Destroy();
-
-        foreach (CharacterWrapper character in survivors)
-            RemoveChild(character.Card);
-
-        foreach (LocationWrapper location in locations)
-            RemoveChild(location.Card);
     }
 
     protected override void UpdateButtons()

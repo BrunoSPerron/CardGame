@@ -3,38 +3,38 @@ using System;
 
 public static class DeckFactory
 {
-    public static DeckWrapper CreateNewCombatDeckWrapper()
+    public static CombatDeckWrapper CreateNewCombatDeckWrapper()
     {
-        DeckModel deckInfo = new DeckModel
+        CombatDeckModel deckInfo = new CombatDeckModel
         {
-            BaseDeck = CreateNewCombatDeck()
+            CombatDeck = CreateNewCombatDeck()
         };
-        return new DeckWrapper(deckInfo);
+        return new CombatDeckWrapper(deckInfo);
     }
 
-    public static DeckCardModel[] CreateNewCombatDeck(int deckSize = 20)
+    public static CombatCardModel[] CreateNewCombatDeck(int deckSize = 20)
     {
-        DeckCardModel[] baseDeck = new DeckCardModel[deckSize];
+        CombatCardModel[] baseDeck = new CombatCardModel[deckSize];
         for (int i = 0; i < deckSize; i++)
             baseDeck[i] = CreateDefaultCombatCard();
         return baseDeck;
     }
 
-    public static DeckWrapper CreateNewFieldDeckWrapper()
+    public static FieldDeckWrapper CreateNewFieldDeckWrapper()
     {
-        DeckModel deckInfo = new DeckModel
+        FieldDeckModel deckInfo = new FieldDeckModel
         {
-            BaseDeck = CreateNewFieldDeck()
+            FieldDeck = CreateNewFieldDeck()
         };
-        return new DeckWrapper(deckInfo);
+        return new FieldDeckWrapper(deckInfo);
     }
 
-    public static DeckCardModel[] CreateNewFieldDeck(int deckSize = 20)
+    public static FieldCardModel[] CreateNewFieldDeck(int deckSize = 20)
     {
-        DeckCardModel[] baseDeck = new DeckCardModel[deckSize];
+        FieldCardModel[] fieldDeck = new FieldCardModel[deckSize];
         for (int i = 0; i < deckSize; i++)
-            baseDeck[i] = CreateDefaultFieldCard();
-        return baseDeck;
+            fieldDeck[i] = CreateDefaultFieldCard();
+        return fieldDeck;
     }
 
     private static CombatCardModel CreateDefaultCombatCard()
