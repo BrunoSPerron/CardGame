@@ -29,6 +29,7 @@ public abstract class BaseGameScreen : Node2D
         return button;
     }
 
+#pragma warning disable IDE0060 //TODO zIndex deal logic
     public void DealOnBoard(
         Card card, Vector2 target, int zIndex = -1, Boolean priority = false)
     {
@@ -78,10 +79,7 @@ public abstract class BaseGameScreen : Node2D
     {
         foreach (Button button in buttons)
             button.Visible = true;
-        UpdateButtons();
     }
-
-    protected abstract void UpdateButtons();
 
     public abstract void Destroy();
 }

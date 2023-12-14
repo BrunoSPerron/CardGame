@@ -1,3 +1,7 @@
+#pragma warning disable
+
+//TODO Copy whatever I may need from this and delete the class
+
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -7,17 +11,13 @@ public class DispatchScreen : BaseGameScreen
     private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
     private readonly List<LocationWrapper> locations = new List<LocationWrapper>();
 
-    private Dictionary<ulong, CharacterWrapper> charactersByCardId = new Dictionary<ulong, CharacterWrapper>();
-    private Dictionary<ulong, LocationWrapper> locationsByCardId = new Dictionary<ulong, LocationWrapper>();
-
-    private Button processButton;
+    private readonly Dictionary<ulong, CharacterWrapper> charactersByCardId = new Dictionary<ulong, CharacterWrapper>();
+    private readonly Dictionary<ulong, LocationWrapper> locationsByCardId = new Dictionary<ulong, LocationWrapper>();
 
     // ===== GD Methods Override =====
 
     public override void _Ready()
     {
-        processButton = AddButton("Proceed", "OnClickProceed", Cardinal.SE, new Vector2(-10, -10));
-        UpdateButtons();
     }
 
     // ===== Methods unique to this class =====
@@ -49,7 +49,6 @@ public class DispatchScreen : BaseGameScreen
         cardWrapper.Card.Connect("OnFieldDeckClick", this, "OnFieldDeckClick");
 
         DealOnBoard(cardWrapper.Card, reservePosition);
-        UpdateButtons();
     }
 
     public void AddSurvivor(CharacterModel survivor)
@@ -92,7 +91,6 @@ public class DispatchScreen : BaseGameScreen
             //character.Location?.Characters.Remove(character);
             //character.Location = location;
             //location.Characters.Add(character);
-            UpdateButtons();
         }
     }
 
@@ -134,23 +132,5 @@ public class DispatchScreen : BaseGameScreen
         {
             locations[i].Card.MoveToPosition(testposition + Vector2.Right * i * 100);
         }
-    }
-
-    protected override void UpdateButtons()
-    {
-        bool isEnabled = true;
-        foreach (CharacterWrapper survivor in survivors)
-        {
-            /*if (survivor.Location == null)
-            {
-                isEnabled = false;
-                break;
-            }*/
-        }
-        if (isEnabled)
-            processButton.Enable();
-        else
-            processButton.Disable();
-
     }
 }

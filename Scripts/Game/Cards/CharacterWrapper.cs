@@ -37,6 +37,7 @@ public class CharacterWrapper : BaseCardWrapper
             model = value;
             ActionPoint = value.ActionPoint;
             CombatDeck = new CombatDeckWrapper(value.CombatDeck);
+            FieldDeck = new FieldDeckWrapper(value.FieldDeck);
             HitPoint = value.CurrentHitPoint;
             Power = value.Power;
             Card.SetLabel(value.Name);

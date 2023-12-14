@@ -55,20 +55,28 @@ public class ExplorationScreen : BaseGameScreen
 
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
+        survivors.Add(survivorDragged);
+        survivorDragged = null;
+
         if (StackTarget != null)
         {
+            CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
+
+            /*
             if (StackTarget == ExploreTarget)
             {
-                survivors.Add(survivorDragged);
-                survivorDragged = null;
-                CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
-                //TODO PROCESS EXPLORE LOCATION
+                TODO Trigger Exploration Event
             }
+            else if (StackTarget == FieldTarget)
+            {
+                TODO
+                    - Create FieldTarget
+                    - Create FieldTarget
+            }
+            */
         }
         else
         {
-            survivors.Add(survivorDragged);
-            survivorDragged = null;
             StackSurvivors();
         }
     }
@@ -85,6 +93,8 @@ public class ExplorationScreen : BaseGameScreen
         if (LocationWrapper != null)
             RemoveChild(LocationWrapper.Card);
         LocationWrapper = location;
+
+        //TODO Position based on screen size
         DealOnBoard(LocationWrapper.Card, new Vector2(338, 200));
     }
 
@@ -92,10 +102,5 @@ public class ExplorationScreen : BaseGameScreen
     {
         List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
         CardManager.StackCards(cards, LocationWrapper.Card.Target);
-    }
-
-    protected override void UpdateButtons()
-    {
-        //throw new NotImplementedException();
     }
 }

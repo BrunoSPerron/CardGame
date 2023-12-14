@@ -42,9 +42,4 @@ public class ExplorationManager : BaseGameScreen
         foreach (KeyValuePair<Vector2Int, ExplorationScreen> kvp in subscreens)
             kvp.Value.Destroy();
     }
-
-    protected override void UpdateButtons()
-    {
-        //throw new System.NotImplementedException();
-    }
 }

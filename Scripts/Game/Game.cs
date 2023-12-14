@@ -17,8 +17,6 @@ public class Game : Node2D
 
     public readonly Dictionary<Vector2Int, LocationWrapper> LocationsByPosition
         = new Dictionary<Vector2Int, LocationWrapper>();
-    public readonly Dictionary<Vector2Int, HexLocationModel> HexLocationsByPosition
-        = new Dictionary<Vector2Int, HexLocationModel>();
 
     public Dictionary<ulong, CharacterWrapper> charactersByCardId
         = new Dictionary<ulong, CharacterWrapper>();
@@ -49,15 +47,9 @@ public class Game : Node2D
         }
 
         if (LocationsByPosition.ContainsKey(hexLocation.HexPosition))
-        {
-            HexLocationsByPosition[hexLocation.HexPosition] = hexLocation;
             LocationsByPosition[hexLocation.HexPosition] = wrapper;
-        }
         else
-        {
-            HexLocationsByPosition.Add(hexLocation.HexPosition, hexLocation);
             LocationsByPosition.Add(hexLocation.HexPosition, wrapper);
-        }
     }
 
     public void InitializeScenario(string mod, string scenario)
@@ -86,7 +78,6 @@ public class Game : Node2D
             character.CurrentHitPoint = Mathf.Clamp(
                 character.CurrentHitPoint, 1, character.HitPoint);
 
-            //TODO from x / y instead
             character.WorldPosition = outsetInfo.StartingPosition;
             AddSurvivor(character);
         }
