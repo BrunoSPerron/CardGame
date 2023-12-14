@@ -5,6 +5,8 @@
 	},
 	"StartingCharacters": [
 		"BaseCharacter",
+		"BaseCharacter",
+		"BaseCharacter",
 		"BaseCharacter"
 	],
 	"World": "Endless"

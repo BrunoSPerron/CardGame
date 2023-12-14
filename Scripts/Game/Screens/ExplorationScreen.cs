@@ -60,20 +60,23 @@ public class ExplorationScreen : BaseGameScreen
 
         if (StackTarget != null)
         {
-            CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
-
-            /*
             if (StackTarget == ExploreTarget)
             {
-                TODO Trigger Exploration Event
+                CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
+
+                //TODO Trigger Exploration Event
             }
-            else if (StackTarget == FieldTarget)
+            /*else if (StackTarget == FieldTarget)
             {
                 TODO
                     - Create FieldTarget
                     - Create FieldTarget
             }
             */
+            else
+            {
+                StackSurvivors();
+            }
         }
         else
         {

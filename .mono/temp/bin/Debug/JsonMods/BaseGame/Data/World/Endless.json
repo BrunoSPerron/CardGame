@@ -1,6 +1,6 @@
 {
 	"Instructions": [
-		"add location -> camp",
+		"add location -> forest",
 		"addlocation -> forest / 1 / 1",
 		"open position -> 0 / 0 / top right",
 		"Open Position -> 1 / 1 "
