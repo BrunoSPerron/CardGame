@@ -23,3 +23,6 @@ data_*/
 mono_crash.*.json
 
 .vs/
+
+# Custom files and folders
+POTENTIAL/

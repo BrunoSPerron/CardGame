@@ -14,9 +14,60 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void _Ready()
     {
+
         if (LocationWrapper.HexLocation.Location.ExplorationDeck.Length != 0)
             AddExploreOption();
+        AddFieldDeckOption();
+
+        AddDestinations();
         StackSurvivors();
+    }
+
+    private void AddDestinations()
+    {
+        foreach (HexLink link in LocationWrapper.HexLocation.Openings)
+        {
+            Vector2Int worldPosition = LocationWrapper.HexLocation.HexPosition;
+            switch (link)
+            {
+                case HexLink.TOPLEFT:
+                    worldPosition.y++;
+                    break;
+                case HexLink.TOPRIGHT:
+                    worldPosition.x++;
+                    worldPosition.y++;
+                    break;
+                case HexLink.LEFT:
+                    worldPosition.x--;
+                    break;
+                case HexLink.RIGHT:
+                    worldPosition.x++;
+                    break;
+                case HexLink.BOTTOMLEFT:
+                    worldPosition.x--;
+                    worldPosition.y--;
+                    break;
+                case HexLink.BOTTOMRIGHT:
+                    worldPosition.y--;
+                    break;
+            }
+
+            if (Game.LocationsByPosition.ContainsKey(worldPosition)                )
+            {
+                LocationWrapper destination = Game.LocationsByPosition[worldPosition];
+                HexLink reverseLink = (HexLink)(((int)link + 3) % 6);
+                if (destination.HexLocation.Openings.Contains(reverseLink))
+                {
+                    Vector2 postion = GetDestinationScreenPosition(link);
+                    AddDestination(destination, postion);
+                }
+            }
+        }
+    }
+
+    private void AddDestination(LocationWrapper locationWrapper, Vector2 position)
+    {
+        DealOnBoard(locationWrapper.Card, position, 0, true);
     }
 
     private void AddExploreOption()
@@ -25,6 +76,13 @@ public class ExplorationScreen : BaseGameScreen
 
         //TODO Placement based on window size
         DealOnBoard(ExploreTarget, new Vector2(450, 200), 0, true);
+    }
+
+    private void AddFieldDeckOption()
+    {
+        ExploreTarget = CardFactory.CreateUseFieldDeckCard();
+        DealOnBoard(ExploreTarget, new Vector2(226, 200), 0, true);
+
     }
 
     public void AddSurvivor(CharacterWrapper cardWrapper)
@@ -53,6 +111,27 @@ public class ExplorationScreen : BaseGameScreen
         base.EnableScreen();
     }
 
+    private Vector2 GetDestinationScreenPosition(HexLink link)
+    {
+        // TODO dynamic based on window size
+        switch (link)
+        {
+            case HexLink.TOPLEFT:
+                return new Vector2(176, 70);
+            case HexLink.TOPRIGHT:
+                return new Vector2(500, 70);
+            case HexLink.LEFT:
+                return new Vector2(114, 200);
+            case HexLink.RIGHT:
+                return new Vector2(562, 200);
+            case HexLink.BOTTOMLEFT:
+                return new Vector2(176, 330);
+            case HexLink.BOTTOMRIGHT:
+                return new Vector2(500, 330);
+        }
+        return new Vector2(70, 70);
+    }
+
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
         survivors.Add(survivorDragged);
@@ -62,7 +141,8 @@ public class ExplorationScreen : BaseGameScreen
         {
             if (StackTarget == ExploreTarget)
             {
-                CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
+                CardManager.StackCards(
+                    new List<Card> { OriginCard }, StackTarget.Position);
 
                 //TODO Trigger Exploration Event
             }
@@ -70,10 +150,10 @@ public class ExplorationScreen : BaseGameScreen
             {
                 TODO
                     - Create FieldTarget
-                    - Create FieldTarget
+                    - Trigger Rest Event
             }
             */
-            else
+            else  
             {
                 StackSurvivors();
             }

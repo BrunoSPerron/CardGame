@@ -179,4 +179,19 @@ public static class CardFactory
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
         return card;
     }
+
+    public static Card CreateUseFieldDeckCard()
+    {
+        Card card = CardScene.Instance<Card>();
+
+        card.IsDraggable = false;
+        card.IsStackTarget = true;
+        card.DownStateOnHover = true;
+        card.Background.Texture = FullArtBackground;
+        card.SetLabel("Survive");
+
+        string path = "res://Art/Cards/Images/Actions/Field.png";
+        card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
+        return card;
+    }
 }

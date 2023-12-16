@@ -20,10 +20,10 @@ public enum HexLink
 {
     TOPLEFT,
     TOPRIGHT,
-    LEFT,
     RIGHT,
+    BOTTOMRIGHT,
     BOTTOMLEFT,
-    BOTTOMRIGHT, 
+    LEFT,
 }
 
 public enum MouseButton
