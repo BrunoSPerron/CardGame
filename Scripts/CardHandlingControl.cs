@@ -115,7 +115,7 @@ public class CardHandlingControl : Node
         ClearStackTargets();
     }
 
-    internal static void OnDraggedCardOverlap(Card card, Card target)
+    internal static void OnDraggedCardOverlap(Card target)
     {
         if (target.IsStackTarget)
         {
@@ -124,7 +124,7 @@ public class CardHandlingControl : Node
         }
     }
 
-    internal static void OnDraggedCardOverlapEnd(Card card, Card target)
+    internal static void OnDraggedCardOverlapEnd(Card target)
     {
         int index = stackTargets.FindIndex(x => x == target);
         if (index != -1)

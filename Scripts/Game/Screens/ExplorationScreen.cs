@@ -5,12 +5,14 @@ using System.Collections.Generic;
 public class ExplorationScreen : BaseGameScreen
 {
     private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
+    private readonly List<Card> destinations = new List<Card>();
 
     private CharacterWrapper survivorDragged;
 
     public LocationWrapper LocationWrapper;
 
     public Card ExploreTarget;
+    public Card FieldTarget;
 
     public override void _Ready()
     {
@@ -67,6 +69,7 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddDestination(LocationWrapper locationWrapper, Vector2 position)
     {
+        destinations.Add(locationWrapper.Card);
         DealOnBoard(locationWrapper.Card, position, 0, true);
     }
 
@@ -80,8 +83,8 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddFieldDeckOption()
     {
-        ExploreTarget = CardFactory.CreateUseFieldDeckCard();
-        DealOnBoard(ExploreTarget, new Vector2(226, 200), 0, true);
+        FieldTarget = CardFactory.CreateUseFieldDeckCard();
+        DealOnBoard(FieldTarget, new Vector2(226, 200), 0, true);
 
     }
 
@@ -97,6 +100,8 @@ public class ExplorationScreen : BaseGameScreen
     {
         foreach (CharacterWrapper character in survivors)
             RemoveChild(character.Card);
+        foreach (Card location in destinations)
+            RemoveChild(location);
         RemoveChild(LocationWrapper.Card);
         QueueFree();
     }
@@ -139,21 +144,22 @@ public class ExplorationScreen : BaseGameScreen
 
         if (StackTarget != null)
         {
+            CardManager.StackCards(
+                new List<Card> { OriginCard }, StackTarget.Position);
+
             if (StackTarget == ExploreTarget)
             {
-                CardManager.StackCards(
-                    new List<Card> { OriginCard }, StackTarget.Position);
-
                 //TODO Trigger Exploration Event
             }
-            /*else if (StackTarget == FieldTarget)
+            else if (StackTarget == FieldTarget)
             {
-                TODO
-                    - Create FieldTarget
-                    - Trigger Rest Event
+                //TODO Trigger Field Event
             }
-            */
-            else  
+            else if (destinations.Contains(StackTarget))
+            {
+                //TODO Move to destination
+            }
+            else
             {
                 StackSurvivors();
             }

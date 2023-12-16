@@ -211,7 +211,7 @@ public class Card : Area2D
     public void OnCardOverlap(Area2D target)
     {
         if (IsBeingDragged)
-            CardHandlingControl.OnDraggedCardOverlap(this, target as Card);
+            CardHandlingControl.OnDraggedCardOverlap(target as Card);
     }
     public void OnCombatDeckClicked()
     {
@@ -226,7 +226,6 @@ public class Card : Area2D
     public void OnOverlapEnd(Area2D target)
     {
         if (IsBeingDragged)
-            CardHandlingControl.OnDraggedCardOverlapEnd(this, target as Card);
+            CardHandlingControl.OnDraggedCardOverlapEnd(target as Card);
     }
-
 }

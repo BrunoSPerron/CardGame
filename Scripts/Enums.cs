@@ -16,6 +16,7 @@ public enum CardIcon
     TIME
 }
 
+//Note: Some code use (HexLink)(((int)MyHexLink + 3) % 6) to get the reverse
 public enum HexLink
 {
     TOPLEFT,
