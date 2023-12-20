@@ -90,7 +90,7 @@ public class CardHandlingControl : Node
         cardBeingDragged = newCardBeingDragged;
         cardBeingDraggedOrigin = cardBeingDragged.Target;
         cardBeingDragged.LerpDeltaMultiplier = 8.0f;
-        cardBeingDragged.ZIndex = 4096;
+        cardBeingDragged.ZIndex = CONSTS.MAX_Z_INDEX;
         cardBeingDragged.IsBeingDragged = true;
         isDragging = true;
         offset = cardBeingDragged.GetLocalMousePosition() * cardBeingDragged.Scale;

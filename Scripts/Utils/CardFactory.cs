@@ -180,7 +180,7 @@ public static class CardFactory
         return card;
     }
 
-    public static Card CreateUseFieldDeckCard()
+    public static Card CreateSurviveCard()
     {
         Card card = CardScene.Instance<Card>();
 

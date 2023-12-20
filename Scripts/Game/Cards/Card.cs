@@ -14,7 +14,7 @@ public class Card : Area2D
     public delegate void OnFieldDeckClick(Card card);
 
     [Export]
-    public bool faceDownOnReady = false;
+    public bool faceDownOnEnterTree = false;
     [Export]
     public bool IsDraggable = true;
 
@@ -85,21 +85,34 @@ public class Card : Area2D
     public override void _EnterTree()
     {
         CardManager.AddCard(this);
+        IsFaceDown = faceDownOnEnterTree;
+        if (faceDownOnEnterTree)
+        {
+            Front.Visible = false;
+            Back.Visible = true;
+        }
+        else
+        {
+            Front.Visible = true;
+            Back.Visible = false;
+        }
+
+
+        // TODO - Replace this DuctTape and fix the problem with FlipToTarget
+        Front.Scale = Vector2.One;
+        Back.Scale = Vector2.One;
     }
 
     public override void _ExitTree()
     {
         CardManager.RemoveCard(this);
+        for (int i = animations.Count - 1; i > 0; i--)
+            animations[i].ForceEnd();
+        animations.Clear();
     }
 
     public override void _Ready()
     {
-        IsFaceDown = faceDownOnReady;
-        if (faceDownOnReady)
-        {
-            Front.Visible = false;
-            Back.Visible = true;
-        }
         //Target = GlobalPosition;
     }
 
@@ -110,6 +123,13 @@ public class Card : Area2D
     }
 
     // ===== Methods unique to this class =====
+
+    public void ClearAnimations()
+    {
+        for (int i = animations.Count - 1; i > 0; i--)
+            animations[i].ForceEnd();
+        animations.Clear();
+    }
 
     public void Flip(float animationTimeInSec = 0.4f)
     {
@@ -186,7 +206,7 @@ public class Card : Area2D
             Vector2 newPos = new Vector2(
                 Mathf.Lerp(globalPos.x, Target.x, lerpDelta),
                 Mathf.Lerp(globalPos.y, Target.y, lerpDelta));
-            if (newPos.DistanceSquaredTo(Target) < Mathf.Epsilon)
+            if (newPos.DistanceSquaredTo(Target) < 0.01f)
                 IsMoving = false;
             GlobalPosition = newPos;
         }

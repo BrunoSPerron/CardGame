@@ -7,8 +7,8 @@ internal class CardFlip : CardAnimationBase
 {
 
     private float timer = 0;
-    private float flipTime;
-    private float halfFlipTime = -1;
+    private readonly float flipTime;
+    private readonly float halfFlipTime = -1;
     private bool halfFlipUpdated = false;
 
     internal CardFlip(Card card, float timeInSeconds = 0.4f) : base(card)
@@ -102,5 +102,14 @@ internal class CardFlip : CardAnimationBase
         }
 
         return false;
+    }
+
+    public override void ForceEnd()
+    {
+        if (reversed)
+            timer = 0;
+        else
+            timer = flipTime;
+        Process(0f);
     }
 }

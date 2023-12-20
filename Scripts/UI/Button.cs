@@ -103,9 +103,10 @@ public class Button : UIElement
 
     // ===== Signals =====
 
-
-    public void OnMouseInputEvent(
-        Viewport viewport, InputEvent evt, int shapeIdx)
+#pragma warning disable IDE0060 //unused argument
+    public void OnMouseInputEvent(Viewport viewport,
+                                  InputEvent evt,
+                                  int shapeIdx)
     {
         if (isDisabled)
             return;
@@ -127,6 +128,7 @@ public class Button : UIElement
             }
         }
     }
+#pragma warning restore IDE0060
 
     public void OnMouseEnter()
     {

@@ -1,35 +1,37 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ExplorationScreen : BaseGameScreen
 {
     private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
-    private readonly List<Card> destinations = new List<Card>();
+    private readonly List<LocationWrapper> destinations = new List<LocationWrapper>();
 
     private CharacterWrapper survivorDragged;
 
-    public LocationWrapper LocationWrapper;
-
     public Card ExploreTarget;
-    public Card FieldTarget;
+    public Card SurviveTarget;
+
+    public LocationWrapper Location;
+    public ExplorationManager Manager;
 
     public override void _Ready()
     {
-
-        if (LocationWrapper.HexLocation.Location.ExplorationDeck.Length != 0)
+        AddLocation();
+        if (Location.HexLocation.Location.ExplorationDeck.Length != 0)
             AddExploreOption();
-        AddFieldDeckOption();
+        AddSurviveOption();
 
         AddDestinations();
-        StackSurvivors();
+        AddSurvivors();
     }
 
     private void AddDestinations()
     {
-        foreach (HexLink link in LocationWrapper.HexLocation.Openings)
+        foreach (HexLink link in Location.HexLocation.Openings)
         {
-            Vector2Int worldPosition = LocationWrapper.HexLocation.HexPosition;
+            Vector2Int worldPosition = Location.HexLocation.HexPosition;
             switch (link)
             {
                 case HexLink.TOPLEFT:
@@ -54,7 +56,7 @@ public class ExplorationScreen : BaseGameScreen
                     break;
             }
 
-            if (Game.LocationsByPosition.ContainsKey(worldPosition)                )
+            if (Game.LocationsByPosition.ContainsKey(worldPosition))
             {
                 LocationWrapper destination = Game.LocationsByPosition[worldPosition];
                 HexLink reverseLink = (HexLink)(((int)link + 3) % 6);
@@ -67,10 +69,19 @@ public class ExplorationScreen : BaseGameScreen
         }
     }
 
-    private void AddDestination(LocationWrapper locationWrapper, Vector2 position)
+    private void AddDestination(LocationWrapper location, Vector2 position)
     {
-        destinations.Add(locationWrapper.Card);
-        DealOnBoard(locationWrapper.Card, position, 0, true);
+        destinations.Add(location);
+        if (Game.RemoveCardFromCleaner(location.Card))
+        {
+            AddChild(location.Card);
+            location.Card.LerpDeltaMultiplier = 3;
+            location.Card.MoveToPosition(position);
+        }
+        else
+        {
+            DealOnBoard(location.Card, position, 0, true);
+        }
     }
 
     private void AddExploreOption()
@@ -81,39 +92,144 @@ public class ExplorationScreen : BaseGameScreen
         DealOnBoard(ExploreTarget, new Vector2(450, 200), 0, true);
     }
 
-    private void AddFieldDeckOption()
+    private void AddLocation()
     {
-        FieldTarget = CardFactory.CreateUseFieldDeckCard();
-        DealOnBoard(FieldTarget, new Vector2(226, 200), 0, true);
-
+        //TODO Position based on screen size
+        if (Game.RemoveCardFromCleaner(Location.Card))
+        {
+            AddChild(Location.Card);
+            Location.Card.LerpDeltaMultiplier = 3;
+            Location.Card.MoveToPosition(CONSTS.SCREEN_CENTER);
+        }
+        else
+        {
+            DealOnBoard(Location.Card, CONSTS.SCREEN_CENTER);
+        }
     }
 
-    public void AddSurvivor(CharacterWrapper cardWrapper)
+    private void AddSurviveOption()
     {
-        cardWrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
-        cardWrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
-        survivors.Add(cardWrapper);
-        DealOnBoard(cardWrapper.Card, Vector2.Zero);
+        SurviveTarget = CardFactory.CreateSurviveCard();
+        DealOnBoard(SurviveTarget, new Vector2(226, 200), 0, true);
+    }
+
+    private void AddSurvivors()
+    {
+        // Note: The CardDealer need each card `Target` to be the correct one
+        //  at the time CardDealer.AddSurvivors is called. This is done in
+        //  this.StackSurvivors() and is why they are first added to this list
+        List<CharacterWrapper> survivorsToAdd = new List<CharacterWrapper>();
+        List<CharacterWrapper> preDealtSurvivors = new List<CharacterWrapper>();
+
+        foreach (CharacterWrapper survivor in Game.Survivors)
+        {
+            if (survivor.Model.WorldPosition == Location.HexLocation.HexPosition)
+            {
+                if (Game.RemoveCardFromCleaner(survivor.Card))
+                {
+                    preDealtSurvivors.Add(survivor);
+                }
+                else
+                {
+                    survivorsToAdd.Add(survivor);
+                    survivors.Add(survivor);
+                }
+            }
+        }
+
+        foreach (CharacterWrapper survivor in preDealtSurvivors)
+            survivors.Add(survivor);
+
+        StackSurvivors();
+
+        foreach (CharacterWrapper survivor in survivorsToAdd)
+            AddSurvivor(survivor);
+
+        foreach (CharacterWrapper survivor in preDealtSurvivors)
+            AddSurvivor(survivor, false);
+    }
+
+    private void AddSurvivor(CharacterWrapper survivor, bool dealOnBoard = true)
+    {
+        survivor.Card.Connect("OnDragStart", this, "OnCarddragStart");
+        survivor.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
+        if (dealOnBoard)
+        {
+            DealOnBoard(survivor.Card, survivor.Card.Target);
+        }
+        else
+        {
+            AddChild(survivor.Card);
+            survivor.Card.ZIndex = CONSTS.MAX_Z_INDEX;
+        }
+    }
+
+    public void Clean()
+    {
+        RemoveChild(Location.Card);
+        Game.CleanCard(Location.Card);
+
+        foreach (CharacterWrapper survivor in survivors)
+        {
+            survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
+            survivor.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
+            RemoveChild(survivor.Card);
+            Game.CleanCard(survivor.Card);
+        }
+
+        if (survivorDragged != null)
+        {
+            RemoveChild(survivorDragged.Card);
+            Game.CleanCard(survivorDragged.Card);
+        }
+
+        foreach (LocationWrapper location in destinations)
+        {
+            RemoveChild(location.Card);
+            Game.CleanCard(location.Card);
+        }
+
+        if (SurviveTarget != null)
+        {
+            RemoveChild(SurviveTarget);
+            Game.CleanCard(SurviveTarget);
+        }
+
+        if (ExploreTarget != null)
+        {
+            RemoveChild(ExploreTarget);
+            Game.CleanCard(ExploreTarget);
+        }
     }
 
     public override void Destroy()
     {
-        foreach (CharacterWrapper character in survivors)
-            RemoveChild(character.Card);
-        foreach (Card location in destinations)
-            RemoveChild(location);
-        RemoveChild(LocationWrapper.Card);
+        foreach (CharacterWrapper survivor in survivors)
+        {
+            survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
+            survivor.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
+            RemoveChild(survivor.Card);
+        }
+
+        foreach (LocationWrapper location in destinations)
+            RemoveChild(location.Card);
+
+        RemoveChild(Location.Card);
         QueueFree();
     }
 
     public override void DisableScreen()
     {
         base.DisableScreen();
+        foreach (CharacterWrapper character in survivors)
+            character.Card.IsDraggable = false;
     }
 
     public override void EnableScreen()
     {
         base.EnableScreen();
+        foreach (CharacterWrapper character in survivors)
+            character.Card.IsDraggable = true;
     }
 
     private Vector2 GetDestinationScreenPosition(HexLink link)
@@ -122,52 +238,55 @@ public class ExplorationScreen : BaseGameScreen
         switch (link)
         {
             case HexLink.TOPLEFT:
-                return new Vector2(176, 70);
+                return new Vector2(170, 70);
             case HexLink.TOPRIGHT:
-                return new Vector2(500, 70);
+                return new Vector2(504, 70);
             case HexLink.LEFT:
                 return new Vector2(114, 200);
             case HexLink.RIGHT:
                 return new Vector2(562, 200);
             case HexLink.BOTTOMLEFT:
-                return new Vector2(176, 330);
+                return new Vector2(170, 330);
             case HexLink.BOTTOMRIGHT:
-                return new Vector2(500, 330);
+                return new Vector2(504, 330);
         }
         return new Vector2(70, 70);
     }
 
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
-        survivors.Add(survivorDragged);
-        survivorDragged = null;
-
-        if (StackTarget != null)
+        if (StackTarget == null)
         {
-            CardManager.StackCards(
-                new List<Card> { OriginCard }, StackTarget.Position);
+            survivors.Add(survivorDragged);
+            StackSurvivors();
+            survivorDragged = null;
+            return;
+        }
+        CardManager.StackCards(new List<Card> { OriginCard }, StackTarget.Position);
 
-            if (StackTarget == ExploreTarget)
-            {
-                //TODO Trigger Exploration Event
-            }
-            else if (StackTarget == FieldTarget)
-            {
-                //TODO Trigger Field Event
-            }
-            else if (destinations.Contains(StackTarget))
-            {
-                //TODO Move to destination
-            }
-            else
-            {
-                StackSurvivors();
-            }
+        if (StackTarget == ExploreTarget)
+        {
+            survivors.Add(survivorDragged);
+            //TODO Trigger Exploration Event
+        }
+        else if (StackTarget == SurviveTarget)
+        {
+            survivors.Add(survivorDragged);
+            //TODO Trigger Field Event
+        }
+        else if (destinations.Exists(d => d.Card == StackTarget))
+        {
+            LocationWrapper targetLocation = Game.locationsByCardId[StackTarget.GetInstanceId()];
+            CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
+            character.Model.WorldPosition = targetLocation.HexLocation.HexPosition;
+            Manager.MoveToHex(targetLocation.HexLocation.HexPosition);
         }
         else
         {
+            survivors.Add(survivorDragged);
             StackSurvivors();
         }
+        survivorDragged = null;
     }
 
     public void OnCarddragStart(Card card)
@@ -177,19 +296,9 @@ public class ExplorationScreen : BaseGameScreen
         StackSurvivors();
     }
 
-    public void SetLocation(LocationWrapper location)
-    {
-        if (LocationWrapper != null)
-            RemoveChild(LocationWrapper.Card);
-        LocationWrapper = location;
-
-        //TODO Position based on screen size
-        DealOnBoard(LocationWrapper.Card, new Vector2(338, 200));
-    }
-
     public void StackSurvivors()
     {
         List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
-        CardManager.StackCards(cards, LocationWrapper.Card.Target);
+        CardManager.StackCards(cards, CONSTS.SCREEN_CENTER);
     }
 }

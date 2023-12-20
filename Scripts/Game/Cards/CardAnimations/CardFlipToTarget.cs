@@ -5,15 +5,28 @@ using System.Drawing;
 
 internal class CardFlipToTarget : CardAnimationBase
 {
-    float halfFlipDistance;
-    bool halfFlipUpdated = false;
+    private readonly float halfFlipDistance;
+    private bool halfFlipUpdated = false;
 
     internal CardFlipToTarget(Card card) : base(card)
     {
-        //wasDraggable = card.IsDraggable;
-        //card.IsDraggable = false;
         Vector2 globalPosition = card.GlobalPosition;
         halfFlipDistance = (globalPosition - card.Target).Length() / 2f;
+    }
+
+    public override void ForceEnd()
+    {
+        ScaleToOne();
+        if (Card.IsFaceDown)
+        {
+            Card.Front.Visible = false;
+            Card.Back.Visible = true;
+        }
+        else
+        {
+            Card.Front.Visible = true;
+            Card.Back.Visible = false;
+        }
     }
 
     internal override bool Process(float delta)
@@ -24,7 +37,7 @@ internal class CardFlipToTarget : CardAnimationBase
             return true;
         }
 
-        //TODO implement reversed
+        //TODO implement reversed?
         Vector2 globalPos = Card.GlobalPosition;
         float distance = (Card.Target - globalPos).Length();
         if (distance > halfFlipDistance)
@@ -63,7 +76,7 @@ internal class CardFlipToTarget : CardAnimationBase
             else
                 Card.Front.Scale = new Vector2(1 - deltaDistance, 1);
 
-            if (deltaDistance < Mathf.Epsilon)
+            if (deltaDistance < 0.001f)
             {
                 ScaleToOne();
                 return true;

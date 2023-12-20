@@ -105,12 +105,12 @@ public class DeckPanel : Node2D
                 SecondsBetweenDraws = 0.03f
             };
 
-            cardDealer.cards.Add(card);
+            cardDealer.AddCard(card, false);
             AddChild(cardDealer);
         }
         else
         {
-            cardDealer.cards.Add(card);
+            cardDealer.AddCard(card);
         }
     }
 

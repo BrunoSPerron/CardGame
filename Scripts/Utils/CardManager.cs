@@ -31,6 +31,15 @@ public static class CardManager
         return cards;
     }
 
+    
+    public static List<Card> GetCardsInLocationWrappers(List<LocationWrapper> wrappers)
+    {
+        List<Card> cards = new List<Card>();
+        foreach (BaseCardWrapper wrapper in wrappers)
+            cards.Add(wrapper.Card);
+        return cards;
+    }
+
     internal static Card GetTopCardInIntersectPointResults(
         Godot.Collections.Array cardEnumerable)
     {
@@ -48,6 +57,8 @@ public static class CardManager
     internal static void OnCardZIndexModified(Card card)
     {
         int oldIndex = cards.FindIndex(x => x == card);
+        if (oldIndex == -1)
+            return;
         cards.RemoveAt(oldIndex);
         if (card.BaseZIndex >= NumberOfCards)
             card.BaseZIndex = NumberOfCards - 1;
@@ -66,6 +77,12 @@ public static class CardManager
         UpdateZIndexes(index);
     }
 
+    public static void RemoveFocus()
+    {
+        focusCard.ZIndex = NumberOfCards - 1;
+        focusCard = null;
+    }
+
     public static void SetFocus(Card card)
     {
         if (focusCard != null)
@@ -79,23 +96,14 @@ public static class CardManager
         for (int i = 0; i < amount; i++)
         {
             Card card = cards[i];
-            card.ZIndex = 4096;
+            card.ZIndex = CONSTS.MAX_Z_INDEX; // TODO get higher from the cards instead
             card.MoveToPosition(
                 position + new Vector2(
                     amount * 4 / 2 - 4 * i,
                     5 + 16 * (i + 1)
-                )
+                ) // TODO -> to setting
             );
         }
-    }
-
-    public static Card RemoveFocus()
-    {
-        Card card = focusCard;
-        focusCard.ZIndex = NumberOfCards - 1;
-        if (focusCard != null)
-            focusCard = null;
-        return card;
     }
 
     public static void UpdateZIndexes(int startIndex = 0, int endIndex = -1)

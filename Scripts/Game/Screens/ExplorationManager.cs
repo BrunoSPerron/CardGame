@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 public class ExplorationManager : BaseGameScreen
 {
-    private readonly Dictionary<Vector2Int, ExplorationScreen> subscreens
-        = new Dictionary<Vector2Int, ExplorationScreen>();
+    private readonly HashSet<Vector2Int> positionsWithSurvivor = new HashSet<Vector2Int>();
+
+    private ExplorationScreen currentScreen;
 
     public override void _Ready()
     {
@@ -13,16 +14,13 @@ public class ExplorationManager : BaseGameScreen
         {
             Vector2Int position = character.Model.WorldPosition;
 
-            if (!subscreens.ContainsKey(position))
-                AddSubScreen(position, Game.LocationsByPosition[position]);
-
-            subscreens[position].AddSurvivor(character);
+            if (!positionsWithSurvivor.Contains(position))
+                positionsWithSurvivor.Add(position);
         }
 
         if (Game.Survivors.Count > 0)
         {
-            //TODO screen priority logic
-            AddChild(subscreens[Game.Survivors[0].Model.WorldPosition]);
+            SetCurrentScreen(Game.Survivors[0].Model.WorldPosition);
         }
         else
         {
@@ -30,16 +28,55 @@ public class ExplorationManager : BaseGameScreen
         }
     }
 
-    public void AddSubScreen(Vector2Int position, LocationWrapper location)
+    public void SetCurrentScreen(Vector2Int position)
     {
-        ExplorationScreen screen = new ExplorationScreen { Game = Game };
-        screen.SetLocation(location);
-        subscreens.Add(position, screen);
+        currentScreen = new ExplorationScreen()
+        {
+            Game = Game,
+            Location = Game.LocationsByPosition[position],
+            Manager = this,
+        };
+        AddChild(currentScreen);
     }
 
     public override void Destroy()
     {
-        foreach (KeyValuePair<Vector2Int, ExplorationScreen> kvp in subscreens)
-            kvp.Value.Destroy();
+        currentScreen.Destroy();
+    }
+
+    public void MoveToHex(Vector2Int worldPosition)
+    {
+        if (!Game.LocationsByPosition.ContainsKey(worldPosition))
+        {
+            GD.PrintErr("Exploration manager error: Non-existant destination");
+            return;
+        }
+
+        if (worldPosition == currentScreen.Location.HexLocation.HexPosition)
+        {
+            GD.PrintErr("Exploration manager error: Destination is current position");
+            return;
+        }
+
+        currentScreen.Clean();
+
+        bool removeOldLocation = true;
+        foreach (CharacterWrapper character in Game.Survivors)
+        {
+            Vector2Int position = character.Model.WorldPosition;
+
+            if (!positionsWithSurvivor.Contains(position))
+            {
+                positionsWithSurvivor.Add(position);
+                removeOldLocation = false;
+                break;
+            }
+        }
+        if (removeOldLocation)
+        {
+            positionsWithSurvivor.Remove(currentScreen.Location.HexLocation.HexPosition);
+        }
+        currentScreen.QueueFree();
+        SetCurrentScreen(worldPosition);
     }
 }

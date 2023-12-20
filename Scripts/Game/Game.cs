@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 public class Game : Node2D
 {
+    public GameStateModel State { get; private set; }
     public TurnCounter TurnCounter { get; private set; }
 
+    private CardCleaner cardCleaner;
     private BaseGameScreen currentScene;
-
-    public GameStateModel State { get; private set; }
 
     // ===== Wrappers Storage =====
 
@@ -17,11 +17,9 @@ public class Game : Node2D
 
     public readonly Dictionary<Vector2Int, LocationWrapper> LocationsByPosition
         = new Dictionary<Vector2Int, LocationWrapper>();
-
-    public Dictionary<ulong, CharacterWrapper> charactersByCardId
+    public readonly Dictionary<ulong, CharacterWrapper> charactersByCardId
         = new Dictionary<ulong, CharacterWrapper>();
-
-    public Dictionary<ulong, LocationWrapper> locationsByCardId
+    public readonly Dictionary<ulong, LocationWrapper> locationsByCardId
         = new Dictionary<ulong, LocationWrapper>();
 
     // ===== Methods =====
@@ -50,6 +48,60 @@ public class Game : Node2D
             LocationsByPosition[hexLocation.HexPosition] = wrapper;
         else
             LocationsByPosition.Add(hexLocation.HexPosition, wrapper);
+    }
+
+    /// <summary>
+    /// Flip cards out of the screen
+    /// </summary>
+    /// <param name="card">Card with no godot parent</param>
+    public void CleanCard(Card card)
+    {
+        card.ClearAnimations();
+        if (cardCleaner == null)
+        {
+            cardCleaner = new CardCleaner();
+            AddChild(cardCleaner);
+            cardCleaner.Position = new Vector2(0, 0);
+        }
+        var instanceId = card.GetInstanceId();
+        bool preserveCard = locationsByCardId.ContainsKey(instanceId)
+            || charactersByCardId.ContainsKey(instanceId);
+
+        cardCleaner.AddCardToClean(card, preserveCard);
+    }
+
+    public bool RemoveCardFromCleaner(Card card)
+    {
+        return cardCleaner?.RemoveCard(card) ?? false;
+    }
+
+    public HexLink? GetHexDirection(LocationWrapper from, LocationWrapper to)
+    {
+        Vector2Int offset = to.HexLocation.HexPosition - from.HexLocation.HexPosition;
+
+        if (offset.x == 1)
+        {
+            if (offset.y == 0)
+                return HexLink.RIGHT;
+            if (offset.y == 1)
+                return HexLink.TOPRIGHT;
+        }
+        else if (offset.x == 0)
+        {
+            if (offset.y == 1)
+                return HexLink.TOPLEFT;
+            if (offset.y == -1)
+                return HexLink.BOTTOMRIGHT;
+        }
+        else if (offset.x == -1)
+        {
+            if (offset.y == -1)
+                return HexLink.BOTTOMLEFT;
+            if (offset.y == 0)
+                return HexLink.LEFT;
+        }
+
+        return null;
     }
 
     public void InitializeScenario(string mod, string scenario)

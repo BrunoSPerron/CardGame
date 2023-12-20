@@ -29,7 +29,8 @@ public abstract class BaseGameScreen : Node2D
         return button;
     }
 
-#pragma warning disable IDE0060 //TODO zIndex deal logic
+#pragma warning disable IDE0060
+    //TODO zIndex logic ?
     public void DealOnBoard(
         Card card, Vector2 target, int zIndex = -1, Boolean priority = false)
     {
@@ -42,16 +43,15 @@ public abstract class BaseGameScreen : Node2D
                 Position = new Vector2(-card.GetSize().x / 2, card.GetSize().y / 2)
             };
 
-            cardDealer.cards.Add(card);
+            cardDealer.AddCard(card, false);
             AddChild(cardDealer);
         }
         else
         {
-
             if (priority)
-                cardDealer.cards.Insert(0, card);
+                cardDealer.AddPriorityCard(card);
             else
-                cardDealer.cards.Add(card);
+                cardDealer.AddCard(card);
         }
     }
 
