@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public abstract class BaseGameScreen : Node2D
 {
-    [Export]
-    public PackedScene ButtonScene;
-    [Export]
-    public PackedScene DeckPanel;
+    public PackedScene ButtonScene => ResourceLoader.Load<PackedScene>(
+        "res://Assets/UI/Button.tscn/");
 
+    public PackedScene DeckPanel => ResourceLoader.Load<PackedScene>(
+        "res://Assets/UI/DeckPanel.tscn/");
+     
     public Game Game;
 
     private readonly List<Button> buttons = new List<Button>();

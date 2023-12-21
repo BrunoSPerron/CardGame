@@ -24,11 +24,13 @@ public class Game : Node2D
 
     // ===== Methods =====
 
-    public void AddSurvivor(CharacterModel survivor)
+    public void AddSurvivor(CharacterModel model)
     {
-        CharacterWrapper character = CardFactory.CreateCardFromCharacter(survivor);
-        Survivors.Add(character);
-        charactersByCardId.Add(character.Card.GetInstanceId(), character);
+        CharacterWrapper wrapper = CardFactory.CreateCardFromCharacter(model);
+        Survivors.Add(wrapper);
+        charactersByCardId.Add(wrapper.Card.GetInstanceId(), wrapper);
+        wrapper.Card.Connect("OnCombatDeckClick", this, "OnCombatDeckClick");
+        wrapper.Card.Connect("OnFieldDeckClick", this, "OnFieldDeckClick");
     }
 
     public void AddLocation(WorldHexModel hexLocation)
@@ -166,6 +168,18 @@ public class Game : Node2D
                 break;
         }
         TurnCounter.UpdateFromGameState(State);
+    }
+
+    public void OnCombatDeckClick(Card card)
+    {
+        CombatDeckWrapper wrapper = charactersByCardId[card.GetInstanceId()].CombatDeck;
+        currentScene?.OpenDeckModificationPanel(wrapper);
+    }
+
+    public void OnFieldDeckClick(Card card)
+    {
+        FieldDeckWrapper wrapper = charactersByCardId[card.GetInstanceId()].FieldDeck;
+        currentScene?.OpenDeckModificationPanel(wrapper);
     }
 
     public void StartExplorationPhase()

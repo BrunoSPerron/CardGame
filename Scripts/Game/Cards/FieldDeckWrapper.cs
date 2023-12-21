@@ -10,10 +10,13 @@ public class FieldDeckWrapper : BaseDeckWrapper
         Model = deckInfo;
     }
 
-    public FieldCardWrapper[] GenerateBaseFieldDeck()
+    public FieldCardWrapper[] GetFieldDeck()
     {
-        if (Model.BaseDeck == null)
+        if (Model.BaseDeck == null || Model.BaseDeck.Length < 1)
+        {
             Model.FieldDeck = DeckFactory.CreateNewFieldDeck();
+            GD.Print("Field deck wrapper error: No field deck. Using bad field deck");
+        }
 
         FieldCardWrapper[] wrappedDeck = new FieldCardWrapper[Model.FieldDeck.Length];
         for (int i = 0; i < Model.BaseDeck.Length; i++)
@@ -23,12 +26,15 @@ public class FieldDeckWrapper : BaseDeckWrapper
                 model);
             wrappedDeck[i] = wrapper;
         }
-
         return wrappedDeck;
     }
 
-    public override void GenerateBaseDeck()
+    public override BaseCardWrapper[] GetBaseDeck()
     {
-        GenerateBaseFieldDeck();
+        FieldCardWrapper[] fieldDeck = GetFieldDeck();
+        BaseCardWrapper[] baseDeck = new BaseCardWrapper[fieldDeck.Length];
+        for (int i = 0; i < baseDeck.Length; i++)
+            baseDeck[i] = fieldDeck[i];
+        return baseDeck;
     }
 }

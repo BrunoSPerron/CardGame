@@ -11,5 +11,5 @@ public abstract class BaseDeckWrapper
         Model = deckInfo;
     }
 
-    public abstract void GenerateBaseDeck();
+    public abstract BaseCardWrapper[] GetBaseDeck();
 }

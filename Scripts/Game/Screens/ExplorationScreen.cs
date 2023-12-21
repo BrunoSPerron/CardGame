@@ -115,9 +115,6 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddSurvivors()
     {
-        // Note: The CardDealer need each card `Target` to be the correct one
-        //  at the time CardDealer.AddSurvivors is called. This is done in
-        //  this.StackSurvivors() and is why they are first added to this list
         List<CharacterWrapper> survivorsToAdd = new List<CharacterWrapper>();
         List<CharacterWrapper> preDealtSurvivors = new List<CharacterWrapper>();
 

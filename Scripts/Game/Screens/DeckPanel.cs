@@ -55,21 +55,18 @@ public class DeckPanel : Node2D
 
     private void DealBaseDeck()
     {
-        //TODO calc multiplier based on available space
+        //TODO Placement based on available space
         float mult = 0.75f;
 
         Vector2 panelSize = panel.GetSize() - new Vector2(
             INNER_PADDING_X * 2, INNER_PADDING_Y * 2);
-        DeckWrapper.GenerateBaseDeck();
-        BaseCardWrapper[] deck = new BaseCardWrapper[0]; //TODO Fix this
+
+        BaseCardWrapper[] deck = DeckWrapper.GetBaseDeck();
 
         Vector2 cardSize = deck[0].Card.GetSize() * mult;
-
         Vector2 viewSize = GetTree().Root.GetVisibleRect().Size;
-
         Vector2 topLeft = new Vector2(OUTER_PADDING + INNER_PADDING_X,
             OUTER_PADDING + INNER_PADDING_Y) + cardSize / 2;
-
         Vector2 bottomRight = new Vector2(
             viewSize.x - OUTER_PADDING - INNER_PADDING_X,
             viewSize.y - OUTER_PADDING - INNER_PADDING_Y) - cardSize / 2;
