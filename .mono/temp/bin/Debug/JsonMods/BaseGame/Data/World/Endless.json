@@ -1,24 +1,11 @@
 {
 	"Instructions": [
 		"add location -> forest / 50 / 50",
-		"open position -> 50 / 50",
-		
-		"addlocation -> forest / 50 / 51",
-		"Open Position -> 50 / 51",
-		
-		"addlocation -> camp / 51 / 51",
-		"Open Position -> 51 / 51",
-		
-		"addlocation -> chasm / 49 / 50",
-		"Open Position -> 49 / 50",
-		
-		"addlocation -> forest / 51 / 50",
-		"Open Position -> 51 / 50 / left",
-		
-		"addlocation -> chasm / 49 / 49",
-		"Open Position -> 49 / 49",
-		
-		"addlocation -> forest / 50 / 49",
-		"Open Position -> 50 / 49"
+		"add location -> forest / 50 / 51",
+		"add location -> camp / 51 / 51",
+		"add location -> chasm / 49 / 50",
+		"add location -> forest / 51 / 50",
+		"add location -> chasm / 49 / 49",
+		"add location -> forest / 50 / 49",
 	]
 }

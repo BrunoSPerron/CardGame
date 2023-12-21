@@ -8,15 +8,14 @@ public static class WorldCreator
 {
 
     /// <summary>
-    /// Create a character by calling 'factory' methods name in an array of strings.
-    /// Arguments are limited to string arguments
+    /// Create a character by calling the 'AssemblyLine' methods Listed in an array of string
     /// </summary>
-    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.." (limited to string arguments)</param>
+    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.."</param>
     public static WorldModel CreateFromModel(WorldCreationModel model)
     {
-        Factory factory = new Factory();
-        factory.model.Mod = model.Mod;
-        Type factoryType = factory.GetType();
+        AssemblyLine assemblyLine = new AssemblyLine();
+        assemblyLine.model.Mod = model.Mod;
+        Type factoryType = assemblyLine.GetType();
 
         foreach (string instruction in model.Instructions)
         {
@@ -34,7 +33,7 @@ public static class WorldCreator
             try
             {
                 MethodInfo theMethod = factoryType.GetMethod(name);
-                theMethod.Invoke(factory, new[] { splittedArguments });
+                theMethod.Invoke(assemblyLine, new[] { splittedArguments });
             }
             catch
             {
@@ -44,13 +43,13 @@ public static class WorldCreator
             }
         }
 
-        return factory.model;
+        return assemblyLine.model;
     }
 
 #pragma warning disable IDE1006
     // Methods in this class must be public and use lowercase names to be invokable.
-    // They must take a single argument, which is an array of string.
-    public class Factory
+    // They must accept a single argument, which is an array of string.
+    public class AssemblyLine
     {
         public WorldModel model = new WorldModel();
 
@@ -69,8 +68,8 @@ public static class WorldCreator
             bool newLocation = true;
             for (int i = 0; i < model.Locations.Count; i++)
             {
-                HexLocationModel location = model.Locations[i];
-                if (location.HexPosition == positionVector)
+                WorldHexModel location = model.Locations[i];
+                if (location.Coord == positionVector)
                 {
                     location.Location = JsonLoader.GetLocationModel(model.Mod, locationName);
                     newLocation = false;
@@ -80,10 +79,10 @@ public static class WorldCreator
 
             if (newLocation)
             {
-                model.Locations.Add(new HexLocationModel
+                model.Locations.Add(new WorldHexModel
                 {
                     Location = JsonLoader.GetLocationModel(model.Mod, locationName),
-                    HexPosition = positionVector
+                    Coord = positionVector
                 });
             }
         }
@@ -99,11 +98,11 @@ public static class WorldCreator
             int y = args.Length > 1 ? int.Parse(args[1]) : 0;
 
             Vector2Int positionVector = new Vector2Int(x, y);
-            HexLocationModel hexlocation = new HexLocationModel() { HexPosition = positionVector };
+            WorldHexModel hexlocation = new WorldHexModel() { Coord = positionVector };
             bool newLocation = true;
-            foreach (HexLocationModel location in model.Locations)
+            foreach (WorldHexModel location in model.Locations)
             {
-                if (location.HexPosition == positionVector)
+                if (location.Coord == positionVector)
                 {
                     hexlocation = location;
                     newLocation = false;

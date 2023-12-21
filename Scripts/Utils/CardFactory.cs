@@ -84,7 +84,7 @@ public static class CardFactory
     }
 
     public static LocationWrapper CreateCardFromLocation(
-        string scenario, HexLocationModel location)
+        string scenario, WorldHexModel location)
     {
         if (location.Location.ImageFileName == null)
             return CreateDefaultWrappedLocation();
@@ -93,8 +93,7 @@ public static class CardFactory
         card.IsDraggable = false;
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
-
-        //TODO, check if file exists
+        AddActionCostCounter(card, location.Location.TravelCost);
         string path = System.IO.Path.Combine(PATHS.ModFolderPath,
             scenario + "\\Images\\Cards\\Full\\" + location.Location.ImageFileName);
         if (System.IO.File.Exists(path))
@@ -146,24 +145,19 @@ public static class CardFactory
         card.IsDraggable = false;
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
+        AddActionCostCounter(card, 0);
         string path = "res://Art/Cards/Images/Locations/" + location.ImageFileName;
         if (ResourceLoader.Exists(path))
             card.Front.GetNode<Sprite>(
                 "Image").Texture = ResourceLoader.Load<Texture>(path);
         else
             GD.PrintErr("Card factory error: Resource missing at " + path);
-        HexLocationModel hexlocation = new HexLocationModel() {
+        WorldHexModel hexlocation = new WorldHexModel() {
             Location=location
         };
         LocationWrapper locationWrapper = new LocationWrapper(card, hexlocation);
         return locationWrapper;
     }
-
-    public static CharacterModel CreateDefaultCharacterInfo()
-    {
-        return new CharacterModel();
-    }
-
 
     public static Card CreateExploreCard()
     {
@@ -177,6 +171,7 @@ public static class CardFactory
 
         string path = "res://Art/Cards/Images/Actions/Explore.png";
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
+        AddActionCostCounter(card, 1);
         return card;
     }
 
@@ -192,6 +187,19 @@ public static class CardFactory
 
         string path = "res://Art/Cards/Images/Actions/Field.png";
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
+        AddActionCostCounter(card, 1);
         return card;
+    }
+
+    // === private methods ===
+
+    private static void AddActionCostCounter(Card card, int cost = 0)
+    {
+        IconCounter counter = new IconCounter() {
+            defaultIcon = CardIcon.TIME,
+            Position = card.Front.GetNode<Position2D>("ActionCostPosition").Position
+        };
+        counter.SetMax(cost);
+        card.Front.AddChild(counter);
     }
 }

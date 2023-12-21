@@ -50,11 +50,14 @@ position = Vector2( -36, 20 )
 
 [node name="PowerCounter" parent="Front" instance=ExtResource( 5 )]
 position = Vector2( -36, 29 )
-icon = 1
+defaultIcon = 1
 
 [node name="ActionCounter" parent="Front" instance=ExtResource( 5 )]
 position = Vector2( -36, 38 )
-icon = 2
+defaultIcon = 2
+
+[node name="ActionCostPosition" type="Position2D" parent="Front"]
+position = Vector2( 35.5, 54.5 )
 
 [node name="Back" type="Node2D" parent="."]
 visible = false
@@ -65,7 +68,6 @@ texture = ExtResource( 4 )
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
 pitch_scale = 0.65
-autoplay = true
 
 [connection signal="area_entered" from="." to="." method="OnCardOverlap"]
 [connection signal="area_exited" from="." to="." method="OnOverlapEnd"]

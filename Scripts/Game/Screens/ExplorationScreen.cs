@@ -19,7 +19,7 @@ public class ExplorationScreen : BaseGameScreen
     public override void _Ready()
     {
         AddLocation();
-        if (Location.HexLocation.Location.ExplorationDeck.Length != 0)
+        if (Location.Model.ExplorationDeck.Length != 0)
             AddExploreOption();
         AddSurviveOption();
 
@@ -29,9 +29,9 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddDestinations()
     {
-        foreach (HexLink link in Location.HexLocation.Openings)
+        foreach (HexLink link in Location.WorldPosition.Openings)
         {
-            Vector2Int worldPosition = Location.HexLocation.HexPosition;
+            Vector2Int worldPosition = Location.WorldPosition.Coord;
             switch (link)
             {
                 case HexLink.TOPLEFT:
@@ -60,7 +60,7 @@ public class ExplorationScreen : BaseGameScreen
             {
                 LocationWrapper destination = Game.LocationsByPosition[worldPosition];
                 HexLink reverseLink = (HexLink)(((int)link + 3) % 6);
-                if (destination.HexLocation.Openings.Contains(reverseLink))
+                if (destination.WorldPosition.Openings.Contains(reverseLink))
                 {
                     Vector2 postion = GetDestinationScreenPosition(link);
                     AddDestination(destination, postion);
@@ -123,7 +123,7 @@ public class ExplorationScreen : BaseGameScreen
 
         foreach (CharacterWrapper survivor in Game.Survivors)
         {
-            if (survivor.Model.WorldPosition == Location.HexLocation.HexPosition)
+            if (survivor.WorldPosition == Location.WorldPosition.Coord)
             {
                 if (Game.RemoveCardFromCleaner(survivor.Card))
                 {
@@ -253,6 +253,21 @@ public class ExplorationScreen : BaseGameScreen
         return new Vector2(70, 70);
     }
 
+    public void Move(CharacterWrapper character, LocationWrapper destination)
+    {
+        if (character.CurrentActionPoint >= destination.Model.TravelCost)
+        {
+            character.CurrentActionPoint -= destination.Model.TravelCost;
+            character.WorldPosition = destination.WorldPosition.Coord;
+            Manager.MoveToHex(destination.WorldPosition.Coord);
+        }
+        else
+        {
+            survivors.Add(survivorDragged);
+            StackSurvivors();
+        }
+    }
+
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
         if (StackTarget == null)
@@ -276,10 +291,9 @@ public class ExplorationScreen : BaseGameScreen
         }
         else if (destinations.Exists(d => d.Card == StackTarget))
         {
-            LocationWrapper targetLocation = Game.locationsByCardId[StackTarget.GetInstanceId()];
+            LocationWrapper destination = Game.locationsByCardId[StackTarget.GetInstanceId()];
             CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
-            character.Model.WorldPosition = targetLocation.HexLocation.HexPosition;
-            Manager.MoveToHex(targetLocation.HexLocation.HexPosition);
+            Move(character, destination);
         }
         else
         {

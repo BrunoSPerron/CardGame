@@ -98,7 +98,7 @@ public class Card : Area2D
         }
 
 
-        // TODO - Replace this DuctTape and fix the problem with FlipToTarget
+        // TODO - Fix the problem with FlipToTarget cancel to replace this DuctTape
         Front.Scale = Vector2.One;
         Back.Scale = Vector2.One;
     }

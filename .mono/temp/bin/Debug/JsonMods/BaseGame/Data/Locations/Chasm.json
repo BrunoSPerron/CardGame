@@ -1,4 +1,5 @@
 {
 	"Name":"chasm",
-	"ImageFileName":"chasm.png"
+	"ImageFileName": "chasm.png",
+	"TravelCost": 1
 }

@@ -7,16 +7,14 @@ public static class CharacterCreator
 {
 
     /// <summary>
-    /// Create a character by calling 'factory' methods name in an array of strings.
-    /// Arguments are limited to string arguments
+    /// Create a character by calling the 'AssemblyLine' methods Listed in an array of string
     /// </summary>
-    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.." (limited to string arguments)</param>
-    /// <returns></returns>
+    /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.."</param>
     public static CharacterModel CreateFromModel(CharacterCreationModel model)
     {
-        Factory factory = new Factory();
-        factory.model.Mod = model.Mod;
-        Type factoryType = factory.GetType();
+        AssemblyLine assemblyLine = new AssemblyLine();
+        assemblyLine.model.Mod = model.Mod;
+        Type factoryType = assemblyLine.GetType();
 
         foreach (string instruction in model.Instructions)
         {
@@ -33,7 +31,7 @@ public static class CharacterCreator
             try
             {
                 MethodInfo theMethod = factoryType.GetMethod(name);
-                theMethod.Invoke(factory, new[] { splittedArguments });
+                theMethod.Invoke(assemblyLine, new[] { splittedArguments });
             }
             catch
             {
@@ -43,19 +41,19 @@ public static class CharacterCreator
             }
         }
 
-        return factory.model;
+        return assemblyLine.model;
     }
 
 
     #pragma warning disable IDE1006
-    // Methods in this class must be public and use lowercase
-    //  names to be invokable.
-    public class Factory
+    // Methods in this class must be public and use lowercase names to be invokable.
+    // They must accept a single argument, which is an array of string.
+    public class AssemblyLine
     {
         public CharacterModel model = new CharacterModel();
 
         /// <param name="args">
-        /// 0: New name
+        /// 0: Name or Command
         /// </param>
         public void rename(string[] args)
         {

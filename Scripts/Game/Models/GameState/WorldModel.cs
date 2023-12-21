@@ -12,5 +12,5 @@ using System.Collections.Generic;
 
 public class WorldModel : BaseModel
 {
-    public List<HexLocationModel> Locations = new List<HexLocationModel>();
+    public List<WorldHexModel> Locations = new List<WorldHexModel>();
 }

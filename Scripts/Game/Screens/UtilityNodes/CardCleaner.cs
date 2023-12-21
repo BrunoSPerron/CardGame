@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CardCleaner : Position2D
 {
-    public float SecondsBetweenClean = 0.10f;
+    public float SecondsBetweenClean = 0.05f;
     private readonly List<CleaningInfo> cardsToClean = new List<CleaningInfo>();
     private readonly List<CleaningInfo> cardsBeingCleaned = new List<CleaningInfo>();
     private float timer = 0f;

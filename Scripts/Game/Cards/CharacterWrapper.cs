@@ -4,6 +4,23 @@ using System.Collections.Generic;
 
 public class CharacterWrapper : BaseCardWrapper
 {
+    private CharacterModel model;
+    public CharacterModel Model
+    {
+        set
+        {
+            model = value;
+
+            Card.SetLabel(value.Name);
+            Card.Front.GetNode<IconCounter>("ActionCounter").SetMax(value.ActionPoint);
+            Card.Front.GetNode<IconCounter>("LifeCounter").SetMax(value.HitPoint);
+            Card.Front.GetNode<IconCounter>("PowerCounter").SetMax(value.Power);
+
+            CombatDeck = new CombatDeckWrapper(value.CombatDeck);
+            FieldDeck = new FieldDeckWrapper(value.FieldDeck);
+        }
+    }
+
     private CombatDeckWrapper combatDeck;
     public CombatDeckWrapper CombatDeck
     {
@@ -28,64 +45,64 @@ public class CharacterWrapper : BaseCardWrapper
         set => fieldDeck = value;
     }
 
-    private CharacterModel model;
-    public CharacterModel Model
+    // ===== Model related attributes =====
+
+    public int MaxActionPoint
     {
-        get => model;
+        get => model.ActionPoint;
+        set
+        {
+            if (model.ActionPoint != value)
+            {
+                Card.Front.GetNode<IconCounter>("ActionCounter").SetMax(value);
+                model.ActionPoint = value;
+            }
+        }
+    }
+
+    public int CurrentActionPoint
+    {
+        get => model.CurrentActionPoint;
+        set
+        {
+            if (model.CurrentActionPoint != value)
+            {
+                Card.Front.GetNode<IconCounter>("ActionCounter").SetCurrent(value);
+                model.CurrentActionPoint = value;
+            }
+        }
+    }
+
+    public int MaxHitPoint
+    {
+        get => model.HitPoint;
         private set
         {
-            model = value;
-            ActionPoint = value.ActionPoint;
-            CombatDeck = new CombatDeckWrapper(value.CombatDeck);
-            FieldDeck = new FieldDeckWrapper(value.FieldDeck);
-            HitPoint = value.CurrentHitPoint;
-            Power = value.Power;
-            Card.SetLabel(value.Name);
-        }
-    }
-
-    // ===== IconCounter related attributes =====
-
-    private int actionPoint;
-    public int ActionPoint
-    {
-        get => actionPoint;
-        set
-        {
-            if (actionPoint != value)
+            if (model.HitPoint != value)
             {
-                Card.Front.GetNode<IconCounter>("ActionCounter").SetAmount(value);
-                actionPoint = value;
+                Card.Front.GetNode<IconCounter>("LifeCounter").SetMax(value);
+                model.HitPoint = value;
             }
         }
     }
 
-    private int hitPoint;
-    public int HitPoint
-    {
-        get => hitPoint;
-        set
-        {
-            if (hitPoint != value)
-            {
-                Card.Front.GetNode<IconCounter>("LifeCounter").SetAmount(value);
-                hitPoint = value;
-            }
-        }
-    }
-
-    private int power;
     public int Power
     {
-        get => power;
-        set
+        get => model.Power;
+        private set
         {
-            if (power != value)
+            if (model.Power != value)
             {
-                Card.Front.GetNode<IconCounter>("PowerCounter").SetAmount(value);
-                power = value;
+                Card.Front.GetNode<IconCounter>("PowerCounter").SetMax(value);
+                model.Power = value;
             }
         }
+    }
+
+    public Vector2Int WorldPosition
+    {
+        get => model.WorldPosition;
+        set => model.WorldPosition = value;
     }
 
     // ===== Methods unique to this class =====

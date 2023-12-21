@@ -4,22 +4,27 @@ using System.Collections.Generic;
 
 public class LocationWrapper : BaseCardWrapper
 {
-    private HexLocationModel hexLocation;
-    public HexLocationModel HexLocation
+    private WorldHexModel worldPosition;
+    public WorldHexModel WorldPosition
     {
-        get => hexLocation;
+        get => worldPosition;
         set
         {
-            hexLocation = value;
+            worldPosition = value;
             Card?.SetLabel(value.Location?.Name ?? "");
         }
     }
 
+    public LocationModel Model
+    {
+        get => worldPosition.Location;
+    }
+
     // ===== Methods =====
 
-    public LocationWrapper(Card card, HexLocationModel location)
+    public LocationWrapper(Card card, WorldHexModel location)
     {
         Card = card;
-        HexLocation = location;
+        WorldPosition = location;
     }
 }

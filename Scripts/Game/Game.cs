@@ -31,7 +31,7 @@ public class Game : Node2D
         charactersByCardId.Add(character.Card.GetInstanceId(), character);
     }
 
-    public void AddLocation(HexLocationModel hexLocation)
+    public void AddLocation(WorldHexModel hexLocation)
     {
         LocationModel location = hexLocation.Location;
         LocationWrapper wrapper = null;
@@ -44,10 +44,10 @@ public class Game : Node2D
                 locationsByCardId.Add(instanceId, wrapper);
         }
 
-        if (LocationsByPosition.ContainsKey(hexLocation.HexPosition))
-            LocationsByPosition[hexLocation.HexPosition] = wrapper;
+        if (LocationsByPosition.ContainsKey(hexLocation.Coord))
+            LocationsByPosition[hexLocation.Coord] = wrapper;
         else
-            LocationsByPosition.Add(hexLocation.HexPosition, wrapper);
+            LocationsByPosition.Add(hexLocation.Coord, wrapper);
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class Game : Node2D
 
     public HexLink? GetHexDirection(LocationWrapper from, LocationWrapper to)
     {
-        Vector2Int offset = to.HexLocation.HexPosition - from.HexLocation.HexPosition;
+        Vector2Int offset = to.WorldPosition.Coord - from.WorldPosition.Coord;
 
         if (offset.x == 1)
         {
@@ -117,7 +117,7 @@ public class Game : Node2D
             mod, outsetInfo.World);
         State.Map = WorldCreator.CreateFromModel(worldCreationModel);
 
-        foreach (HexLocationModel hexLocation in State.Map.Locations)
+        foreach (WorldHexModel hexLocation in State.Map.Locations)
             AddLocation(hexLocation);
 
         foreach (string characterCreatorLogic in outsetInfo.StartingCharacters)

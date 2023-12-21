@@ -12,7 +12,7 @@ public class ExplorationManager : BaseGameScreen
     {
         foreach (CharacterWrapper character in Game.Survivors)
         {
-            Vector2Int position = character.Model.WorldPosition;
+            Vector2Int position = character.WorldPosition;
 
             if (!positionsWithSurvivor.Contains(position))
                 positionsWithSurvivor.Add(position);
@@ -20,7 +20,7 @@ public class ExplorationManager : BaseGameScreen
 
         if (Game.Survivors.Count > 0)
         {
-            SetCurrentScreen(Game.Survivors[0].Model.WorldPosition);
+            SetCurrentScreen(Game.Survivors[0].WorldPosition);
         }
         else
         {
@@ -52,7 +52,7 @@ public class ExplorationManager : BaseGameScreen
             return;
         }
 
-        if (worldPosition == currentScreen.Location.HexLocation.HexPosition)
+        if (worldPosition == currentScreen.Location.WorldPosition.Coord)
         {
             GD.PrintErr("Exploration manager error: Destination is current position");
             return;
@@ -63,7 +63,7 @@ public class ExplorationManager : BaseGameScreen
         bool removeOldLocation = true;
         foreach (CharacterWrapper character in Game.Survivors)
         {
-            Vector2Int position = character.Model.WorldPosition;
+            Vector2Int position = character.WorldPosition;
 
             if (!positionsWithSurvivor.Contains(position))
             {
@@ -74,7 +74,7 @@ public class ExplorationManager : BaseGameScreen
         }
         if (removeOldLocation)
         {
-            positionsWithSurvivor.Remove(currentScreen.Location.HexLocation.HexPosition);
+            positionsWithSurvivor.Remove(currentScreen.Location.WorldPosition.Coord);
         }
         currentScreen.QueueFree();
         SetCurrentScreen(worldPosition);
