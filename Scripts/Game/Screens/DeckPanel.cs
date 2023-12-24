@@ -16,7 +16,7 @@ public class DeckPanel : Node2D
     [Export]
     public PackedScene PixelTextScene;
 
-    public BaseDeckWrapper DeckWrapper;
+    public BaseDeckManager DeckWrapper;
     public BaseGameScreen GameScreen;
 
     private readonly List<Button> buttons = new List<Button>();
@@ -43,7 +43,6 @@ public class DeckPanel : Node2D
                              Cardinal anchor = Cardinal.NW,
                              Vector2? offset = null)
     {
-
         Button button = ButtonScene.Instance<Button>();
         button.Label = label;
         button.Connect("OnClick", this, callbackMethodName);

@@ -16,13 +16,13 @@ public class CharacterWrapper : BaseCardWrapper
             Card.Front.GetNode<IconCounter>("LifeCounter").SetMax(value.HitPoint);
             Card.Front.GetNode<IconCounter>("PowerCounter").SetMax(value.Power);
 
-            CombatDeck = new CombatDeckWrapper(value.CombatDeck);
-            FieldDeck = new FieldDeckWrapper(value.FieldDeck);
+            CombatDeck = new CombatDeckManager(value.CombatDeck);
+            FieldDeck = new FieldDeckManager(value.FieldDeck);
         }
     }
 
-    private CombatDeckWrapper combatDeck;
-    public CombatDeckWrapper CombatDeck
+    private CombatDeckManager combatDeck;
+    public CombatDeckManager CombatDeck
     {
         get
         {
@@ -33,8 +33,8 @@ public class CharacterWrapper : BaseCardWrapper
         set => combatDeck = value;
     }
 
-    private FieldDeckWrapper fieldDeck;
-    public FieldDeckWrapper FieldDeck
+    private FieldDeckManager fieldDeck;
+    public FieldDeckManager FieldDeck
     {
         get
         {
@@ -113,15 +113,17 @@ public class CharacterWrapper : BaseCardWrapper
         Model = character;
     }
 
-    private CombatDeckWrapper CreateNewCombatDeck()
+    private CombatDeckManager CreateNewCombatDeck()
     {
+        //TODO Check if there's a deck in the model
         GD.PrintErr("Character wrapper error: No combat deck for character '"
             + model.Name + "'. Received bad generic deck.");
         return DeckFactory.CreateNewCombatDeckWrapper();
     }
 
-    private FieldDeckWrapper CreateNewFieldDeck()
+    private FieldDeckManager CreateNewFieldDeck()
     {
+        //TODO Check if there's a deck in the model
         GD.PrintErr("Character wrapper error: No field deck for character '"
             + model.Name + "'. Received bad generic deck.");
         return DeckFactory.CreateNewFieldDeckWrapper();

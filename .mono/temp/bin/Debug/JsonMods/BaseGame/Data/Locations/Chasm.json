@@ -1,5 +1,6 @@
 {
-	"Name":"chasm",
+	"FieldActionCost": 2,
 	"ImageFileName": "chasm.png",
-	"TravelCost": 1
+	"Name":"chasm",
+	"TravelCost": 1,
 }

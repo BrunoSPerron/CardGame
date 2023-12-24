@@ -1,11 +1,11 @@
 ﻿using Godot;
 using System;
 
-public class CombatDeckWrapper : BaseDeckWrapper
+public class CombatDeckManager : BaseDeckManager
 {
     public new CombatDeckModel Model { get; private set; }
 
-    public CombatDeckWrapper(CombatDeckModel deckInfo) : base(deckInfo)
+    public CombatDeckManager(CombatDeckModel deckInfo) : base(deckInfo)
     {
         Model = deckInfo;
     }

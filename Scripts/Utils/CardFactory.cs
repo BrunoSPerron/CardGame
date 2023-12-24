@@ -196,6 +196,7 @@ public static class CardFactory
     private static void AddActionCostCounter(Card card, int cost = 0)
     {
         IconCounter counter = new IconCounter() {
+            Name = "ActionCostCounter",
             defaultIcon = CardIcon.TIME,
             Position = card.Front.GetNode<Position2D>("ActionCostPosition").Position
         };

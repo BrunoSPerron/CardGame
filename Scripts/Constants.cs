@@ -8,6 +8,7 @@ public static class CONSTS
 
     //TODO replace with dynamic and delete this
     public static readonly Godot.Vector2 SCREEN_CENTER = new Godot.Vector2(338, 200);
+    public static readonly Godot.Vector2 SCREEN_SIZE = new Godot.Vector2(676, 400);
 }
 
 public static class PATHS

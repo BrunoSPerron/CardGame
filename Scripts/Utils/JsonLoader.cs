@@ -5,15 +5,6 @@ using System.IO;
 
 public static class JsonLoader
 {
-    ///<returns>The object serialized in a Json encoded string.</returns>
-    public static string Serialize<T>(this T source) // .Serialize() extension
-    {
-        return JsonConvert.SerializeObject(source);
-    }
-
-    // ===== Getters =====
-
-
     public static CharacterCreationModel GetCharacterCreationModel(string modName,
                                                                    string jsonFileName)
     {

@@ -172,13 +172,13 @@ public class Game : Node2D
 
     public void OnCombatDeckClick(Card card)
     {
-        CombatDeckWrapper wrapper = charactersByCardId[card.GetInstanceId()].CombatDeck;
+        CombatDeckManager wrapper = charactersByCardId[card.GetInstanceId()].CombatDeck;
         currentScene?.OpenDeckModificationPanel(wrapper);
     }
 
     public void OnFieldDeckClick(Card card)
     {
-        FieldDeckWrapper wrapper = charactersByCardId[card.GetInstanceId()].FieldDeck;
+        FieldDeckManager wrapper = charactersByCardId[card.GetInstanceId()].FieldDeck;
         currentScene?.OpenDeckModificationPanel(wrapper);
     }
 

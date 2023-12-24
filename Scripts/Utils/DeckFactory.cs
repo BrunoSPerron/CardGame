@@ -3,13 +3,13 @@ using System;
 
 public static class DeckFactory
 {
-    public static CombatDeckWrapper CreateNewCombatDeckWrapper()
+    public static CombatDeckManager CreateNewCombatDeckWrapper()
     {
         CombatDeckModel deckInfo = new CombatDeckModel
         {
             CombatDeck = CreateNewCombatDeck()
         };
-        return new CombatDeckWrapper(deckInfo);
+        return new CombatDeckManager(deckInfo);
     }
 
     public static CombatCardModel[] CreateNewCombatDeck(int deckSize = 20)
@@ -20,13 +20,13 @@ public static class DeckFactory
         return baseDeck;
     }
 
-    public static FieldDeckWrapper CreateNewFieldDeckWrapper()
+    public static FieldDeckManager CreateNewFieldDeckWrapper()
     {
         FieldDeckModel deckInfo = new FieldDeckModel
         {
             FieldDeck = CreateNewFieldDeck()
         };
-        return new FieldDeckWrapper(deckInfo);
+        return new FieldDeckManager(deckInfo);
     }
 
     public static FieldCardModel[] CreateNewFieldDeck(int deckSize = 20)

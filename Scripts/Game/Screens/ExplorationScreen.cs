@@ -21,7 +21,7 @@ public class ExplorationScreen : BaseGameScreen
         AddLocation();
         if (Location.Model.ExplorationDeck.Length != 0)
             AddExploreOption();
-        AddSurviveOption();
+        AddFieldOption();
 
         AddDestinations();
         AddSurvivors();
@@ -90,11 +90,11 @@ public class ExplorationScreen : BaseGameScreen
 
         //TODO Placement based on window size
         DealOnBoard(ExploreTarget, new Vector2(450, 200), 0, true);
+        ExploreTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
     }
 
     private void AddLocation()
     {
-        //TODO Position based on screen size
         if (Game.RemoveCardFromCleaner(Location.Card))
         {
             AddChild(Location.Card);
@@ -107,10 +107,11 @@ public class ExplorationScreen : BaseGameScreen
         }
     }
 
-    private void AddSurviveOption()
+    private void AddFieldOption()
     {
         SurviveTarget = CardFactory.CreateSurviveCard();
         DealOnBoard(SurviveTarget, new Vector2(226, 200), 0, true);
+        SurviveTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
     }
 
     private void AddSurvivors()
@@ -166,6 +167,18 @@ public class ExplorationScreen : BaseGameScreen
         RemoveChild(Location.Card);
         Game.CleanCard(Location.Card);
 
+        if (SurviveTarget != null)
+        {
+            RemoveChild(SurviveTarget);
+            Game.CleanCard(SurviveTarget);
+        }
+
+        if (ExploreTarget != null)
+        {
+            RemoveChild(ExploreTarget);
+            Game.CleanCard(ExploreTarget);
+        }
+
         foreach (CharacterWrapper survivor in survivors)
         {
             survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
@@ -184,18 +197,6 @@ public class ExplorationScreen : BaseGameScreen
         {
             RemoveChild(location.Card);
             Game.CleanCard(location.Card);
-        }
-
-        if (SurviveTarget != null)
-        {
-            RemoveChild(SurviveTarget);
-            Game.CleanCard(SurviveTarget);
-        }
-
-        if (ExploreTarget != null)
-        {
-            RemoveChild(ExploreTarget);
-            Game.CleanCard(ExploreTarget);
         }
     }
 
@@ -250,21 +251,6 @@ public class ExplorationScreen : BaseGameScreen
         return new Vector2(70, 70);
     }
 
-    public void Move(CharacterWrapper character, LocationWrapper destination)
-    {
-        if (character.CurrentActionPoint >= destination.Model.TravelCost)
-        {
-            character.CurrentActionPoint -= destination.Model.TravelCost;
-            character.WorldPosition = destination.WorldPosition.Coord;
-            Manager.MoveToHex(destination.WorldPosition.Coord);
-        }
-        else
-        {
-            survivors.Add(survivorDragged);
-            StackSurvivors();
-        }
-    }
-
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
     {
         if (StackTarget == null)
@@ -284,13 +270,14 @@ public class ExplorationScreen : BaseGameScreen
         else if (StackTarget == SurviveTarget)
         {
             survivors.Add(survivorDragged);
-            //TODO Trigger Field Event
+            CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
+            SurvivorEvent_Field(character);
         }
         else if (destinations.Exists(d => d.Card == StackTarget))
         {
             LocationWrapper destination = Game.locationsByCardId[StackTarget.GetInstanceId()];
             CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
-            Move(character, destination);
+            SurvivorEvent_Move(character, destination);
         }
         else
         {
@@ -311,5 +298,37 @@ public class ExplorationScreen : BaseGameScreen
     {
         List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
         CardManager.StackCards(cards, CONSTS.SCREEN_CENTER);
+    }
+
+    private void SurvivorEvent_Field(CharacterWrapper character)
+    {
+        if (character.CurrentActionPoint >= Location.Model.FieldActionCost)
+        {
+            PlayFieldScreen fieldScreen = new PlayFieldScreen() 
+            {
+                Character = character,
+                Game = Game
+            };
+            AddChild(fieldScreen);
+        }
+        else
+        {
+            StackSurvivors();
+        }
+    }
+
+    public void SurvivorEvent_Move(CharacterWrapper character, LocationWrapper destination)
+    {
+        if (character.CurrentActionPoint >= destination.Model.TravelCost)
+        {
+            character.CurrentActionPoint -= destination.Model.TravelCost;
+            character.WorldPosition = destination.WorldPosition.Coord;
+            Manager.MoveToHex(destination.WorldPosition.Coord);
+        }
+        else
+        {
+            survivors.Add(survivorDragged);
+            StackSurvivors();
+        }
     }
 }

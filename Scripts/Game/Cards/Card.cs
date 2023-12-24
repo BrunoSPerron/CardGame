@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 public class Card : Area2D
 {
@@ -74,6 +75,8 @@ public class Card : Area2D
             return front;
         }
     }
+
+    public IconCounter CostCounter => Front.GetNode<IconCounter>("ActionCostCounter");
 
     private readonly List<CardAnimationBase> animations = new List<CardAnimationBase>();
 
