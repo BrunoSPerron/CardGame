@@ -3,12 +3,13 @@
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Scripts\Game\Models\GameModels\**" />
+    <EmbeddedResource Remove="Scripts\Game\Models\GameModels\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime.Caching" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\Game\Models\GameModels\" />
   </ItemGroup>
 </Project>

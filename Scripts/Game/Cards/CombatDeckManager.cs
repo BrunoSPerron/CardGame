@@ -15,7 +15,7 @@ public class CombatDeckManager : BaseDeckManager
         if (Model.BaseDeck == null || Model.BaseDeck.Length < 1)
         {
             Model.CombatDeck = DeckFactory.CreateNewCombatDeck();
-            GD.Print("Combat deck wrapper error: No field deck. Using bad field deck");
+            GD.PrintErr("Combat deck wrapper error: No field deck. Using bad field deck");
         }
 
         CombatCardWrapper[] wrappedDeck = new CombatCardWrapper[Model.BaseDeck.Length];

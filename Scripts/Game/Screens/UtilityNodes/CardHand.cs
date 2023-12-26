@@ -23,7 +23,6 @@ public class CardHand: Node2D
     {
         foreach (BaseCardWrapper cardWrapper in cardWrappers)
         {
-            GD.Print(cardWrapper);
             Cards.Add(cardWrapper);
             AddChild(cardWrapper.Card);
         }

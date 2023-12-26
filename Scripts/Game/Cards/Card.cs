@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 
 public class Card : Area2D
 {
@@ -174,6 +175,11 @@ public class Card : Area2D
             IsFaceDown = !IsFaceDown;
             animations.Add(new CardFlipToTarget(this));
         }
+    }
+
+    public string GetLabel()
+    {
+        return Front.GetNode<PixelText>("CardTitle").Value;
     }
 
     public Vector2 GetSize()

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*
- * IMPORTANT REMINDER:
+ * REMINDER:
  *   Use `Card.BaseZIndex = value` to change a card's ZIndex from here.
  *   Using the usual ZIndex attribute calls `OnCardZIndexModified`. This will most
  *     likely result in an infinite loop or unexpected behavior.
@@ -96,7 +96,7 @@ public static class CardManager
         for (int i = 0; i < amount; i++)
         {
             Card card = cards[i];
-            card.ZIndex = CONSTS.MAX_Z_INDEX; // TODO get higher from the cards instead
+            card.ZIndex = CONSTS.MAX_Z_INDEX;
             card.MoveToPosition(
                 position + new Vector2(
                     amount * 4 / 2 - 4 * i,

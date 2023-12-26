@@ -80,7 +80,7 @@ public class ExplorationScreen : BaseGameScreen
         }
         else
         {
-            DealOnBoard(location.Card, position, 0, true);
+            DealOnBoard(location.Card, position, true);
         }
     }
 
@@ -89,7 +89,7 @@ public class ExplorationScreen : BaseGameScreen
         ExploreTarget = CardFactory.CreateExploreCard();
 
         //TODO Placement based on window size
-        DealOnBoard(ExploreTarget, new Vector2(450, 200), 0, true);
+        DealOnBoard(ExploreTarget, new Vector2(450, 200), true);
         ExploreTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
     }
 
@@ -103,6 +103,7 @@ public class ExplorationScreen : BaseGameScreen
         }
         else
         {
+            GD.Print(CONSTS.SCREEN_SIZE.Serialize());
             DealOnBoard(Location.Card, CONSTS.SCREEN_CENTER);
         }
     }
@@ -110,7 +111,7 @@ public class ExplorationScreen : BaseGameScreen
     private void AddFieldOption()
     {
         SurviveTarget = CardFactory.CreateSurviveCard();
-        DealOnBoard(SurviveTarget, new Vector2(226, 200), 0, true);
+        DealOnBoard(SurviveTarget, new Vector2(226, 200), true);
         SurviveTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
     }
 

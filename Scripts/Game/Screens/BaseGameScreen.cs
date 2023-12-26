@@ -30,10 +30,7 @@ public abstract class BaseGameScreen : Node2D
         return button;
     }
 
-#pragma warning disable IDE0060
-    //TODO zIndex logic ?
-    public void DealOnBoard(
-        Card card, Vector2 target, int zIndex = -1, Boolean priority = false)
+    public void DealOnBoard(Card card, Vector2 target, Boolean priority = false)
     {
         card.MoveToPosition(target);
         if (cardDealer == null || cardDealer.IsQueuedForDeletion())
