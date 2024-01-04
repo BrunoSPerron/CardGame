@@ -39,7 +39,7 @@ public class Game : Node2D
         LocationWrapper wrapper = null;
         if (location != null)
         {
-            wrapper = CardFactory.CreateCardFromLocation(State.Scenario, hexLocation);
+            wrapper = CardFactory.CreateCardFromLocation(State.Mod, hexLocation);
             Locations.Add(wrapper);
             ulong instanceId = wrapper.Card.GetInstanceId();
             if (!locationsByCardId.ContainsKey(instanceId))
@@ -72,9 +72,9 @@ public class Game : Node2D
         cardCleaner.AddCardToClean(card, preserveCard);
     }
 
-    public bool RemoveCardFromCleaner(Card card)
+    public CardCleanResponse RemoveFromCleaner(Card card)
     {
-        return cardCleaner?.RemoveCard(card) ?? false;
+        return cardCleaner?.RemoveCard(card) ?? CardCleanResponse.NONE;
     }
 
     public HexLink? GetHexDirection(LocationWrapper from, LocationWrapper to)
@@ -91,7 +91,7 @@ public class Game : Node2D
         else if (offset.x == 0)
         {
             if (offset.y == 1)
-                return HexLink.TOPLEFT;
+                return HexLink.TOPLEFT; 
             if (offset.y == -1)
                 return HexLink.BOTTOMRIGHT;
         }
@@ -110,8 +110,9 @@ public class Game : Node2D
     {
         State = new GameStateModel
         {
+            Mod = mod,
+            Scenario = scenario,
             Turn = 0,
-            Scenario = mod
         };
         OutsetModel outsetInfo = JsonLoader.GetOnsetModel(mod, scenario);
 
@@ -125,7 +126,7 @@ public class Game : Node2D
         foreach (string characterCreatorLogic in outsetInfo.StartingCharacters)
         {
             CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(
-                State.Scenario, characterCreatorLogic);
+                State.Mod, characterCreatorLogic);
             CharacterModel character = CharacterCreator.CreateFromModel(model);
             character.CurrentActionPoint = Mathf.Clamp(
                 character.CurrentActionPoint, 1, character.ActionPoint);

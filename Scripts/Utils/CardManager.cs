@@ -49,7 +49,6 @@ public static class CardManager
             Card card = item["collider"] as Card;
             if ((topCard?.ZIndex ?? -4097) < card.ZIndex)
                 topCard = card;
-
         }
         return topCard;
     }

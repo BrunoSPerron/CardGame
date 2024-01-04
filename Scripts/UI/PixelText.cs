@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 //Simple bitmap text simulacrum expecting a specific texture.
-//TODO Replace with bitmap font (Supported in Godot 4)
+//TODO improve this
 public class PixelText : Node2D
 {
     [Export]
@@ -23,7 +23,7 @@ public class PixelText : Node2D
             if (value != this.value)
             {
                 this.value = value;
-                SetText(value);
+                SetLabel(value);
             }
         }
     }
@@ -42,7 +42,11 @@ public class PixelText : Node2D
         }
 
         int textureOffsetX;
-        if (c > 96)
+        if (c == 8592)
+            textureOffsetX = 36;
+        else if (c == 8594)
+            textureOffsetX = 37;
+        else if (c > 96)
             textureOffsetX = c - 97;
         else if (c < 65)
             textureOffsetX = c - 22;
@@ -95,7 +99,7 @@ public class PixelText : Node2D
     }
 
     /// <param name="text">No sanitization</param>
-    private void SetText(string text)
+    public void SetLabel(string text)
     {
         Clear();
         foreach (char c in text)

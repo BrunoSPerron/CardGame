@@ -3,6 +3,7 @@
     public new string Name = "Punch";
     public new string ImageFileName = "punch.png";
 
-    public CombatAction Type = CombatAction.ATTACK;
+    public int Cost = 3;
     public int FlatDamageModifier = 0;
+    public CombatAction Type = CombatAction.ATTACK;
 }

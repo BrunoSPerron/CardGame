@@ -80,7 +80,7 @@ public static class JsonLoader
     // ===== helper class =====
 
 
-    private static class GetOfType<T>
+    public static class GetOfType<T>
     {
         //TODO Manage cache
         private static readonly Dictionary<string, T> cache

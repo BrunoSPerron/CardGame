@@ -51,3 +51,10 @@ public enum PressableState
     OVER = 1,
     DOWN = 2
 }
+
+public enum CardCleanResponse
+{
+    NONE,
+    RECENT,
+    OLD
+}

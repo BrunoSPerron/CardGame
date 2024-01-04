@@ -3,13 +3,13 @@
 
 public class FieldCardWrapper : BaseCardWrapper
 {
-    private FieldCardModel info;
-    public FieldCardModel Info
+    private FieldCardModel model;
+    public FieldCardModel Model
     {
-        get => info;
+        get => model;
         private set
         {
-            info = value;
+            model = value;
             Card.SetLabel(value.Name);
         }
     }
@@ -17,6 +17,6 @@ public class FieldCardWrapper : BaseCardWrapper
     public FieldCardWrapper(Card card, FieldCardModel cardInfo)
     {
         Card = card;
-        Info = cardInfo;
+        Model = cardInfo;
     }
 }

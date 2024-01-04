@@ -41,7 +41,7 @@ public class CardCleaner : Position2D
         }
     }
 
-    public bool RemoveCard(Card card)
+    public CardCleanResponse RemoveCard(Card card)
     {
         card.ClearAnimations();
         int index = cardsToClean.FindIndex(c => c.card.GetInstanceId() == card.GetInstanceId());
@@ -49,7 +49,7 @@ public class CardCleaner : Position2D
         {
             RemoveChild(cardsToClean[index].card);
             cardsToClean.RemoveAt(index);
-            return true;
+            return CardCleanResponse.RECENT;
         }
 
         index = cardsBeingCleaned.FindIndex(c => c.card == card);
@@ -57,9 +57,9 @@ public class CardCleaner : Position2D
         {
             RemoveChild(cardsBeingCleaned[index].card);
             cardsBeingCleaned.RemoveAt(index);
-            return true;
+            return CardCleanResponse.OLD;
         }
-        return false;
+        return CardCleanResponse.NONE;
     }
 
     private void UpdateCleaning()

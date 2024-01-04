@@ -8,13 +8,14 @@ public class ExplorationScreen : BaseGameScreen
     private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
     private readonly List<LocationWrapper> destinations = new List<LocationWrapper>();
 
-    private CharacterWrapper survivorDragged;
-
     public Card ExploreTarget;
     public Card SurviveTarget;
 
     public LocationWrapper Location;
     public ExplorationManager Manager;
+
+    private BaseGameScreen eventScreen;
+    private CharacterWrapper survivorDragged;
 
     public override void _Ready()
     {
@@ -72,7 +73,7 @@ public class ExplorationScreen : BaseGameScreen
     private void AddDestination(LocationWrapper location, Vector2 position)
     {
         destinations.Add(location);
-        if (Game.RemoveCardFromCleaner(location.Card))
+        if (Game.RemoveFromCleaner(location.Card) == CardCleanResponse.RECENT)
         {
             AddChild(location.Card);
             location.Card.LerpDeltaMultiplier = 3;
@@ -95,7 +96,7 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddLocation()
     {
-        if (Game.RemoveCardFromCleaner(Location.Card))
+        if (Game.RemoveFromCleaner(Location.Card) == CardCleanResponse.RECENT)
         {
             AddChild(Location.Card);
             Location.Card.LerpDeltaMultiplier = 3;
@@ -103,7 +104,6 @@ public class ExplorationScreen : BaseGameScreen
         }
         else
         {
-            GD.Print(CONSTS.SCREEN_SIZE.Serialize());
             DealOnBoard(Location.Card, CONSTS.SCREEN_CENTER);
         }
     }
@@ -124,7 +124,7 @@ public class ExplorationScreen : BaseGameScreen
         {
             if (survivor.WorldPosition == Location.WorldPosition.Coord)
             {
-                if (Game.RemoveCardFromCleaner(survivor.Card))
+                if (Game.RemoveFromCleaner(survivor.Card) == CardCleanResponse.RECENT)
                 {
                     preDealtSurvivors.Add(survivor);
                 }
@@ -219,16 +219,71 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void DisableScreen()
     {
+        float alpha = 0.25f;
         base.DisableScreen();
+        foreach (LocationWrapper destination in destinations)
+        {
+            destination.Card.IsStackTarget = false;
+            destination.Card.SetAlpha(alpha);
+        }
+
         foreach (CharacterWrapper character in survivors)
+        {
             character.Card.IsDraggable = false;
+            character.Card.SetAlpha(alpha);
+        }
+
+        if (SurviveTarget != null)
+        {
+            SurviveTarget.IsStackTarget = false;
+            SurviveTarget.SetAlpha(alpha);
+        }
+
+        if (ExploreTarget != null)
+        {
+            ExploreTarget.IsStackTarget = false;
+            ExploreTarget.SetAlpha(alpha);
+        }
+
+        if (Location != null)
+        {
+            Location.Card.IsStackTarget = false;
+            Location.Card.SetAlpha(alpha);
+        }
     }
 
     public override void EnableScreen()
     {
         base.EnableScreen();
+        foreach (LocationWrapper destination in destinations)
+        {
+            destination.Card.IsStackTarget = true;
+            destination.Card.SetAlpha(1f);
+        }
+
         foreach (CharacterWrapper character in survivors)
+        {
             character.Card.IsDraggable = true;
+            character.Card.SetAlpha(1f);
+        }
+
+        if (SurviveTarget != null)
+        {
+            SurviveTarget.IsStackTarget = true;
+            SurviveTarget.SetAlpha(1f);
+        }
+
+        if (ExploreTarget != null)
+        {
+            ExploreTarget.IsStackTarget = true;
+            ExploreTarget.SetAlpha(1f);
+        }
+
+        if (Location != null)
+        {
+            Location.Card.IsStackTarget = true;
+            Location.Card.SetAlpha(1f);
+        }
     }
 
     private Vector2 GetDestinationScreenPosition(HexLink link)
@@ -305,17 +360,27 @@ public class ExplorationScreen : BaseGameScreen
     {
         if (character.CurrentActionPoint >= Location.Model.FieldActionCost)
         {
-            PlayFieldScreen fieldScreen = new PlayFieldScreen() 
+            character.CurrentActionPoint -= Location.Model.FieldActionCost;
+            DisableScreen();
+            eventScreen = new PlayFieldScreen() 
             {
                 Character = character,
+                Parent = this,
                 Game = Game
             };
-            AddChild(fieldScreen);
+            AddChild(eventScreen);
         }
         else
         {
             StackSurvivors();
         }
+    }
+
+    public void SurvivorEvent_Field_End()
+    {
+        eventScreen.Destroy();
+        EnableScreen();
+        StackSurvivors();
     }
 
     public void SurvivorEvent_Move(CharacterWrapper character, LocationWrapper destination)

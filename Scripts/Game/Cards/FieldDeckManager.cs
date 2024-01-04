@@ -55,6 +55,25 @@ public class FieldDeckManager : BaseDeckManager
         return wrapper;
     }
 
+    public FieldCardWrapper[] DrawMultiple(int amount)
+    {
+        FieldCardWrapper[] cards = new FieldCardWrapper[amount];
+        int i = 0;
+        while (i < amount)
+        {
+            if (Deck.Count == 0)
+                Shuffle();
+            cards[i] = deck[0];
+            deck.RemoveAt(0);
+            i++;
+        }
+
+        foreach (FieldCardWrapper card in cards)
+            DiscardPile.Add(card);
+
+        return cards;
+    }
+
     public void GenerateDeck()
     {
         if (Model.BaseDeck == null || Model.BaseDeck.Length < 1)
@@ -73,25 +92,6 @@ public class FieldDeckManager : BaseDeckManager
         }
         deck = wrappedDeck.ToList();
         discardPile = new List<FieldCardWrapper>();
-    }
-
-    public FieldCardWrapper[] MultiDraw(int amount)
-    {
-        FieldCardWrapper[] cards = new FieldCardWrapper[amount];
-        int i = 0;
-        while (i < amount)
-        {
-            if (Deck.Count == 0)
-                Shuffle();
-            cards[i] = deck[0];
-            deck.RemoveAt(0);
-            i++;
-        }
-
-        foreach (FieldCardWrapper card in cards)
-            DiscardPile.Add(card);
-
-        return cards;
     }
 
     public void Shuffle()

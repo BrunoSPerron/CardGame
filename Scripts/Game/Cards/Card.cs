@@ -102,7 +102,7 @@ public class Card : Area2D
         }
 
 
-        // TODO - Fix the problem with FlipToTarget cancel to replace this DuctTape
+        // TODO - Fix the problem with FlipToTarget cancel and remove this DuctTape
         Front.Scale = Vector2.One;
         Back.Scale = Vector2.One;
     }
@@ -124,6 +124,16 @@ public class Card : Area2D
     {
         ProcessMovement(delta);
         ProcessAnimation(delta);
+    }
+
+    public string Serialize()
+    {
+        return "Serialized Card name: "
+            + Front.GetNode<PixelText>("CardTitle").Value
+            + System.Environment.NewLine
+            + " - Draggable: " + IsDraggable + System.Environment.NewLine
+            + " - Stack Target: " + IsStackTarget + System.Environment.NewLine
+            + " - Face Down: " + IsFaceDown + System.Environment.NewLine;
     }
 
     // ===== Methods unique to this class =====
@@ -219,6 +229,11 @@ public class Card : Area2D
                 IsMoving = false;
             GlobalPosition = newPos;
         }
+    }
+
+    public void SetAlpha(float value)
+    {
+        Modulate = new Color(Modulate.r, Modulate.g, Modulate.b, value);
     }
 
     public void SetLabel(string name)

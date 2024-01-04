@@ -10,7 +10,10 @@ public class CardHand: Node2D
     public int targetXOffset = 50;
     public int cardWidth = 87;
 
-    private readonly List<BaseCardWrapper> Cards = new List<BaseCardWrapper>();
+    public readonly List<BaseCardWrapper> Cards = new List<BaseCardWrapper>();
+    public int Size => Cards.Count;
+
+    public Game Game;
 
     public void AddCard(BaseCardWrapper cardWrapper)
     {
@@ -38,6 +41,12 @@ public class CardHand: Node2D
         return cardsRemoved;
     }
 
+    public void RemoveCard(FieldCardWrapper card)
+    {
+        Cards.Remove(card);
+        UpdateCardsPositions();
+    }
+
     public void UpdateCardsPositions()
     {
         float offsetBetweenCards = targetXOffset;
@@ -52,5 +61,13 @@ public class CardHand: Node2D
         for (int i = 0; i < handSize; i++)
             Cards[i].Card.MoveToPosition(new Vector2(
                 originX + i * offsetBetweenCards, Position.y));
+    }
+
+    internal void Destroy()
+    {
+        foreach (BaseCardWrapper card in Cards)
+        {
+            Game.CleanCard(card.Card);
+        }
     }
 }

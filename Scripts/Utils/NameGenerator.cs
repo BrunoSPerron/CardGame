@@ -4,12 +4,9 @@ using System.Collections.Generic;
 
 public static class NameGenerator
 {
-    //private static bool isInitialized = Initialize();
-
     private const int averageNameLength = 6;
     private const int nameLengthVariance = 4;
 
-#pragma warning disable IDE0044 // "Add readonly modifier"
     private static Dictionary<char, Dictionary<char, int>> maleCharWeights;
     private static Dictionary<char, Dictionary<char, int>> MaleCharWeights
     {
@@ -30,7 +27,7 @@ public static class NameGenerator
             return femaleCharWeights;
         }
     }
-#pragma warning restore IDE0044 // "Add readonly modifier"
+
     private static readonly Random rand = new Random();
 
     private static bool Initialize()
@@ -111,9 +108,6 @@ public static class NameGenerator
 
     private static char GetRandomCharAfter(char currentChar, bool forMaleName)
     {
-        char c;
-        c = '-';
-
         int TotalWeight = 0;
         foreach (KeyValuePair<char, int> kvp in forMaleName
             ? MaleCharWeights[currentChar]
@@ -126,10 +120,9 @@ public static class NameGenerator
             : FemaleCharWeights[currentChar])
         {
             rollValue -= kvp.Value;
-            if (rollValue < 0 && c == '-')
-                c = kvp.Key;
+            if (rollValue < 0)
+                return kvp.Key;
         }
-
-        return c;
+        throw new Exception("Name Generator error");
     }
 }

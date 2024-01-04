@@ -1,31 +1,83 @@
 ﻿using Godot;
 using System;
+using System.Collections.Generic;
 
 public class PlayFieldScreen : BaseGameScreen
 {
-    private CardHand cardHand;
-
+    public FieldCardWrapper CardBeingPaidFor = null;
+    public readonly List<FieldCardWrapper> CardsUsedAsPayment = new List<FieldCardWrapper>();
     public CharacterWrapper Character;
-
     public FieldDeckManager Deck;
+    public ExplorationScreen Parent;
+    public CardHand Hand;
+
+    private Card playTarget;
+    private readonly Dictionary<ulong, FieldCardWrapper> wrapperByCardIds
+        = new Dictionary<ulong, FieldCardWrapper>();
 
     public override void _Ready()
     {
-        cardHand = new CardHand();
+        Hand = new CardHand()
+        {
+            Game = Game,
+        };
         Deck = Character.FieldDeck;
-        AddChild(cardHand);
-        cardHand.Position = new Vector2(CONSTS.SCREEN_CENTER.x, CONSTS.SCREEN_SIZE.y - 25);
+        AddChild(Hand);
+        Hand.Position = new Vector2(CONSTS.SCREEN_CENTER.x, CONSTS.SCREEN_SIZE.y - 25);
+
+        playTarget = CardFactory.CreatePlayTarget();
+        AddChild(playTarget);
         DrawNewHand();
     }
 
     private void DrawNewHand()
     {
-        cardHand.DiscardHand();
-        cardHand.AddCards(Deck.MultiDraw(5));
+        foreach (BaseCardWrapper wrapper in Hand.Cards)
+            wrapper.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
+        Hand.DiscardHand();
+        FieldCardWrapper[] cards = Deck.DrawMultiple(5);
+        foreach (FieldCardWrapper wrapper in cards)
+        {
+            wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
+            wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
+        }
+
+        Hand.AddCards(cards);
+    }
+
+    public void OnCarddragEnd(Card OriginCard, Card StackTarget)
+    {
+        if (StackTarget == null)
+            return;
+
+        if (StackTarget == playTarget)
+        {
+            FieldCardWrapper wrapper = wrapperByCardIds[OriginCard.GetInstanceId()];
+            if (CardBeingPaidFor == null && wrapper.Model.Cost < Hand.Size)
+            {
+                CardBeingPaidFor = wrapper;
+                Hand.RemoveCard(CardBeingPaidFor);
+                CardBeingPaidFor.Card.MoveToPosition(new Vector2(200, 150));
+            }
+            else
+            {
+                Hand.RemoveCard(wrapper);
+                CardsUsedAsPayment.Add(wrapper);
+                wrapper.Card.MoveToPosition(new Vector2(450, 200));
+                if (CardsUsedAsPayment.Count >= CardBeingPaidFor.Model.Cost)
+                    PlayCardBeingPaid();
+            }
+        }
+    }
+
+    private void PlayCardBeingPaid()
+    {
+        Hand.Destroy();
+        Parent.SurvivorEvent_Field_End();
     }
 
     public override void Destroy()
     {
-        // TODO
+        QueueFree();
     }
 }

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.IO;
 
 
 public static class CardFactory
@@ -53,12 +54,6 @@ public static class CardFactory
         }
     }
 
-    public static Card GetCard()
-    {
-        Card card = CardScene.Instance<Card>();
-        return card;
-    }
-
     public static CharacterWrapper CreateCardFromCharacter(CharacterModel character)
     {
         Card card = CardScene.Instance<Card>();
@@ -84,7 +79,7 @@ public static class CardFactory
     }
 
     public static LocationWrapper CreateCardFromLocation(
-        string scenario, WorldHexModel location)
+        string mod, WorldHexModel location)
     {
         if (location.Location.ImageFileName == null)
             return CreateDefaultWrappedLocation();
@@ -95,7 +90,7 @@ public static class CardFactory
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, location.Location.TravelCost);
         string path = System.IO.Path.Combine(PATHS.ModFolderPath,
-            scenario + "\\Images\\Cards\\Full\\" + location.Location.ImageFileName);
+            mod + "\\Images\\Cards\\Full\\" + location.Location.ImageFileName);
         if (System.IO.File.Exists(path))
         {
             card.Front.GetNode<Sprite>("Image").Texture
@@ -115,21 +110,35 @@ public static class CardFactory
     {
         Card card = CardScene.Instance<Card>();
 
-        string path = "res://Art/Cards/Images/CombatDeck/" + model.ImageFileName;
-        if (ResourceLoader.Exists(path))
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>("res://Assets/UI/PixelText.tscn");
+        PixelText cost = pixelText.Instance<PixelText>();
+        cost.Name = "CardCostLabel";
+        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
+        cost.SetLabel(model.Cost.ToString());
+        card.Front.AddChild(cost);
+
+        string texturePath = "res://Art/Cards/Images/CombatDeck/" + model.ImageFileName;
+        if (ResourceLoader.Exists(texturePath))
             card.Front.GetNode<Sprite>(
-                "Image").Texture = ResourceLoader.Load<Texture>(path);
+                "Image").Texture = ResourceLoader.Load<Texture>(texturePath);
         return new CombatCardWrapper(card, model);
     }
 
     public static FieldCardWrapper CreateCardFromFieldCardModel(FieldCardModel model)
     {
         Card card = CardScene.Instance<Card>();
-
-        string path = "res://Art/Cards/Images/FieldDeck/" + model.ImageFileName;
-        if (ResourceLoader.Exists(path))
+        
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>("res://Assets/UI/PixelText.tscn");
+        PixelText cost = pixelText.Instance<PixelText>();
+        cost.Name = "CardCostLabel";
+        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
+        cost.SetLabel(model.Cost.ToString());
+        card.Front.AddChild(cost);
+        
+        string texturePath = "res://Art/Cards/Images/FieldDeck/" + model.ImageFileName;
+        if (ResourceLoader.Exists(texturePath))
             card.Front.GetNode<Sprite>(
-                "Image").Texture = ResourceLoader.Load<Texture>(path);
+                "Image").Texture = ResourceLoader.Load<Texture>(texturePath);
         return new FieldCardWrapper(card, model);
     }
 
@@ -172,6 +181,30 @@ public static class CardFactory
         string path = "res://Art/Cards/Images/Actions/Explore.png";
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
         AddActionCostCounter(card, 1);
+        return card;
+    }
+
+    public static Card CreatePlayTarget()
+    {
+        Card card = CardScene.Instance<Card>();
+
+        card.Front.GetNode("Image").QueueFree();
+        Sprite background = card.Front.GetNode<Sprite>("Background");
+        background.Texture = ResourceLoader.Load<Texture>("res://Art/hoverable_color.png");
+        background.Scale = CONSTS.SCREEN_SIZE;
+        background.RegionRect = new Rect2(Vector2.Zero, Vector2.One);
+
+        CollisionShape2D collider = card.GetNode<CollisionShape2D>("CollisionShape2D");
+        collider.Shape = new RectangleShape2D()
+        {
+            Extents = new Vector2(CONSTS.SCREEN_CENTER.x, CONSTS.SCREEN_CENTER.y - 70),
+        };
+        collider.Position = new Vector2 (0f, -70f);
+        card.Position = CONSTS.SCREEN_CENTER;
+        card.MoveToPosition(CONSTS.SCREEN_CENTER);
+
+        card.IsStackTarget = true;
+        card.IsDraggable = false;
         return card;
     }
 
