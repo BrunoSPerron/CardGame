@@ -147,6 +147,8 @@ public class Card : Area2D
 
     public void Flip(float animationTimeInSec = 0.4f)
     {
+        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>("res://Audio/Fx/cardFlip.mp3");
+        AudioHelper.PlaySoundOnNode(this, sound, .7f);
         IsFaceDown = !IsFaceDown;
         bool isFlippingAlready = false;
         foreach (CardAnimationBase animation in animations)
@@ -182,6 +184,8 @@ public class Card : Area2D
         }
         else
         {
+            AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>("res://Audio/Fx/cardFlip.mp3");
+            AudioHelper.PlaySoundOnNode(this, sound, .7f);
             IsFaceDown = !IsFaceDown;
             animations.Add(new CardFlipToTarget(this));
         }

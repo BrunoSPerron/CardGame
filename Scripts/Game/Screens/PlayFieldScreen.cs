@@ -9,7 +9,7 @@ public class PlayFieldScreen : BaseGameScreen
     public CharacterWrapper Character;
     public FieldDeckManager Deck;
     public ExplorationScreen Parent;
-    public CardHand Hand;
+    public Hand Hand;
 
     private Card playTarget;
     private readonly Dictionary<ulong, FieldCardWrapper> wrapperByCardIds
@@ -17,7 +17,7 @@ public class PlayFieldScreen : BaseGameScreen
 
     public override void _Ready()
     {
-        Hand = new CardHand()
+        Hand = new Hand()
         {
             Game = Game,
         };
@@ -57,12 +57,16 @@ public class PlayFieldScreen : BaseGameScreen
             {
                 CardBeingPaidFor = wrapper;
                 Hand.RemoveCard(CardBeingPaidFor);
+                CardBeingPaidFor.Card.Position += Hand.Position;
+                AddChild(CardBeingPaidFor.Card);
                 CardBeingPaidFor.Card.MoveToPosition(new Vector2(200, 150));
             }
             else
             {
                 Hand.RemoveCard(wrapper);
                 CardsUsedAsPayment.Add(wrapper);
+                wrapper.Card.Position += Hand.Position;
+                AddChild(wrapper.Card);
                 wrapper.Card.MoveToPosition(new Vector2(450, 200));
                 if (CardsUsedAsPayment.Count >= CardBeingPaidFor.Model.Cost)
                     PlayCardBeingPaid();
@@ -72,12 +76,16 @@ public class PlayFieldScreen : BaseGameScreen
 
     private void PlayCardBeingPaid()
     {
-        Hand.Destroy();
         Parent.SurvivorEvent_Field_End();
     }
 
     public override void Destroy()
     {
+        if (CardBeingPaidFor != null)
+            RemoveChild(CardBeingPaidFor.Card);
+        foreach (FieldCardWrapper wrapper in CardsUsedAsPayment)
+            RemoveChild(wrapper.Card);
+        Hand.Destroy();
         QueueFree();
     }
 }
