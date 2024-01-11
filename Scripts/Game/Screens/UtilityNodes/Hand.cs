@@ -42,7 +42,7 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         return cardsRemoved;
     }
 
-    public void RemoveCard(FieldCardWrapper wrapper)
+    public void RemoveCard(BaseCardWrapper wrapper)
     {
         Cards.Remove(wrapper);
         RemoveChild(wrapper.Card);

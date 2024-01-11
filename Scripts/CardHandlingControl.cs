@@ -103,16 +103,23 @@ public class CardHandlingControl : Node
         cardBeingDragged.EmitSignal("OnDragStart", cardBeingDragged);
     }
 
-    private static void StopDragging()
+    public static void StopDragging(bool emitSignal = true)
     {
-        cardBeingDragged.MoveToPosition(cardBeingDraggedOrigin);
-        cardBeingDragged.LerpDeltaMultiplier = 3.5f;
-        cardBeingDragged.IsBeingDragged = false;
-        cardBeingDragged.EmitSignal("OnDragEnd", cardBeingDragged, currentStackTarget);
-        cardBeingDragged = null;
-        CardManager.RemoveFocus();
-        isDragging = false;
-        ClearStackTargets();
+        if (isDragging)
+        {
+            cardBeingDragged.MoveToPosition(cardBeingDraggedOrigin);
+            cardBeingDragged.LerpDeltaMultiplier = 3.5f;
+            cardBeingDragged.IsBeingDragged = false;
+            if (emitSignal)
+            {
+                cardBeingDragged.EmitSignal(
+                    "OnDragEnd", cardBeingDragged, currentStackTarget);
+            }
+            cardBeingDragged = null;
+            CardManager.RemoveFocus();
+            isDragging = false;
+            ClearStackTargets();
+        }
     }
 
     internal static void OnDraggedCardOverlap(Card target)
