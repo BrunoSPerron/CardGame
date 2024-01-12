@@ -1,5 +1,7 @@
 ﻿using Godot;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public static class DeckFactory
 {
@@ -29,12 +31,12 @@ public static class DeckFactory
         return new FieldDeckManager(deckInfo);
     }
 
-    public static FieldCardModel[] CreateNewFieldDeck(int deckSize = 20)
+    public static List<FieldCardModel> CreateNewFieldDeck(int deckSize = 20)
     {
         FieldCardModel[] fieldDeck = new FieldCardModel[deckSize];
         for (int i = 0; i < deckSize; i++)
             fieldDeck[i] = CreateDefaultFieldCard();
-        return fieldDeck;
+        return fieldDeck.ToList();
     }
 
     private static CombatCardModel CreateDefaultCombatCard()

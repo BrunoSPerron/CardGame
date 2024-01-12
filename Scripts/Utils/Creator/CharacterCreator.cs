@@ -37,7 +37,7 @@ public static class CharacterCreator
             {
                 GD.PrintErr(
                     "Character creator error: Invalid instruction from json. \"" +
-                    instruction + "\"");
+                    instruction + "\" at: " + model.JsonFilePath);
             }
         }
 
@@ -45,11 +45,13 @@ public static class CharacterCreator
     }
 
 
-    #pragma warning disable IDE1006
+
     // Methods in this class must be public and use lowercase names to be invokable.
     // They must accept a single argument, which is an array of string.
     public class AssemblyLine
     {
+        #pragma warning disable IDE1006
+        #pragma warning disable IDE0060
         public CharacterModel model = new CharacterModel();
 
         /// <param name="args">
@@ -57,22 +59,36 @@ public static class CharacterCreator
         /// </param>
         public void rename(string[] args)
         {
-            string newName = args.Length > 0 ? args[0] : "random";
-            switch (newName)
-            {
-                case "random":
-                    model.Name = NameGenerator.GetRandomName();
-                    break;
-                case "random female":
-                    model.Name = NameGenerator.GetRandomFemaleName();
-                    break;
-                case "random male":
-                    model.Name = NameGenerator.GetRandomMaleName();
-                    break;
-                default:
-                    model.Name = newName;
-                    break;
-            }
+            if (args.Length > 0)
+                model.Name = args[0];
+            else
+                renamerandom(args);
+        }
+
+        public void renamerandom(string[] args)
+        {
+            model.Name = NameGenerator.GetRandomName();
+        }
+
+        public void renamerandomfemale(string[] args)
+        {
+            model.Name = NameGenerator.GetRandomFemaleName();
+        }
+
+        public void renamerandommale(string[] args)
+        {
+            model.Name = NameGenerator.GetRandomMaleName();
+        }
+
+        /// <param name="args">
+        /// 0: FieldDeckCreation FileName
+        /// </param>
+        public void usefielddeck(string[] args)
+        {
+            string fileName = args[0];
+            FieldDeckCreationModel creationModel = JsonLoader.GetFieldDeckCreationModel(
+                model.Mod, fileName);
+            model.FieldDeck = FieldDeckCreator.CreateFromModel(creationModel);
         }
     }
 }

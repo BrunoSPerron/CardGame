@@ -37,6 +37,18 @@ public static class JsonLoader
         return model;
     }
 
+    public static FieldDeckCreationModel GetFieldDeckCreationModel(string modName,
+                                                                   string jsonFileName)
+    {
+        string path = Path.Combine(PATHS.ModFolderPath,
+            modName + "\\Data\\FieldDeckCreation\\" + jsonFileName);
+        FieldDeckCreationModel model =
+            GetOfType<FieldDeckCreationModel>.FromJson(path)
+            ?? new FieldDeckCreationModel();
+        model.Mod = modName;
+        return model;
+    }
+
     public static ItemModel GetItemModel(string modName, string jsonFileName)
     {
         string path = Path.Combine(PATHS.ModFolderPath,
@@ -126,8 +138,7 @@ public static class JsonLoader
                     baseModel.JsonFilePath = pathWithExtension;
 
                 cache.Add(pathWithExtension, deserialized);
-                return deserialized;
-
+                return deserialized.CloneViaJSON();
             }
             return cache[pathWithExtension];
         }

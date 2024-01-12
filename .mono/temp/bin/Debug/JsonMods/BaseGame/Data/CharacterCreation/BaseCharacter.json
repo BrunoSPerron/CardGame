@@ -1,3 +1,6 @@
 {
-	"Instructions": ["rename"]
+	"Instructions": [
+		"rename random",
+		"use field deck -> BaseDeck"
+	]
 }
