@@ -1,7 +1,7 @@
 ﻿public class CombatCardModel : BaseCardModel
 {
     public new string Name = "Punch";
-    public new string ImageFileName = "punch.png";
+    public new string Image = "core__punch";
 
     public int Cost = 3;
     public int FlatDamageModifier = 0;

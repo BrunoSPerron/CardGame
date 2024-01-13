@@ -1,5 +1,5 @@
 {
 	"Name":"forest",
-	"ImageFileName":"forest.png",
+	"Image":"forest",
 	"ExplorationDeck": ["CampDeck"],
 }

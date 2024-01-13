@@ -81,7 +81,7 @@ public static class CardFactory
     public static LocationWrapper CreateCardFromLocation(
         string mod, WorldHexModel location)
     {
-        if (location.Location.ImageFileName == null)
+        if (location.Location.Image == null)
             return CreateDefaultWrappedLocation();
 
         Card card = CardScene.Instance<Card>();
@@ -89,16 +89,17 @@ public static class CardFactory
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, location.Location.TravelCost);
-        string path = System.IO.Path.Combine(PATHS.ModFolderPath,
-            mod + "\\Images\\Cards\\Full\\" + location.Location.ImageFileName);
-        if (System.IO.File.Exists(path))
+        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            mod + "\\Images\\Cards\\Full\\" + location.Location.Image);
+        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+        if (System.IO.File.Exists(pathWithExtension))
         {
             card.Front.GetNode<Sprite>("Image").Texture
-                = TextureLoader.GetImageTextureFromPng(path);
+                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
         }
         else
         {
-            GD.PrintErr("Card factory error: Resource missing at " + path);
+            GD.PrintErr("Card factory error: Resource missing at " + pathWithExtension);
             return CreateDefaultWrappedLocation();
         }
 
@@ -110,35 +111,82 @@ public static class CardFactory
     {
         Card card = CardScene.Instance<Card>();
 
-        PackedScene pixelText = ResourceLoader.Load<PackedScene>("res://Assets/UI/PixelText.tscn");
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/PixelText.tscn");
         PixelText cost = pixelText.Instance<PixelText>();
         cost.Name = "CardCostLabel";
         cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
         cost.SetLabel(model.Cost.ToString());
         card.Front.AddChild(cost);
 
-        string texturePath = "res://Art/Cards/Images/CombatDeck/" + model.ImageFileName;
-        if (ResourceLoader.Exists(texturePath))
-            card.Front.GetNode<Sprite>(
-                "Image").Texture = ResourceLoader.Load<Texture>(texturePath);
+        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            model.Mod + "\\Images\\Cards\\Box\\" + model.Image);
+        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+        if (System.IO.File.Exists(pathWithExtension))
+        {
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+        }
+        else
+        {
+            GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
+        }
         return new CombatCardWrapper(card, model);
     }
 
     public static FieldCardWrapper CreateCardFromFieldCardModel(FieldCardModel model)
     {
+        GD.Print(model.Serialize());
         Card card = CardScene.Instance<Card>();
         
-        PackedScene pixelText = ResourceLoader.Load<PackedScene>("res://Assets/UI/PixelText.tscn");
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/PixelText.tscn");
         PixelText cost = pixelText.Instance<PixelText>();
         cost.Name = "CardCostLabel";
         cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
         cost.SetLabel(model.Cost.ToString());
         card.Front.AddChild(cost);
-        
-        string texturePath = "res://Art/Cards/Images/FieldDeck/" + model.ImageFileName;
-        if (ResourceLoader.Exists(texturePath))
-            card.Front.GetNode<Sprite>(
-                "Image").Texture = ResourceLoader.Load<Texture>(texturePath);
+
+        string mod = model.Mod;
+        string[] splittedImageName = model.Image.Split(
+            new string[] { "__" }, StringSplitOptions.None);
+        string cardName = splittedImageName[0];
+        if (splittedImageName.Length > 1)
+        {
+            mod = splittedImageName[0];
+            cardName = splittedImageName[1];
+
+        }
+
+        if (mod == "core")
+        {
+            switch (cardName)
+            {
+                case "drool":
+                    //TODO default image
+                    break;
+                default:
+                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    break;
+            }
+        }
+        else
+        {
+            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+                mod + "\\Images\\Cards\\Box\\" + model.Image);
+
+            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+            if (System.IO.File.Exists(pathWithExtension))
+            {
+                card.Front.GetNode<Sprite>("Image").Texture
+                    = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+            }
+            else
+            {
+                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
+            }
+        }
+
         return new FieldCardWrapper(card, model);
     }
 
@@ -148,14 +196,14 @@ public static class CardFactory
         {
             Name = "Desolation",
             ID = "core_desolation",
-            ImageFileName = "desolation.png"
+            Image = "desolation.png"
         };
         Card card = CardScene.Instance<Card>();
         card.IsDraggable = false;
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, 0);
-        string path = "res://Art/Cards/Images/Locations/" + location.ImageFileName;
+        string path = "res://Art/Cards/Images/Locations/" + location.Image;
         if (ResourceLoader.Exists(path))
             card.Front.GetNode<Sprite>(
                 "Image").Texture = ResourceLoader.Load<Texture>(path);

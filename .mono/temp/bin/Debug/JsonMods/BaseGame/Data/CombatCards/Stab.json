@@ -1,6 +1,6 @@
 {
 	"Name": "Stab",
-	"ImageFileName": "knife.png",
+	"Image": "knife",
 	"Type": "ATTACK",
 	"FlatDamageModifier": 0
 }

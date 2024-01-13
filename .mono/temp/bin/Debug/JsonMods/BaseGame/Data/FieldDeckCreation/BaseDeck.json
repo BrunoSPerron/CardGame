@@ -1,6 +1,6 @@
 {
 	"Instructions": [
-		"add card -> core__drool / 10",
-		"add card -> sharpen / 10"
+		"add card -> core__drool / 8",
+		"add card -> sharpen / 12"
 	]
 }
