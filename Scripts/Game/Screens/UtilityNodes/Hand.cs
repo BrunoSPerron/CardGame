@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Hand: Node2D, IEnumerable<BaseCardWrapper>
 {
-    // TODO add -> public Vector2Int Pivot = new Vector2Int(0,0);
+    public Vector2 Pivot = new Vector2(0, 800);
 
     public int maxWidth = 800;
     public int targetXOffset = 50;
@@ -44,6 +44,7 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
 
     public void RemoveCard(BaseCardWrapper wrapper)
     {
+        wrapper.Card.Rotation = 0;
         Cards.Remove(wrapper);
         RemoveChild(wrapper.Card);
         UpdateCardsPositions();
@@ -53,16 +54,29 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
     {
         float offsetBetweenCards = targetXOffset;
         int handSize = Cards.Count;
-        float originX = CONSTS.SCREEN_CENTER.x - ((handSize - 1) * targetXOffset) / 2f;
+        float originX = CONSTS.SCREEN_CENTER.x - (handSize - 1) * targetXOffset / 2f;
         if (originX > maxWidth / 2)
         {
             originX = - maxWidth / 2;
             offsetBetweenCards = (maxWidth - cardWidth) / Cards.Count;
         }
 
+        Vector2 globalPivot = Pivot + Position;
+        float pivotMagnitude = (float)Math.Sqrt(Pivot.x * Pivot.x + Pivot.y * Pivot.y);
         for (int i = 0; i < handSize; i++)
-            Cards[i].Card.MoveToPosition(new Vector2(
-                originX + i * offsetBetweenCards, Position.y));
+        {
+            Card card = Cards[i].Card;
+            var target = new Vector2(originX + i * offsetBetweenCards, Position.y);
+
+            float xDiff = target.x - globalPivot.x;
+            float yDiff = target.y - globalPivot.y;
+            double angle = Math.Atan2(yDiff, xDiff);
+            card.Rotation = (float)(angle + Math.PI / 2);
+
+            float x = globalPivot.x + pivotMagnitude * (float)Math.Cos(angle);
+            float y = globalPivot.y + pivotMagnitude * (float)Math.Sin(angle);
+            card.MoveToPosition(new Vector2(x, y));
+        }
     }
 
     public void Destroy()

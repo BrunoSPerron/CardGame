@@ -136,7 +136,6 @@ public static class CardFactory
 
     public static FieldCardWrapper CreateCardFromFieldCardModel(FieldCardModel model)
     {
-        GD.Print(model.Serialize());
         Card card = CardScene.Instance<Card>();
         
         PackedScene pixelText = ResourceLoader.Load<PackedScene>(
@@ -155,7 +154,6 @@ public static class CardFactory
         {
             mod = splittedImageName[0];
             cardName = splittedImageName[1];
-
         }
 
         if (mod == "core")
