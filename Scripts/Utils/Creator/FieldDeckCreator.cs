@@ -45,11 +45,12 @@ public static class FieldDeckCreator
     }
 
 
-    #pragma warning disable IDE1006
     // Methods in this class must be public and use lowercase names to be invokable.
     // They must accept a single argument, which is an array of string.
     public class AssemblyLine
     {
+        #pragma warning disable IDE1006
+
         public FieldDeckModel model = new FieldDeckModel();
 
         /// <param name="args">
@@ -103,7 +104,7 @@ public static class FieldDeckCreator
 
             for (int i = 0; i < amount; i++)
             {
-                model.FieldDeck.Add(card.CloneViaJSON());
+                model.BaseFieldDeck.Add(card.CloneViaJSON());
             }
         }
     }

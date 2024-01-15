@@ -42,6 +42,18 @@ public abstract class CardButtonBase : Area2D
     {
         Sprite sprite = GetNode<Sprite>("Sprite");
         sprite.Texture = texture;
+        sprite.RegionRect = new Rect2(
+            Vector2.Zero, texture.GetSize().x / 3, texture.GetSize().y);
+    }
+
+    public void Disable()
+    {
+        isDisabled = true;
+    }
+
+    public void Enable()
+    {
+        isDisabled = false;
     }
 
     private void SetImage(PressableState state)
@@ -64,7 +76,6 @@ public abstract class CardButtonBase : Area2D
                 sprite.RegionRect = new Rect2(regionPosition, sprite.RegionRect.Size);
             }
         }
-
     }
 
     public void UpdateSpriteRect()

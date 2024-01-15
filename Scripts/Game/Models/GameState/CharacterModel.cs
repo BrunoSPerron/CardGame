@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class CharacterModel : BaseModel
 {
     public string Name = "Survivor";
@@ -12,5 +14,5 @@ public class CharacterModel : BaseModel
     public CombatDeckModel CombatDeck = new CombatDeckModel();
     public FieldDeckModel FieldDeck = new FieldDeckModel();
 
-    public ItemModel[] items = new ItemModel[0];
+    public List<ItemModel> Items = new List<ItemModel>();
 }

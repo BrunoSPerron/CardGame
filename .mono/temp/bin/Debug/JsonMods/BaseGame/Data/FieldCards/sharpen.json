@@ -1,4 +1,7 @@
 {
-	"Name": "sharpen",
+	"Cost": 3,
+	"Effects": ["add item -> PointyStick"],
+	"Name": "Sharpen",
 	"Image": "Knife",
+	"TextBox": "Craft a pointy stick"
 }

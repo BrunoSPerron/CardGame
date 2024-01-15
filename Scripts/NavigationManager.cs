@@ -10,7 +10,6 @@ public class NavigationManager : Node2D
 
     public override void _Ready()
     {
-        //OpenTestScreen();
         StartNewGame();
     }
 

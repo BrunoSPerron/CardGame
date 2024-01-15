@@ -1,8 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Linq;
 
 public class Card : Area2D
 {
@@ -14,6 +12,8 @@ public class Card : Area2D
     public delegate void OnCombatDeckClick(Card card);
     [Signal]
     public delegate void OnFieldDeckClick(Card card);
+    [Signal]
+    public delegate void OnInventoryButtonClick(Card Card);
 
     [Export]
     public bool faceDownOnEnterTree = false;
@@ -113,11 +113,6 @@ public class Card : Area2D
         for (int i = animations.Count - 1; i > 0; i--)
             animations[i].ForceEnd();
         animations.Clear();
-    }
-
-    public override void _Ready()
-    {
-        //Target = GlobalPosition;
     }
 
     public override void _PhysicsProcess(float delta)
@@ -261,6 +256,7 @@ public class Card : Area2D
         if (IsBeingDragged)
             CardHandlingControl.OnDraggedCardOverlap(target as Card);
     }
+
     public void OnCombatDeckClicked()
     {
         EmitSignal("OnCombatDeckClick", this);
@@ -269,6 +265,11 @@ public class Card : Area2D
     public void OnFieldDeckClicked()
     {
         EmitSignal("OnFieldDeckClick", this);
+    }
+
+    public void OnInventoryClicked()
+    {
+        EmitSignal("OnInventoryButtonClick", this);
     }
 
     public void OnOverlapEnd(Area2D target)

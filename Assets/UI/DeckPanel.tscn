@@ -1,12 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://Scripts/Game/Screens/DeckPanel.cs" type="Script" id=1]
-[ext_resource path="res://Assets/UI/Panel.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/UI/PixelText.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/UI/Button.tscn" type="PackedScene" id=4]
 
 [node name="DeckPanel" type="Node2D"]
 script = ExtResource( 1 )
-ButtonScene = ExtResource( 4 )
-PanelScene = ExtResource( 2 )
-PixelTextScene = ExtResource( 3 )

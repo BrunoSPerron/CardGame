@@ -6,15 +6,11 @@ public abstract class BaseGameScreen : Node2D
 {
     public PackedScene ButtonScene => ResourceLoader.Load<PackedScene>(
         "res://Assets/UI/Button.tscn/");
-
-    public PackedScene DeckPanel => ResourceLoader.Load<PackedScene>(
-        "res://Assets/UI/DeckPanel.tscn/");
      
     public Game Game;
 
     private readonly List<Button> buttons = new List<Button>();
     private CardDealer cardDealer;
-    private DeckPanel deckPanel;
 
     public Button AddButton(string label,
                          string callbackMethodName,
@@ -53,19 +49,7 @@ public abstract class BaseGameScreen : Node2D
         }
     }
 
-    public void OpenDeckModificationPanel(BaseDeckManager deck)
-    {
-        DisableScreen();
-        deckPanel = DeckPanel.Instance<DeckPanel>();
-        deckPanel.DeckWrapper = deck;
-        deckPanel.GameScreen = this;
-        AddChild(deckPanel);
-    }
-
-    public void OnDeckPanelClosed()
-    {
-        EnableScreen();
-    }
+    public abstract void Destroy();
 
     public virtual void DisableScreen()
     {
@@ -79,5 +63,35 @@ public abstract class BaseGameScreen : Node2D
             button.Visible = true;
     }
 
-    public abstract void Destroy();
+
+    public void OnDeckPanelClosed()
+    {
+        EnableScreen();
+    }
+
+    public void OnInventoryScreenClosed()
+    {
+        EnableScreen();
+    }
+    public void OpenDeckModificationPanel(BaseDeckManager deck)
+    {
+        DisableScreen();
+        DeckPanel deckPanel = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/DeckPanel.tscn/").Instance<DeckPanel>();
+        deckPanel.DeckWrapper = deck;
+        deckPanel.GameScreen = this;
+        AddChild(deckPanel);
+    }
+
+    public void OpenInventoryScreen(CharacterWrapper wrapper)
+    {
+        DisableScreen();
+
+        InventoryPanel panel = new InventoryPanel
+        {
+            GameScreen = this,
+            CharacterWrapper = wrapper
+        };
+        AddChild(panel);
+    }
 }

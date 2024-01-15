@@ -65,6 +65,9 @@ public class PlayFieldScreen : BaseGameScreen
 
     public void PlayCardBeingPaid()
     {
+        EventPlayer eventPlayer = new EventPlayer();
+        eventPlayer.PlayEvent(Character, CardBeingPaidFor.Model.Effects,
+            CardBeingPaidFor.Model);
         Parent.SurvivorEvent_Field_End();
     }
 

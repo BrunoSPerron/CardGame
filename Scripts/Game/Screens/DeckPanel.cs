@@ -9,13 +9,6 @@ public class DeckPanel : Node2D
     private const float OUTER_PADDING = 5;
     private const int VERTICAL_CARD_SPACING = 30;
 
-    [Export]
-    public PackedScene ButtonScene;
-    [Export]
-    public PackedScene PanelScene;
-    [Export]
-    public PackedScene PixelTextScene;
-
     public BaseDeckManager DeckWrapper;
     public BaseGameScreen GameScreen;
 
@@ -25,7 +18,8 @@ public class DeckPanel : Node2D
 
     public override void _Ready()
     {
-        panel = PanelScene.Instance<Panel>();
+        panel = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/Panel.tscn/").Instance<Panel>();
         float paddingX2 = OUTER_PADDING * 2;
         Vector2 viewSize = GetTree().Root.GetVisibleRect().Size;
         Vector2 halfViewSize = viewSize / 2;
@@ -39,13 +33,15 @@ public class DeckPanel : Node2D
     }
 
     private Button AddButton(string label,
-                             string callbackMethodName,
+                             string callbackMethod,
                              Cardinal anchor = Cardinal.NW,
                              Vector2? offset = null)
     {
-        Button button = ButtonScene.Instance<Button>();
+        Button button = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/Button.tscn/").Instance<Button>();
+
         button.Label = label;
-        button.Connect("OnClick", this, callbackMethodName);
+        button.Connect("OnClick", this, callbackMethod);
         buttons.Add(button);
         AddChild(button);
         button.UIAnchorToScreenBorder(anchor, offset);

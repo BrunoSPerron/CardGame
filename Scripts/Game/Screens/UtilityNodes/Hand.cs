@@ -62,7 +62,7 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         }
 
         Vector2 globalPivot = Pivot + Position;
-        float pivotMagnitude = (float)Math.Sqrt(Pivot.x * Pivot.x + Pivot.y * Pivot.y);
+        float pivotMagnitude = Mathf.Sqrt(Pivot.x * Pivot.x + Pivot.y * Pivot.y);
         for (int i = 0; i < handSize; i++)
         {
             Card card = Cards[i].Card;

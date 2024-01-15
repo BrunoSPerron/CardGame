@@ -47,19 +47,6 @@ public class CharacterWrapper : BaseCardWrapper
 
     // ===== Model related attributes =====
 
-    public int MaxActionPoint
-    {
-        get => model.ActionPoint;
-        set
-        {
-            if (model.ActionPoint != value)
-            {
-                Card.Front.GetNode<IconCounter>("ActionCounter").SetMax(value);
-                model.ActionPoint = value;
-            }
-        }
-    }
-
     public int CurrentActionPoint
     {
         get => model.CurrentActionPoint;
@@ -69,6 +56,33 @@ public class CharacterWrapper : BaseCardWrapper
             {
                 Card.Front.GetNode<IconCounter>("ActionCounter").SetCurrent(value);
                 model.CurrentActionPoint = value;
+            }
+        }
+    }
+
+    public List<ItemModel> Items
+    {
+        get => model.Items;
+        set
+        {
+            model.Items = value;
+            foreach (ItemModel item in model.Items)
+            {
+                AddBonusCardsToFieldDeck(item);
+                AddBonusCardsToCombatDeck(item);
+            }
+        }
+    }
+
+    public int MaxActionPoint
+    {
+        get => model.ActionPoint;
+        set
+        {
+            if (model.ActionPoint != value)
+            {
+                Card.Front.GetNode<IconCounter>("ActionCounter").SetMax(value);
+                model.ActionPoint = value;
             }
         }
     }
@@ -113,6 +127,32 @@ public class CharacterWrapper : BaseCardWrapper
         Model = character;
     }
 
+    private void AddBonusCardsToCombatDeck(ItemModel item)
+    {
+        //TODO
+    }
+
+    private void AddBonusCardsToFieldDeck(ItemModel item)
+    {
+        for (int i = 0; i < item.FieldCards.Length; i++)
+        {
+            string cardName = item.FieldCards[i];
+            FieldCardModel cardModel = JsonLoader.GetFieldCardModel(item.Mod, cardName);
+            model.FieldDeck.BonusCards.Add(new ItemFieldCard()
+            {
+                Card = cardModel,
+                ItemSourceId = item.ID,
+                OverrideCardIndex = 0,
+                Priority = i
+            });
+        }
+    }
+
+    public void AddItem(ItemModel item)
+    {
+        model.Items.Add(item);
+    }
+
     private CombatDeckManager CreateNewCombatDeck()
     {
         //TODO Check if there's a deck in the model
@@ -127,5 +167,10 @@ public class CharacterWrapper : BaseCardWrapper
         GD.PrintErr("Character wrapper error: No field deck for character '"
             + model.Name + "'. Received bad generic deck.");
         return DeckFactory.CreateNewFieldDeckWrapper();
+    }
+
+    private void UpdateBonusDeckCards()
+    {
+
     }
 }

@@ -1,8 +1,8 @@
 ﻿
 public class CombatDeckModel : BaseDeckModel
 {
-    public new BaseCardModel[] BaseDeck => CombatDeck;
+    public new BaseCardModel[] BaseDeck => BaseCombatDeck;
 
-    public CombatCardModel[] CombatDeck;
+    public CombatCardModel[] BaseCombatDeck;
 }
 

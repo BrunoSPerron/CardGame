@@ -1,0 +1,6 @@
+{
+	"Name": "pointy stick",
+	"Image": "stick",
+	"CombatCards": ["stab"],
+	"FieldCards": ["sharpen"]
+}

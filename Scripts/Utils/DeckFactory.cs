@@ -9,7 +9,7 @@ public static class DeckFactory
     {
         CombatDeckModel deckInfo = new CombatDeckModel
         {
-            CombatDeck = CreateNewCombatDeck()
+            BaseCombatDeck = CreateNewCombatDeck()
         };
         return new CombatDeckManager(deckInfo);
     }
@@ -26,7 +26,7 @@ public static class DeckFactory
     {
         FieldDeckModel deckInfo = new FieldDeckModel
         {
-            FieldDeck = CreateNewFieldDeck()
+            BaseFieldDeck = CreateNewFieldDeck()
         };
         return new FieldDeckManager(deckInfo);
     }

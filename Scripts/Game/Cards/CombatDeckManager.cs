@@ -14,14 +14,14 @@ public class CombatDeckManager : BaseDeckManager
     {
         if (Model.BaseDeck == null || Model.BaseDeck.Length < 1)
         {
-            Model.CombatDeck = DeckFactory.CreateNewCombatDeck();
+            Model.BaseCombatDeck = DeckFactory.CreateNewCombatDeck();
             GD.PrintErr("Combat deck wrapper error: No field deck. Using bad field deck");
         }
 
         CombatCardWrapper[] wrappedDeck = new CombatCardWrapper[Model.BaseDeck.Length];
         for (int i = 0; i < Model.BaseDeck.Length; i++)
         {
-            CombatCardModel cardInfo = Model.CombatDeck[i];
+            CombatCardModel cardInfo = Model.BaseCombatDeck[i];
             CombatCardWrapper cardInfoWrapper = CardFactory.CreateCardFromCombatCardModel(
                 cardInfo);
             wrappedDeck[i] = cardInfoWrapper;

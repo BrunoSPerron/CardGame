@@ -17,7 +17,7 @@ public static class ObjectCopier
     public static T CloneViaJSON<T>(this T source)
     {
         // Don't serialize a null object, simply return the default for that object
-        if (ReferenceEquals(source, null)) return default;
+        if (source == null) return default;
 
         // initialize inner objects individually
         // for example in default constructor some list property initialized with some values,

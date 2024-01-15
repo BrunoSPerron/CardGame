@@ -31,6 +31,7 @@ public class Game : Node2D
         charactersByCardId.Add(wrapper.Card.GetInstanceId(), wrapper);
         wrapper.Card.Connect("OnCombatDeckClick", this, "OnCombatDeckClick");
         wrapper.Card.Connect("OnFieldDeckClick", this, "OnFieldDeckClick");
+        wrapper.Card.Connect("OnInventoryButtonClick", this, "OnInventoryClick");
     }
 
     public void AddLocation(WorldHexModel hexLocation)
@@ -181,6 +182,12 @@ public class Game : Node2D
     {
         FieldDeckManager wrapper = charactersByCardId[card.GetInstanceId()].FieldDeck;
         currentScene?.OpenDeckModificationPanel(wrapper);
+    }
+
+    public void OnInventoryClick(Card card)
+    {
+        CharacterWrapper wrapper = charactersByCardId[card.GetInstanceId()];
+        currentScene?.OpenInventoryScreen(wrapper);
     }
 
     public void StartExplorationPhase()

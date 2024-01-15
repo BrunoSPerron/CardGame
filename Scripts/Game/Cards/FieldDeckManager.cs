@@ -78,14 +78,14 @@ public class FieldDeckManager : BaseDeckManager
     {
         if (Model.BaseDeck == null || Model.BaseDeck.Length < 1)
         {
-            Model.FieldDeck = DeckFactory.CreateNewFieldDeck();
+            Model.BaseFieldDeck = DeckFactory.CreateNewFieldDeck();
             GD.PrintErr("Field deck wrapper error: No field deck. Using bad field deck");
         }
 
-        FieldCardWrapper[] wrappedDeck = new FieldCardWrapper[Model.FieldDeck.Count];
+        FieldCardWrapper[] wrappedDeck = new FieldCardWrapper[Model.BaseFieldDeck.Count];
         for (int i = 0; i < Model.BaseDeck.Length; i++)
         {
-            FieldCardModel model = Model.FieldDeck[i];
+            FieldCardModel model = Model.BaseFieldDeck[i];
             FieldCardWrapper wrapper = CardFactory.CreateCardFromFieldCardModel(
                 model);
             wrappedDeck[i] = wrapper;

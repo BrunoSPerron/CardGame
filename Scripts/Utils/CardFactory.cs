@@ -57,25 +57,43 @@ public static class CardFactory
     public static CharacterWrapper CreateCardFromCharacter(CharacterModel character)
     {
         Card card = CardScene.Instance<Card>();
-        CharacterWrapper characterCardWrapper = new CharacterWrapper(
-            card, character);
 
         Node2D cardFront = card.Front;
 
-        CardButtonBase combatDeckButton = DeckIconScene.Instance<DeckCardButton>();
+        Vector2 lifeCounterPosition = cardFront.GetNode<Position2D>(
+            "CounterOnePosition").Position;
+        AddCounter(card, "LifeCounter", lifeCounterPosition, CardIcon.HEART);
+
+        Vector2 powerCounterPosition = cardFront.GetNode<Position2D>(
+            "CounterTwoPosition").Position;
+        AddCounter(card, "PowerCounter", powerCounterPosition, CardIcon.SWORD);
+
+        Vector2 actionCounterPosition = cardFront.GetNode<Position2D>(
+            "CounterThreePosition").Position;
+        AddCounter(card, "ActionCounter", actionCounterPosition, CardIcon.TIME);
+
+        CardButtonBase combatDeckButton = DeckIconScene.Instance<CardButtonBase>();
         cardFront.AddChild(combatDeckButton);
         combatDeckButton.Connect("OnClick", card, "OnCombatDeckClicked");
         combatDeckButton.Position = cardFront.GetNode<Position2D>(
             "CombatDeckPosition").Position;
 
-        CardButtonBase restDeckButton = DeckIconScene.Instance<DeckCardButton>();
+        CardButtonBase restDeckButton = DeckIconScene.Instance<CardButtonBase>();
         restDeckButton.ButtonTextureOnReady = DeckIconTexture_rest;
         cardFront.AddChild(restDeckButton);
         restDeckButton.Connect("OnClick", card, "OnFieldDeckClicked");
         restDeckButton.Position = cardFront.GetNode<Position2D>(
             "RestDeckPosition").Position;
 
-        return characterCardWrapper;
+        CardButtonBase inventoryButton = DeckIconScene.Instance<CardButtonBase>();
+        inventoryButton.ButtonTextureOnReady = ResourceLoader.Load<Texture>
+            ("res://Art/Cards/Icons/inventory.png"); ;
+        cardFront.AddChild(inventoryButton);
+        inventoryButton.Connect("OnClick", card, "OnInventoryClicked");
+        inventoryButton.Position = cardFront.GetNode<Position2D>(
+            "InventoryPosition").Position;
+
+        return new CharacterWrapper(card, character);
     }
 
     public static LocationWrapper CreateCardFromLocation(
@@ -145,6 +163,12 @@ public static class CardFactory
         cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
         cost.SetLabel(model.Cost.ToString());
         card.Front.AddChild(cost);
+
+        string textBoxContent = model.TextBox;
+        PixelText textBox = pixelText.Instance<PixelText>();
+        textBox.SetLabel(model.TextBox);
+        card.Front.AddChild(textBox);
+        textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
         string mod = model.Mod;
         string[] splittedImageName = model.Image.Split(
@@ -274,12 +298,26 @@ public static class CardFactory
 
     private static void AddActionCostCounter(Card card, int cost = 0)
     {
-        IconCounter counter = new IconCounter() {
+        IconCounter counter = new IconCounter()
+        {
             Name = "ActionCostCounter",
             defaultIcon = CardIcon.TIME,
             Position = card.Front.GetNode<Position2D>("ActionCostPosition").Position
         };
         counter.SetMax(cost);
+        card.Front.AddChild(counter);
+    }
+
+    private static void AddCounter(
+        Card card, string name, Vector2 position, CardIcon icon, int value = 0)
+    {
+        IconCounter counter = new IconCounter()
+        {
+            Name = name,
+            defaultIcon = icon,
+            Position = position
+        };
+        counter.SetMax(value);
         card.Front.AddChild(counter);
     }
 }
