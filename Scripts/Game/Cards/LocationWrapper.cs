@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
 public class LocationWrapper : BaseCardWrapper
 {
@@ -26,5 +25,15 @@ public class LocationWrapper : BaseCardWrapper
     {
         Card = card;
         WorldPosition = location;
+    }
+
+    public void PopulateEncounters()
+    {
+        if (Model?.ExploreDeck != null) 
+        {
+            ExploreDeckCreationModel creationModel = JsonLoader.GetExploreDeckCreationModel(
+                Model.Mod, Model.ExploreDeck);
+            Model.Encounters = ExploreDeckCreator.CreateFromModel(creationModel);
+        }
     }
 }

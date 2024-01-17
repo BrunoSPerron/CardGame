@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class LocationModel : BaseCardModel
 {
@@ -8,5 +9,7 @@ public class LocationModel : BaseCardModel
     public new string Name = "core_desolation";
     public int TravelCost = 0;
 
-    public string[] ExplorationDeck = new string[0];
+    public string ExploreDeck;
+
+    public List<EncounterModel> Encounters = new List<EncounterModel>();
 }

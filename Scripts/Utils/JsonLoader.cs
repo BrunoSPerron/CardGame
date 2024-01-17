@@ -27,6 +27,27 @@ public static class JsonLoader
         return model;
     }
 
+    public static EncounterModel GetEncounterModel(string modName, string jsonFileName)
+    {
+        string path = Path.Combine(PATHS.ModFolderPath,
+            modName + "\\Data\\Encounters\\" + jsonFileName);
+        EncounterModel model =
+            GetOfType<EncounterModel>.FromJson(path) ?? new EncounterModel();
+        model.Mod = modName;
+        return model;
+    }
+
+    public static ExploreDeckCreationModel GetExploreDeckCreationModel(string modName,
+                                                                       string jsonFileName)
+    {
+        string path = Path.Combine(PATHS.ModFolderPath,
+            modName + "\\Data\\ExploreDeckCreation\\" + jsonFileName);
+        ExploreDeckCreationModel model = GetOfType<ExploreDeckCreationModel>.FromJson(path)
+            ?? new ExploreDeckCreationModel();
+        model.Mod = modName;
+        return model;
+    }
+
     public static FieldCardModel GetFieldCardModel(string modName, string jsonFileName)
     {
         string path = Path.Combine(PATHS.ModFolderPath,
@@ -138,9 +159,12 @@ public static class JsonLoader
                     baseModel.JsonFilePath = pathWithExtension;
 
                 cache.Add(pathWithExtension, deserialized);
-                return deserialized.CloneViaJSON();
+                return deserialized;
             }
-            return cache[pathWithExtension];
+            T clone = cache[pathWithExtension].CloneViaJSON();
+            if (clone is BaseModel baseModelClone)
+                baseModelClone.ID = Guid.NewGuid().ToString();
+            return clone;
         }
     }
 }

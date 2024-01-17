@@ -122,6 +122,7 @@ public static class CardFactory
         }
 
         LocationWrapper locationWrapper = new LocationWrapper(card, location);
+        locationWrapper.PopulateEncounters();
         return locationWrapper;
     }
 
@@ -164,7 +165,6 @@ public static class CardFactory
         cost.SetLabel(model.Cost.ToString());
         card.Front.AddChild(cost);
 
-        string textBoxContent = model.TextBox;
         PixelText textBox = pixelText.Instance<PixelText>();
         textBox.SetLabel(model.TextBox);
         card.Front.AddChild(textBox);

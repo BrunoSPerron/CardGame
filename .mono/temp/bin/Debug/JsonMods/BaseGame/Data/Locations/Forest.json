@@ -1,5 +1,5 @@
 {
 	"Name":"forest",
 	"Image":"forest",
-	"ExplorationDeck": ["CampDeck"],
+	"ExploreDeck": "forest"
 }

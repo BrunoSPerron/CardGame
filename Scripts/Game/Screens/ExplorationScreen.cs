@@ -20,7 +20,7 @@ public class ExplorationScreen : BaseGameScreen
     public override void _Ready()
     {
         AddLocation();
-        if (Location.Model.ExplorationDeck.Length != 0)
+        if (Location.Model.Encounters.Count != 0)
             AddExploreOption();
         AddFieldOption();
 
@@ -221,6 +221,7 @@ public class ExplorationScreen : BaseGameScreen
     {
         float alpha = 0.25f;
         base.DisableScreen();
+        Manager.DisableScreen();
         foreach (LocationWrapper destination in destinations)
         {
             destination.Card.IsStackTarget = false;
@@ -255,6 +256,7 @@ public class ExplorationScreen : BaseGameScreen
     public override void EnableScreen()
     {
         base.EnableScreen();
+        Manager.EnableScreen();
         foreach (LocationWrapper destination in destinations)
         {
             destination.Card.IsStackTarget = true;
@@ -321,7 +323,8 @@ public class ExplorationScreen : BaseGameScreen
         if (StackTarget == ExploreTarget)
         {
             survivors.Add(survivorDragged);
-            //TODO Trigger Exploration Event
+            CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
+            SurvivorEvent_Explore(character);
         }
         else if (StackTarget == SurviveTarget)
         {
@@ -356,6 +359,25 @@ public class ExplorationScreen : BaseGameScreen
         CardManager.StackCards(cards, CONSTS.SCREEN_CENTER);
     }
 
+    private void SurvivorEvent_Explore(CharacterWrapper character)
+    {
+        if (character.CurrentActionPoint >= Location.Model.ExploreCost)
+        {
+            DisableScreen();
+            character.CurrentActionPoint -= Location.Model.ExploreCost;
+            Random rand = new Random();
+            List<EncounterModel> encounters = Location.Model.Encounters;
+            EncounterModel encounter = encounters[rand.Next(0, encounters.Count)];
+            EventPlayer eventPlayer = new EventPlayer(character, encounter.Steps, encounter);
+            eventPlayer.Connect("OnEventEnd", this, "SurvivorEvent_Field_End");
+            AddChild(eventPlayer);
+        }
+        else
+        {
+            StackSurvivors();
+        }
+    }
+
     private void SurvivorEvent_Field(CharacterWrapper character)
     {
         if (character.CurrentActionPoint >= Location.Model.FieldActionCost)
@@ -378,7 +400,6 @@ public class ExplorationScreen : BaseGameScreen
 
     public void SurvivorEvent_Field_End()
     {
-        eventScreen.Destroy();
         EnableScreen();
         StackSurvivors();
     }

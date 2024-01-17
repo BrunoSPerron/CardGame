@@ -19,6 +19,7 @@ public class PlayFieldScreen : BaseGameScreen
 
     public override void _Ready()
     {
+        ZIndex = CardManager.NumberOfCards;
         Hand = new Hand()
         {
             Game = Game,
@@ -65,10 +66,10 @@ public class PlayFieldScreen : BaseGameScreen
 
     public void PlayCardBeingPaid()
     {
-        EventPlayer eventPlayer = new EventPlayer();
-        eventPlayer.PlayEvent(Character, CardBeingPaidFor.Model.Effects,
-            CardBeingPaidFor.Model);
-        Parent.SurvivorEvent_Field_End();
+        EventPlayer eventPlayer = new EventPlayer(Character,
+            CardBeingPaidFor.Model.Effects, CardBeingPaidFor.Model);
+        eventPlayer.Connect("OnEventEnd", this, "OnCardEffectOver");
+        AddChild(eventPlayer);
     }
 
     public void ReturnCardBeingPaidForToHand()
@@ -143,5 +144,11 @@ public class PlayFieldScreen : BaseGameScreen
                 CardsUsedAsPayment.Remove(wrapper);
             }
         }
+    }
+
+    public void OnCardEffectOver()
+    {
+        //TODO Check if another card can be played
+        Parent.SurvivorEvent_Field_End();
     }
 }
