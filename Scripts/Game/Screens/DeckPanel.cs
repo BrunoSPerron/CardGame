@@ -9,7 +9,7 @@ public class DeckPanel : Node2D
     private const float OUTER_PADDING = 5;
     private const int VERTICAL_CARD_SPACING = 30;
 
-    public BaseDeckManager DeckWrapper;
+    public List<BaseCardWrapper> Deck;
     public BaseGameScreen GameScreen;
 
     private readonly List<Button> buttons = new List<Button>();
@@ -56,9 +56,7 @@ public class DeckPanel : Node2D
         Vector2 panelSize = panel.GetSize() - new Vector2(
             INNER_PADDING_X * 2, INNER_PADDING_Y * 2);
 
-        BaseCardWrapper[] deck = DeckWrapper.GetBaseDeck();
-
-        Vector2 cardSize = deck[0].Card.GetSize() * mult;
+        Vector2 cardSize = Deck[0].Card.GetSize() * mult;
         Vector2 viewSize = GetTree().Root.GetVisibleRect().Size;
         Vector2 topLeft = new Vector2(OUTER_PADDING + INNER_PADDING_X,
             OUTER_PADDING + INNER_PADDING_Y) + cardSize / 2;
@@ -68,20 +66,20 @@ public class DeckPanel : Node2D
 
         int numberOfRows = Mathf.CeilToInt(
             panelSize.y / (cardSize.y + VERTICAL_CARD_SPACING * mult));
-        int cardsPerRow = Mathf.CeilToInt(deck.Length / (float)numberOfRows);
+        int cardsPerRow = Mathf.CeilToInt(Deck.Count / (float)numberOfRows);
 
         float xSpacing = (bottomRight.x - topLeft.x) / (cardsPerRow - 1);
         float ySpacing = cardSize.y + VERTICAL_CARD_SPACING * mult;
 
-        for (int i = 0; i < deck.Length; i++)
+        for (int i = 0; i < Deck.Count; i++)
         {
             int x = i % cardsPerRow;
             int y = i / cardsPerRow;
-            deck[i].Card.Scale = new Vector2(mult, mult);
-            deck[i].Card.IsDraggable = false;
-            deck[i].Card.IsStackTarget = false;
+            Deck[i].Card.Scale = new Vector2(mult, mult);
+            Deck[i].Card.IsDraggable = false;
+            Deck[i].Card.IsStackTarget = false;
 
-            DealOnBoard(deck[i].Card, topLeft + new Vector2(x * xSpacing, y * ySpacing));
+            DealOnBoard(Deck[i].Card, topLeft + new Vector2(x * xSpacing, y * ySpacing));
         }
     }
 

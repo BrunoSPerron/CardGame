@@ -1,6 +1,7 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PlayFieldScreen : BaseGameScreen
 {
@@ -24,12 +25,13 @@ public class PlayFieldScreen : BaseGameScreen
         {
             Game = Game,
         };
-        Deck = Character.FieldDeck;
+        Deck = Character.FieldDeckManager;
         AddChild(Hand);
         Hand.Position = new Vector2(CONSTS.SCREEN_CENTER.x, CONSTS.SCREEN_SIZE.y - 25);
 
         playTarget = CardFactory.CreatePlayTarget();
         AddChild(playTarget);
+        Deck.Reset();
         DrawNewHand();
     }
 
@@ -53,15 +55,15 @@ public class PlayFieldScreen : BaseGameScreen
             wrapper.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
         }
         Hand.DiscardHand();
-        FieldCardWrapper[] cards = Deck.DrawMultiple(5);
+        List<FieldCardWrapper> cards = Deck.DrawMultiple(5);
+        // TODO handle nulls
         foreach (FieldCardWrapper wrapper in cards)
         {
             wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
             wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
             wrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
+            Hand.AddCard(wrapper);
         }
-
-        Hand.AddCards(cards);
     }
 
     public void PlayCardBeingPaid()
@@ -149,6 +151,7 @@ public class PlayFieldScreen : BaseGameScreen
     public void OnCardEffectOver()
     {
         //TODO Check if another card can be played
+        Destroy();
         Parent.SurvivorEvent_Field_End();
     }
 }

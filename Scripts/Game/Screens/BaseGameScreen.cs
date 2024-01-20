@@ -73,12 +73,13 @@ public abstract class BaseGameScreen : Node2D
     {
         EnableScreen();
     }
-    public void OpenDeckModificationPanel(BaseDeckManager deck)
+    public void OpenDeckModificationPanel(List<BaseCardWrapper> deck)
     {
         DisableScreen();
         DeckPanel deckPanel = ResourceLoader.Load<PackedScene>(
             "res://Assets/UI/DeckPanel.tscn/").Instance<DeckPanel>();
-        deckPanel.DeckWrapper = deck;
+
+        deckPanel.Deck = deck;
         deckPanel.GameScreen = this;
         AddChild(deckPanel);
     }

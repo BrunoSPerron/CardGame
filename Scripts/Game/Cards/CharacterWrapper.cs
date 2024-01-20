@@ -16,33 +16,39 @@ public class CharacterWrapper : BaseCardWrapper
             Card.Front.GetNode<IconCounter>("LifeCounter").SetMax(value.HitPoint);
             Card.Front.GetNode<IconCounter>("PowerCounter").SetMax(value.Power);
 
-            CombatDeck = new CombatDeckManager(value.CombatDeck);
-            FieldDeck = new FieldDeckManager(value.FieldDeck);
+            combatDeckManager = new CombatDeckManager(value.CombatDeck);
+            fieldDeckManager = new FieldDeckManager(value.FieldDeck);
         }
     }
 
-    private CombatDeckManager combatDeck;
-    public CombatDeckManager CombatDeck
+    private CombatDeckManager combatDeckManager;
+    public CombatDeckManager CombatDeckManager
     {
         get
         {
-            if (combatDeck == null)
-                combatDeck = CreateNewCombatDeck();
-            return combatDeck;
+            if (combatDeckManager == null)
+            {
+                combatDeckManager = DeckFactory.CreateCombatDeckManagerFromModel(
+                    model.CombatDeck);
+            }
+            return combatDeckManager;
         }
-        set => combatDeck = value;
+        set => combatDeckManager = value;
     }
 
-    private FieldDeckManager fieldDeck;
-    public FieldDeckManager FieldDeck
+    private FieldDeckManager fieldDeckManager;
+    public FieldDeckManager FieldDeckManager
     {
         get
         {
-            if (fieldDeck == null)
-                fieldDeck = CreateNewFieldDeck();
-            return fieldDeck;
+            if (fieldDeckManager == null)
+            {
+                fieldDeckManager = DeckFactory.CreateFieldDeckManagerFromModel(
+                    model.FieldDeck);
+            }
+            return fieldDeckManager;
         }
-        set => fieldDeck = value;
+        set => fieldDeckManager = value;
     }
 
     // ===== Model related attributes =====
@@ -68,8 +74,8 @@ public class CharacterWrapper : BaseCardWrapper
             model.Items = value;
             foreach (ItemModel item in model.Items)
             {
-                AddBonusCardsToFieldDeck(item);
-                AddBonusCardsToCombatDeck(item);
+                fieldDeckManager.AddBonusCardsFromItem(item);
+                combatDeckManager.AddBonusCardsFromItem(item);
             }
         }
     }
@@ -127,50 +133,15 @@ public class CharacterWrapper : BaseCardWrapper
         Model = character;
     }
 
-    private void AddBonusCardsToCombatDeck(ItemModel item)
-    {
-        //TODO
-    }
-
-    private void AddBonusCardsToFieldDeck(ItemModel item)
-    {
-        for (int i = 0; i < item.FieldCards.Length; i++)
-        {
-            string cardName = item.FieldCards[i];
-            FieldCardModel cardModel = JsonLoader.GetFieldCardModel(item.Mod, cardName);
-            model.FieldDeck.BonusCards.Add(new ItemFieldCard()
-            {
-                Card = cardModel,
-                ItemSourceId = item.ID,
-                OverrideCardIndex = 0,
-                Priority = i
-            });
-        }
-    }
-
     public void AddItem(ItemModel item)
     {
         model.Items.Add(item);
-    }
-
-    private CombatDeckManager CreateNewCombatDeck()
-    {
-        //TODO Check if there's a deck in the model
-        GD.PrintErr("Character wrapper error: No combat deck for character '"
-            + model.Name + "'. Received bad generic deck.");
-        return DeckFactory.CreateNewCombatDeckWrapper();
-    }
-
-    private FieldDeckManager CreateNewFieldDeck()
-    {
-        //TODO Check if there's a deck in the model
-        GD.PrintErr("Character wrapper error: No field deck for character '"
-            + model.Name + "'. Received bad generic deck.");
-        return DeckFactory.CreateNewFieldDeckWrapper();
+        UpdateBonusDeckCards();
     }
 
     private void UpdateBonusDeckCards()
     {
-
+        fieldDeckManager.UpdateBonusCards(Items);
+        combatDeckManager.UpdateBonusCards(Items);
     }
 }

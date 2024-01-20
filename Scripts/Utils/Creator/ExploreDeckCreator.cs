@@ -39,7 +39,7 @@ public static class ExploreDeckCreator
             catch
             {
                 GD.PrintErr(
-                    "World creator error: Invalid instruction from json. "
+                    "Explore deck creator error: Invalid instruction from json. "
                     + model.Mod + " \"" + instruction + "\"");
             }
         }

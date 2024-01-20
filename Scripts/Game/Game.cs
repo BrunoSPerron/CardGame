@@ -174,14 +174,22 @@ public class Game : Node2D
 
     public void OnCombatDeckClick(Card card)
     {
-        CombatDeckManager wrapper = charactersByCardId[card.GetInstanceId()].CombatDeck;
-        currentScene?.OpenDeckModificationPanel(wrapper);
+        if (currentScene != null)
+        {
+            CharacterWrapper character = charactersByCardId[card.GetInstanceId()];
+            List<BaseCardWrapper> deck = character.CombatDeckManager.GetSortedBaseDeck();
+            currentScene.OpenDeckModificationPanel(deck);
+        }
     }
 
     public void OnFieldDeckClick(Card card)
     {
-        FieldDeckManager wrapper = charactersByCardId[card.GetInstanceId()].FieldDeck;
-        currentScene?.OpenDeckModificationPanel(wrapper);
+        if (currentScene != null)
+        {
+            CharacterWrapper character = charactersByCardId[card.GetInstanceId()];
+            List<BaseCardWrapper> deck = character.FieldDeckManager.GetSortedBaseDeck();
+            currentScene.OpenDeckModificationPanel(deck);
+        }
     }
 
     public void OnInventoryClick(Card card)

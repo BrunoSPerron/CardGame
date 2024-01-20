@@ -1,5 +1,7 @@
 ﻿
+using System.Collections.Generic;
+
 public abstract class BaseDeckModel : BaseModel
 {
-    public BaseCardModel[] BaseDeck;
+    public List<BaseCardModel> BaseDeck = new List<BaseCardModel>();
 }

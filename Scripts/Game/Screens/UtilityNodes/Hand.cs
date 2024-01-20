@@ -23,7 +23,7 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         UpdateCardsPositions();
     }
 
-    public void AddCards(BaseCardWrapper[] cardWrappers)
+    public void AddCards(List<BaseCardWrapper> cardWrappers)
     {
         foreach (BaseCardWrapper cardWrapper in cardWrappers)
         {

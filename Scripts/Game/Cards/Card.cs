@@ -24,6 +24,8 @@ public class Card : Area2D
     public bool IsStackTarget = false;
     public bool DownStateOnHover = false;
     public float LerpDeltaMultiplier = 6;
+
+    [Export]
     public Vector2 Target { get; private set; }
 
     ///<summary>Direct access to the parent Z-Index. Bypass the call to CardZIndexManager when setting the value.</summary>
@@ -142,7 +144,8 @@ public class Card : Area2D
 
     public void Flip(float animationTimeInSec = 0.4f)
     {
-        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>("res://Audio/Fx/cardFlip.mp3");
+        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
+            "res://Audio/Fx/cardFlip.mp3");
         AudioHelper.PlaySoundOnNode(this, sound, .7f);
         IsFaceDown = !IsFaceDown;
         bool isFlippingAlready = false;
@@ -179,7 +182,8 @@ public class Card : Area2D
         }
         else
         {
-            AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>("res://Audio/Fx/cardFlip.mp3");
+            AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
+                "res://Audio/Fx/cardFlip.mp3");
             AudioHelper.PlaySoundOnNode(this, sound, .7f);
             IsFaceDown = !IsFaceDown;
             animations.Add(new CardFlipToTarget(this));

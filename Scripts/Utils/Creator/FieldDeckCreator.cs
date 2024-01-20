@@ -28,6 +28,7 @@ public static class FieldDeckCreator
             string[] splittedArguments = arguments?.Split('/') ?? new string[0];
             for (int i = 0; i < splittedArguments.Length; i++)
                 splittedArguments[i] = splittedArguments[i].Trim();
+
             try
             {
                 MethodInfo theMethod = factoryType.GetMethod(name);
@@ -36,7 +37,7 @@ public static class FieldDeckCreator
             catch
             {
                 GD.PrintErr(
-                    "Character creator error: Invalid instruction from json. \"" +
+                    "Field deck creator error: Invalid instruction from json. \"" +
                     instruction + "\"");
             }
         }
@@ -97,14 +98,14 @@ public static class FieldDeckCreator
                         + "\" from mod dependency \"" + mod + "\" for mod \"" + model.Mod
                         + "\". Trying the mod fallback.");
                 }
-            } 
+            }
 
             if (card == null)
                 card = JsonLoader.GetFieldCardModel(model.Mod, cardName) ?? new FieldCardModel();
 
             for (int i = 0; i < amount; i++)
             {
-                model.BaseFieldDeck.Add(card.CloneViaJSON());
+                model.BaseDeck.Add(card.CloneViaJSON());
             }
         }
     }

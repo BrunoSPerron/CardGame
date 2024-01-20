@@ -1,8 +1,9 @@
-﻿
+﻿using System.Collections.Generic;
+
 public class CombatDeckModel : BaseDeckModel
 {
-    public new BaseCardModel[] BaseDeck => BaseCombatDeck;
+    public new List<CombatCardModel> BaseDeck = new List<CombatCardModel>();
 
-    public CombatCardModel[] BaseCombatDeck;
+    public List<BonusCombatCardModel> BonusCards = new List<BonusCombatCardModel>();
 }
 

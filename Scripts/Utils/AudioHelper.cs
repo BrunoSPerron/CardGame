@@ -12,9 +12,9 @@ public static class AudioHelper
         player.Play();
         System.Threading.Thread thread = new System.Threading.Thread(delegate ()
             {
-                while (player.Playing)
+                while (player != null && player.Playing)
                     System.Threading.Thread.Sleep(1000);
-                player.QueueFree();
+                player?.QueueFree();
             });
         thread.Start();
     }

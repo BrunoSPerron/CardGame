@@ -71,7 +71,7 @@ public class EventPlayer: BaseGameScreen
         catch
         {
             GD.PrintErr(
-                "PlayEventError: Invalid instruction from json. \"" +
+                "Event player error: Invalid instruction from json. \"" +
                 instruction + "\" at: " + originModel.JsonFilePath);
         }
     }
@@ -100,7 +100,6 @@ public class EventPlayer: BaseGameScreen
 
     public class BackStage_Solo : Backstage_base
     {
-        #pragma warning disable IDE0060
         #pragma warning disable IDE1006
 
         private readonly EventPlayer player;
