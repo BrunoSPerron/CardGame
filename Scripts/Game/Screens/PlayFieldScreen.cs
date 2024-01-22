@@ -56,9 +56,11 @@ public class PlayFieldScreen : BaseGameScreen
         }
         Hand.DiscardHand();
         List<FieldCardWrapper> cards = Deck.DrawMultiple(5);
-        // TODO handle nulls
+
         foreach (FieldCardWrapper wrapper in cards)
         {
+            if (wrapper == null) continue;
+
             wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
             wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
             wrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");

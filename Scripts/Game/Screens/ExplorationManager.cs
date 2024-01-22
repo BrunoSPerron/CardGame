@@ -37,6 +37,83 @@ public class ExplorationManager : BaseGameScreen
         currentScreen.Destroy();
     }
 
+    public override void DisableScreen()
+    {
+        base.DisableScreen();
+
+        if (currentScreen != null)
+        {
+            float alpha = 0.25f;
+            foreach (LocationWrapper destination in currentScreen.Destinations)
+            {
+                destination.Card.IsStackTarget = false;
+                destination.Card.SetAlpha(alpha);
+            }
+
+            foreach (CharacterWrapper character in currentScreen.Survivors)
+            {
+                character.Card.IsDraggable = false;
+                character.Card.SetAlpha(alpha);
+            }
+
+            if (currentScreen.SurviveTarget != null)
+            {
+                currentScreen.SurviveTarget.IsStackTarget = false;
+                currentScreen.SurviveTarget.SetAlpha(alpha);
+            }
+
+            if (currentScreen.ExploreTarget != null)
+            {
+                currentScreen.ExploreTarget.IsStackTarget = false;
+                currentScreen.ExploreTarget.SetAlpha(alpha);
+            }
+
+            if (currentScreen.Location != null)
+            {
+                currentScreen.Location.Card.IsStackTarget = false;
+                currentScreen.Location.Card.SetAlpha(alpha);
+            }
+        }
+    }
+
+    public override void EnableScreen()
+    {
+        base.EnableScreen();
+        if (currentScreen != null)
+        {
+
+            foreach (LocationWrapper destination in currentScreen.Destinations)
+            {
+                destination.Card.IsStackTarget = true;
+                destination.Card.SetAlpha(1f);
+            }
+
+            foreach (CharacterWrapper character in currentScreen.Survivors)
+            {
+                character.Card.IsDraggable = true;
+                character.Card.SetAlpha(1f);
+            }
+
+            if (currentScreen.SurviveTarget != null)
+            {
+                currentScreen.SurviveTarget.IsStackTarget = true;
+                currentScreen.SurviveTarget.SetAlpha(1f);
+            }
+
+            if (currentScreen.ExploreTarget != null)
+            {
+                currentScreen.ExploreTarget.IsStackTarget = true;
+                currentScreen.ExploreTarget.SetAlpha(1f);
+            }
+
+            if (currentScreen.Location != null)
+            {
+                currentScreen.Location.Card.IsStackTarget = true;
+                currentScreen.Location.Card.SetAlpha(1f);
+            }
+        }
+    }
+
     //===Unique Methods===
 
     public void AddNavigationButtons()

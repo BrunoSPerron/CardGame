@@ -55,13 +55,13 @@ public class FieldDeckManager : BaseDeckManager
         if (deck == null)
         {
             GD.PrintErr("Deck manager error: Tried to draw from a non-existing deck");
-            return default;
+            return CardFactory.CreateCardFromFieldCardModel(new FieldCardModel());
         }
 
         if (deck.Count == 0)
         {
             if (discardPile.Count == 0)
-                return default;
+                return null;
             Shuffle();
         }
 
@@ -84,11 +84,22 @@ public class FieldDeckManager : BaseDeckManager
         return wrappers;
     }
 
+    public override List<BaseBonusCardWrapper> GetBonusCards()
+    {
+        List<BaseBonusCardWrapper> wrappers = new List<BaseBonusCardWrapper>();
+        foreach (BonusFieldCardModel cardModel in Model.BonusCards)
+        {
+            BaseBonusCardWrapper wrapper = CardFactory.CreateCardFromBonusFieldCard(cardModel);
+            wrappers.Add(wrapper);
+        }
+        return wrappers;
+    }
+
     public override List<BaseCardWrapper> GetSortedBaseDeck()
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
 
-        foreach (FieldCardModel model in Model.BaseDeck)
+        foreach (FieldCardModel model in Model.FieldDeck)
             wrappers.Add(CardFactory.CreateCardFromFieldCardModel(model));
 
         return wrappers;
@@ -98,14 +109,13 @@ public class FieldDeckManager : BaseDeckManager
     public void Reset()
     {
         Clear();
-        GD.Print(Model.BaseDeck.Count);
 
         List<FieldCardWrapper> wrappedDeck = new List<FieldCardWrapper>();
 
-        if (Model.BaseDeck == null || Model.BaseDeck.Count == 0)
+        if (Model.FieldDeck == null || Model.FieldDeck.Count == 0)
         {
             List<FieldCardModel> fieldDeck = DeckFactory.CreateBadFieldDeck();
-            Model.BaseDeck = new List<FieldCardModel>();
+            Model.FieldDeck = new List<FieldCardModel>();
             foreach (FieldCardModel fieldCard in fieldDeck)
                 Model.BaseDeck.Add(fieldCard);
             GD.PrintErr("Deck manager error: No field deck. Using bad deck");
@@ -113,7 +123,7 @@ public class FieldDeckManager : BaseDeckManager
 
         for (int i = 0; i < Model.BaseDeck.Count; i++)
         {
-            FieldCardModel model = Model.BaseDeck[i];
+            FieldCardModel model = Model.FieldDeck[i];
             wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(model));
         }
 

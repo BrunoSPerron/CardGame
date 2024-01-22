@@ -5,8 +5,8 @@ using System.Linq;
 
 public class ExplorationScreen : BaseGameScreen
 {
-    private readonly List<CharacterWrapper> survivors = new List<CharacterWrapper>();
-    private readonly List<LocationWrapper> destinations = new List<LocationWrapper>();
+    public readonly List<CharacterWrapper> Survivors = new List<CharacterWrapper>();
+    public readonly List<LocationWrapper> Destinations = new List<LocationWrapper>();
 
     public Card ExploreTarget;
     public Card SurviveTarget;
@@ -72,7 +72,7 @@ public class ExplorationScreen : BaseGameScreen
 
     private void AddDestination(LocationWrapper location, Vector2 position)
     {
-        destinations.Add(location);
+        Destinations.Add(location);
         if (Game.RemoveFromCleaner(location.Card) == CardCleanResponse.RECENT)
         {
             AddChild(location.Card);
@@ -131,13 +131,13 @@ public class ExplorationScreen : BaseGameScreen
                 else
                 {
                     survivorsToAdd.Add(survivor);
-                    survivors.Add(survivor);
+                    Survivors.Add(survivor);
                 }
             }
         }
 
         foreach (CharacterWrapper survivor in preDealtSurvivors)
-            survivors.Add(survivor);
+            Survivors.Add(survivor);
 
         StackSurvivors();
 
@@ -180,7 +180,7 @@ public class ExplorationScreen : BaseGameScreen
             Game.CleanCard(ExploreTarget);
         }
 
-        foreach (CharacterWrapper survivor in survivors)
+        foreach (CharacterWrapper survivor in Survivors)
         {
             survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
             survivor.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
@@ -194,7 +194,7 @@ public class ExplorationScreen : BaseGameScreen
             Game.CleanCard(survivorDragged.Card);
         }
 
-        foreach (LocationWrapper location in destinations)
+        foreach (LocationWrapper location in Destinations)
         {
             RemoveChild(location.Card);
             Game.CleanCard(location.Card);
@@ -203,14 +203,14 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void Destroy()
     {
-        foreach (CharacterWrapper survivor in survivors)
+        foreach (CharacterWrapper survivor in Survivors)
         {
             survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
             survivor.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
             RemoveChild(survivor.Card);
         }
 
-        foreach (LocationWrapper location in destinations)
+        foreach (LocationWrapper location in Destinations)
             RemoveChild(location.Card);
 
         RemoveChild(Location.Card);
@@ -219,73 +219,12 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void DisableScreen()
     {
-        float alpha = 0.25f;
-        base.DisableScreen();
         Manager.DisableScreen();
-        foreach (LocationWrapper destination in destinations)
-        {
-            destination.Card.IsStackTarget = false;
-            destination.Card.SetAlpha(alpha);
-        }
-
-        foreach (CharacterWrapper character in survivors)
-        {
-            character.Card.IsDraggable = false;
-            character.Card.SetAlpha(alpha);
-        }
-
-        if (SurviveTarget != null)
-        {
-            SurviveTarget.IsStackTarget = false;
-            SurviveTarget.SetAlpha(alpha);
-        }
-
-        if (ExploreTarget != null)
-        {
-            ExploreTarget.IsStackTarget = false;
-            ExploreTarget.SetAlpha(alpha);
-        }
-
-        if (Location != null)
-        {
-            Location.Card.IsStackTarget = false;
-            Location.Card.SetAlpha(alpha);
-        }
     }
 
     public override void EnableScreen()
     {
-        base.EnableScreen();
         Manager.EnableScreen();
-        foreach (LocationWrapper destination in destinations)
-        {
-            destination.Card.IsStackTarget = true;
-            destination.Card.SetAlpha(1f);
-        }
-
-        foreach (CharacterWrapper character in survivors)
-        {
-            character.Card.IsDraggable = true;
-            character.Card.SetAlpha(1f);
-        }
-
-        if (SurviveTarget != null)
-        {
-            SurviveTarget.IsStackTarget = true;
-            SurviveTarget.SetAlpha(1f);
-        }
-
-        if (ExploreTarget != null)
-        {
-            ExploreTarget.IsStackTarget = true;
-            ExploreTarget.SetAlpha(1f);
-        }
-
-        if (Location != null)
-        {
-            Location.Card.IsStackTarget = true;
-            Location.Card.SetAlpha(1f);
-        }
     }
 
     private Vector2 GetDestinationScreenPosition(HexLink link)
@@ -313,7 +252,7 @@ public class ExplorationScreen : BaseGameScreen
     {
         if (StackTarget == null)
         {
-            survivors.Add(survivorDragged);
+            Survivors.Add(survivorDragged);
             StackSurvivors();
             survivorDragged = null;
             return;
@@ -322,17 +261,17 @@ public class ExplorationScreen : BaseGameScreen
 
         if (StackTarget == ExploreTarget)
         {
-            survivors.Add(survivorDragged);
+            Survivors.Add(survivorDragged);
             CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
             SurvivorEvent_Explore(character);
         }
         else if (StackTarget == SurviveTarget)
         {
-            survivors.Add(survivorDragged);
+            Survivors.Add(survivorDragged);
             CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
             SurvivorEvent_Field(character);
         }
-        else if (destinations.Exists(d => d.Card == StackTarget))
+        else if (Destinations.Exists(d => d.Card == StackTarget))
         {
             LocationWrapper destination = Game.locationsByCardId[StackTarget.GetInstanceId()];
             CharacterWrapper character = Game.charactersByCardId[OriginCard.GetInstanceId()];
@@ -340,7 +279,7 @@ public class ExplorationScreen : BaseGameScreen
         }
         else
         {
-            survivors.Add(survivorDragged);
+            Survivors.Add(survivorDragged);
             StackSurvivors();
         }
         survivorDragged = null;
@@ -349,13 +288,13 @@ public class ExplorationScreen : BaseGameScreen
     public void OnCarddragStart(Card card)
     {
         survivorDragged = Game.charactersByCardId[card.GetInstanceId()];
-        survivors.Remove(survivorDragged);
+        Survivors.Remove(survivorDragged);
         StackSurvivors();
     }
 
     public void StackSurvivors()
     {
-        List<Card> cards = CardManager.GetCardsInCharacterWrappers(survivors);
+        List<Card> cards = CardManager.GetCardsInCharacterWrappers(Survivors);
         CardManager.StackCards(cards, CONSTS.SCREEN_CENTER);
     }
 
@@ -414,7 +353,7 @@ public class ExplorationScreen : BaseGameScreen
         }
         else
         {
-            survivors.Add(survivorDragged);
+            Survivors.Add(survivorDragged);
             StackSurvivors();
         }
     }

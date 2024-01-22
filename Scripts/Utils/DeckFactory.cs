@@ -9,7 +9,7 @@ public static class DeckFactory
     {
         CombatDeckModel deckInfo = new CombatDeckModel
         {
-            BaseDeck = CreateBadCombatDeck()
+            CombatDeck = CreateBadCombatDeck()
         };
         return new CombatDeckManager(deckInfo);
     }
@@ -26,7 +26,7 @@ public static class DeckFactory
     {
         FieldDeckModel deckInfo = new FieldDeckModel
         {
-            BaseDeck = CreateBadFieldDeck()
+            FieldDeck = CreateBadFieldDeck()
         };
         return new FieldDeckManager(deckInfo);
     }
@@ -64,7 +64,7 @@ public static class DeckFactory
 
     public static CombatDeckManager CreateCombatDeckManagerFromModel(CombatDeckModel combatDeck)
     {
-        if (combatDeck.BaseDeck == null || combatDeck.BaseDeck.Count < 5)
+        if (combatDeck.CombatDeck == null || combatDeck.CombatDeck.Count < 5)
         {
             GD.PrintErr(
                 "Deck Factory error: Combat deck missing, a generic one will be used. Mod: '"

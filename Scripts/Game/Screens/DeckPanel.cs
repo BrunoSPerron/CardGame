@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 public class DeckPanel : Node2D
 {
@@ -9,12 +10,24 @@ public class DeckPanel : Node2D
     private const float OUTER_PADDING = 5;
     private const int VERTICAL_CARD_SPACING = 30;
 
-    public List<BaseCardWrapper> Deck;
+    public BaseDeckManager Manager;
     public BaseGameScreen GameScreen;
+
+    private BaseCardWrapper[] baseCards;
+    private readonly Dictionary<ulong, BaseCardWrapper> baseCardWrapperById
+        = new Dictionary<ulong, BaseCardWrapper>();
+
+    private BaseBonusCardWrapper[] bonusCards;
+    private List<BaseBonusCardWrapper>[] bonusCardsAtIndex;
+    private Dictionary<ulong, BaseBonusCardWrapper> bonusCardWrapperById
+        = new Dictionary<ulong, BaseBonusCardWrapper>();
 
     private readonly List<Button> buttons = new List<Button>();
     private CardDealer cardDealer;
+    private float cardSizeMultiplier = 1f;
+
     private Panel panel;
+    private Vector2[] positionsOnScreen;
 
     public override void _Ready()
     {
@@ -30,6 +43,7 @@ public class DeckPanel : Node2D
         AddButton("Finish", "OnDone", Cardinal.SE,
             new Vector2(-10 - INNER_PADDING_X, -10 - INNER_PADDING_Y));
         DealBaseDeck();
+        DealBonusCards();
     }
 
     private Button AddButton(string label,
@@ -51,12 +65,15 @@ public class DeckPanel : Node2D
     private void DealBaseDeck()
     {
         //TODO Placement based on available space
-        float mult = 0.75f;
+        cardSizeMultiplier = 0.75f;
 
         Vector2 panelSize = panel.GetSize() - new Vector2(
             INNER_PADDING_X * 2, INNER_PADDING_Y * 2);
 
-        Vector2 cardSize = Deck[0].Card.GetSize() * mult;
+        baseCards = Manager.GetSortedBaseDeck().ToArray();
+        positionsOnScreen = new Vector2[baseCards.Length];
+
+        Vector2 cardSize = baseCards[0].Card.GetSize() * cardSizeMultiplier;
         Vector2 viewSize = GetTree().Root.GetVisibleRect().Size;
         Vector2 topLeft = new Vector2(OUTER_PADDING + INNER_PADDING_X,
             OUTER_PADDING + INNER_PADDING_Y) + cardSize / 2;
@@ -65,21 +82,63 @@ public class DeckPanel : Node2D
             viewSize.y - OUTER_PADDING - INNER_PADDING_Y) - cardSize / 2;
 
         int numberOfRows = Mathf.CeilToInt(
-            panelSize.y / (cardSize.y + VERTICAL_CARD_SPACING * mult));
-        int cardsPerRow = Mathf.CeilToInt(Deck.Count / (float)numberOfRows);
+            panelSize.y / (cardSize.y + VERTICAL_CARD_SPACING * cardSizeMultiplier));
+        int cardsPerRow = Mathf.CeilToInt(baseCards.Length / (float)numberOfRows);
 
         float xSpacing = (bottomRight.x - topLeft.x) / (cardsPerRow - 1);
-        float ySpacing = cardSize.y + VERTICAL_CARD_SPACING * mult;
+        float ySpacing = cardSize.y + VERTICAL_CARD_SPACING * cardSizeMultiplier;
 
-        for (int i = 0; i < Deck.Count; i++)
+        for (int i = 0; i < baseCards.Length; i++)
         {
             int x = i % cardsPerRow;
             int y = i / cardsPerRow;
-            Deck[i].Card.Scale = new Vector2(mult, mult);
-            Deck[i].Card.IsDraggable = false;
-            Deck[i].Card.IsStackTarget = false;
+            Card card = baseCards[i].Card;
+            card.Scale = new Vector2(cardSizeMultiplier, cardSizeMultiplier);
+            card.IsDraggable = false;
+            card.IsStackTarget = true;
+            var targetPosition = topLeft + new Vector2(x * xSpacing, y * ySpacing);
+            positionsOnScreen[i] = targetPosition;
+            baseCardWrapperById[card.GetInstanceId()] = baseCards[i];
+            DealOnBoard(card, targetPosition);
+        }
+    }
 
-            DealOnBoard(Deck[i].Card, topLeft + new Vector2(x * xSpacing, y * ySpacing));
+    private void DealBonusCards()
+    {
+        bonusCards = Manager.GetBonusCards().ToArray();
+
+        bonusCardsAtIndex = new List<BaseBonusCardWrapper>[baseCards.Length];
+        for (int i = 0; i < bonusCardsAtIndex.Length; i++)
+            bonusCardsAtIndex[i] = new List<BaseBonusCardWrapper>();
+
+        for (int i = 0; i < bonusCards.Length; i++)
+        {
+            BaseBonusCardWrapper bonusCardWrapper = bonusCards[i];
+            int overrideIndex = bonusCardWrapper.BaseModel.OverrideCardIndex;
+            bonusCardsAtIndex[overrideIndex].Add(bonusCardWrapper);
+        }
+
+        for (int i = 0; i < bonusCardsAtIndex.Length; i++)
+        {
+            List<BaseBonusCardWrapper> cardsAtPosition = bonusCardsAtIndex[i];
+            if (cardsAtPosition.Count != 0)
+            {
+                List<Card> cards = new List<Card>();
+                foreach (BaseBonusCardWrapper bonusCardWrapper in cardsAtPosition)
+                    cards.Add(bonusCardWrapper.Card);
+                CardManager.StackCards(cards, positionsOnScreen[i]);
+            }
+        }
+
+        for (int i = 0; i < bonusCards.Length; i++)
+        {
+            Card card = bonusCards[i].Card;
+            card.Scale = new Vector2(cardSizeMultiplier, cardSizeMultiplier);
+            card.IsDraggable = true;
+            card.Connect("OnDragStart", this, "OnCardDragStart");
+            card.Connect("OnDragEnd", this, "OnCardDragEnd");
+            bonusCardWrapperById[card.GetInstanceId()] = bonusCards[i];
+            DealOnBoard(card, card.Target);
         }
     }
 
@@ -108,5 +167,50 @@ public class DeckPanel : Node2D
     {
         GameScreen.OnDeckPanelClosed();
         QueueFree();
+    }
+
+    public void OnCardDragEnd(Card originCard, Card stackTarget)
+    {
+        BaseBonusCardWrapper originWrapper = bonusCardWrapperById[originCard.GetInstanceId()];
+        int oldIndex = originWrapper.BaseModel.OverrideCardIndex;
+        bonusCardsAtIndex[oldIndex].Remove(originWrapper);
+
+        if (stackTarget == null)
+        {
+            bonusCardsAtIndex[oldIndex].Add(originWrapper);
+            RestackPosition(oldIndex);
+            return;
+        }
+
+        BaseCardWrapper stackWrapper = baseCardWrapperById[stackTarget.GetInstanceId()];
+        int newIndex = Array.IndexOf(baseCards, stackWrapper);
+        GD.Print(newIndex);
+        originWrapper.BaseModel.OverrideCardIndex = newIndex;
+        bonusCardsAtIndex[newIndex].Add(originWrapper);
+
+        RestackPosition(oldIndex);
+        RestackPosition(newIndex);
+    }
+
+    public void OnCardDragStart(Card originCard)
+    {
+        BaseBonusCardWrapper wrapper = bonusCardWrapperById[originCard.GetInstanceId()];
+        RestackPosition(
+            wrapper.BaseModel.OverrideCardIndex,
+            new List<Card>() { originCard } );
+    }
+
+    public void RestackPosition(int index, List<Card> exclude = null)
+    {
+        if (exclude == null)
+            exclude = new List<Card>();
+
+        List<Card> cardsToStack = new List<Card>();
+
+        foreach (BaseBonusCardWrapper wrapper in bonusCardsAtIndex[index])
+            if (!exclude.Contains(wrapper.Card))
+                cardsToStack.Add(wrapper.Card);
+
+        CardManager.StackCards(cardsToStack, positionsOnScreen[index]);
     }
 }

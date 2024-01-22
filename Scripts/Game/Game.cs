@@ -177,8 +177,7 @@ public class Game : Node2D
         if (currentScene != null)
         {
             CharacterWrapper character = charactersByCardId[card.GetInstanceId()];
-            List<BaseCardWrapper> deck = character.CombatDeckManager.GetSortedBaseDeck();
-            currentScene.OpenDeckModificationPanel(deck);
+            currentScene.OpenDeckModificationPanel(character.CombatDeckManager);
         }
     }
 
@@ -187,8 +186,7 @@ public class Game : Node2D
         if (currentScene != null)
         {
             CharacterWrapper character = charactersByCardId[card.GetInstanceId()];
-            List<BaseCardWrapper> deck = character.FieldDeckManager.GetSortedBaseDeck();
-            currentScene.OpenDeckModificationPanel(deck);
+            currentScene.OpenDeckModificationPanel(character.FieldDeckManager);
         }
     }
 

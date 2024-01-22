@@ -54,6 +54,65 @@ public static class CardFactory
         }
     }
 
+    public static BaseBonusCardWrapper CreateCardFromBonusFieldCard(BonusFieldCardModel cardModel)
+    {
+        Card card = CardScene.Instance<Card>();
+
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/PixelText.tscn");
+        PixelText cost = pixelText.Instance<PixelText>();
+        cost.Name = "CardCostLabel";
+        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
+        cost.SetLabel(cardModel.Card.Cost.ToString());
+        card.Front.AddChild(cost);
+
+        PixelText textBox = pixelText.Instance<PixelText>();
+        textBox.SetLabel(cardModel.Card.TextBox);
+        card.Front.AddChild(textBox);
+        textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
+
+        string mod = cardModel.Card.Mod;
+        string[] splittedImageName = cardModel.Card.Image.Split(
+            new string[] { "__" }, StringSplitOptions.None);
+        string cardName = splittedImageName[0];
+        if (splittedImageName.Length > 1)
+        {
+            mod = splittedImageName[0];
+            cardName = splittedImageName[1];
+        }
+
+        if (mod == "core")
+        {
+            switch (cardName)
+            {
+                case "drool":
+                    //TODO default image
+                    break;
+                default:
+                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    break;
+            }
+        }
+        else
+        {
+            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+                mod + "\\Images\\Cards\\Box\\" + cardModel.Card.Image);
+
+            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+            if (System.IO.File.Exists(pathWithExtension))
+            {
+                card.Front.GetNode<Sprite>("Image").Texture
+                    = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+            }
+            else
+            {
+                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
+            }
+        }
+
+        return new BonusFieldCardWrapper(card, cardModel);
+    }
+
     public static CharacterWrapper CreateCardFromCharacter(CharacterModel character)
     {
         Card card = CardScene.Instance<Card>();
@@ -94,36 +153,6 @@ public static class CardFactory
             "InventoryPosition").Position;
 
         return new CharacterWrapper(card, character);
-    }
-
-    public static LocationWrapper CreateCardFromLocation(
-        string mod, WorldHexModel location)
-    {
-        if (location.Location.Image == null)
-            return CreateDefaultWrappedLocation();
-
-        Card card = CardScene.Instance<Card>();
-        card.IsDraggable = false;
-        card.IsStackTarget = true;
-        card.Background.Texture = FullArtBackground;
-        AddActionCostCounter(card, location.Location.TravelCost);
-        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-            mod + "\\Images\\Cards\\Full\\" + location.Location.Image);
-        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-        if (System.IO.File.Exists(pathWithExtension))
-        {
-            card.Front.GetNode<Sprite>("Image").Texture
-                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
-        }
-        else
-        {
-            GD.PrintErr("Card factory error: Resource missing at " + pathWithExtension);
-            return CreateDefaultWrappedLocation();
-        }
-
-        LocationWrapper locationWrapper = new LocationWrapper(card, location);
-        locationWrapper.PopulateEncounters();
-        return locationWrapper;
     }
 
     public static CombatCardWrapper CreateCardFromCombatCardModel(CombatCardModel model)
@@ -210,6 +239,36 @@ public static class CardFactory
         }
 
         return new FieldCardWrapper(card, model);
+    }
+
+    public static LocationWrapper CreateCardFromLocation(
+    string mod, WorldHexModel location)
+    {
+        if (location.Location.Image == null)
+            return CreateDefaultWrappedLocation();
+
+        Card card = CardScene.Instance<Card>();
+        card.IsDraggable = false;
+        card.IsStackTarget = true;
+        card.Background.Texture = FullArtBackground;
+        AddActionCostCounter(card, location.Location.TravelCost);
+        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            mod + "\\Images\\Cards\\Full\\" + location.Location.Image);
+        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+        if (System.IO.File.Exists(pathWithExtension))
+        {
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+        }
+        else
+        {
+            GD.PrintErr("Card factory error: Resource missing at " + pathWithExtension);
+            return CreateDefaultWrappedLocation();
+        }
+
+        LocationWrapper locationWrapper = new LocationWrapper(card, location);
+        locationWrapper.PopulateEncounters();
+        return locationWrapper;
     }
 
     public static LocationWrapper CreateDefaultWrappedLocation()
@@ -319,5 +378,11 @@ public static class CardFactory
         };
         counter.SetMax(value);
         card.Front.AddChild(counter);
+    }
+
+    internal static BaseBonusCardWrapper CreateCardFromBonusCombatCard(BonusCombatCardModel cardModel)
+    {
+        //TODO same as CreateCardFromBonusFieldCard -> extract logic beforehand
+        throw new NotImplementedException();
     }
 }

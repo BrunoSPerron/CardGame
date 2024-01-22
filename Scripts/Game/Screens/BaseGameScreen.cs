@@ -9,7 +9,7 @@ public abstract class BaseGameScreen : Node2D
      
     public Game Game;
 
-    private readonly List<Button> buttons = new List<Button>();
+    public readonly List<Button> Buttons = new List<Button>();
     private CardDealer cardDealer;
 
     public Button AddButton(string label,
@@ -20,7 +20,7 @@ public abstract class BaseGameScreen : Node2D
         Button button = ButtonScene.Instance<Button>();
         button.Label = label;
         button.Connect("OnClick", this, callbackMethodName);
-        buttons.Add(button);
+        Buttons.Add(button);
         AddChild(button);
         button.UIAnchorToScreenBorder(anchor, offset);
         return button;
@@ -53,13 +53,13 @@ public abstract class BaseGameScreen : Node2D
 
     public virtual void DisableScreen()
     {
-        foreach (Button button in buttons)
+        foreach (Button button in Buttons)
             button.Visible = false;
     }
 
     public virtual void EnableScreen()
     {
-        foreach (Button button in buttons)
+        foreach (Button button in Buttons)
             button.Visible = true;
     }
 
@@ -73,13 +73,13 @@ public abstract class BaseGameScreen : Node2D
     {
         EnableScreen();
     }
-    public void OpenDeckModificationPanel(List<BaseCardWrapper> deck)
+    public void OpenDeckModificationPanel(BaseDeckManager manager)
     {
         DisableScreen();
         DeckPanel deckPanel = ResourceLoader.Load<PackedScene>(
             "res://Assets/UI/DeckPanel.tscn/").Instance<DeckPanel>();
 
-        deckPanel.Deck = deck;
+        deckPanel.Manager = manager;
         deckPanel.GameScreen = this;
         AddChild(deckPanel);
     }

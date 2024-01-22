@@ -18,6 +18,7 @@ public class CharacterWrapper : BaseCardWrapper
 
             combatDeckManager = new CombatDeckManager(value.CombatDeck);
             fieldDeckManager = new FieldDeckManager(value.FieldDeck);
+            UpdateBonusDeckCards();
         }
     }
 
@@ -66,19 +67,7 @@ public class CharacterWrapper : BaseCardWrapper
         }
     }
 
-    public List<ItemModel> Items
-    {
-        get => model.Items;
-        set
-        {
-            model.Items = value;
-            foreach (ItemModel item in model.Items)
-            {
-                fieldDeckManager.AddBonusCardsFromItem(item);
-                combatDeckManager.AddBonusCardsFromItem(item);
-            }
-        }
-    }
+    public List<ItemModel> Items => model.Items;
 
     public int MaxActionPoint
     {

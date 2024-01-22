@@ -1,6 +1,7 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CombatDeckManager : BaseDeckManager
 {
@@ -27,12 +28,19 @@ public class CombatDeckManager : BaseDeckManager
             });
         }
     }
+    public override List<BaseBonusCardWrapper> GetBonusCards()
+    {
+        List<BaseBonusCardWrapper> wrappers = new List<BaseBonusCardWrapper>();
+        foreach (BonusCombatCardModel cardModel in Model.BonusCards)
+            wrappers.Add(CardFactory.CreateCardFromBonusCombatCard(cardModel));
+        return wrappers;
+    }
 
     public override List<BaseCardWrapper> GetSortedBaseDeck()
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
 
-        foreach (CombatCardModel model in Model.BaseDeck)
+        foreach (CombatCardModel model in Model.CombatDeck)
             wrappers.Add(CardFactory.CreateCardFromCombatCardModel(model));
 
         return wrappers;
@@ -50,4 +58,6 @@ public class CombatDeckManager : BaseDeckManager
             if (!Model.BonusCards.Exists((bonus) => bonus.ItemSourceId == item.ID))
                 AddBonusCardsFromItem(item);
     }
+
+
 }

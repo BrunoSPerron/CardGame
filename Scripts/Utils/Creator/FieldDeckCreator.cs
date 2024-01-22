@@ -105,7 +105,7 @@ public static class FieldDeckCreator
 
             for (int i = 0; i < amount; i++)
             {
-                model.BaseDeck.Add(card.CloneViaJSON());
+                model.FieldDeck.Add(card.CloneViaJSON());
             }
         }
     }
