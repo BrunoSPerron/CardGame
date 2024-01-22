@@ -105,7 +105,6 @@ public class FieldDeckManager : BaseDeckManager
         return wrappers;
     }
 
-    /// <typeparam name="T">Must inherit baseCardWrapper</typeparam>
     public void Reset()
     {
         Clear();
@@ -121,13 +120,42 @@ public class FieldDeckManager : BaseDeckManager
             GD.PrintErr("Deck manager error: No field deck. Using bad deck");
         }
 
-        for (int i = 0; i < Model.BaseDeck.Count; i++)
+        BonusFieldCardModel[] bonusModels = Model.BonusCards.ToArray();
+
+        List<BonusFieldCardModel>[] bonusCardsAtindex
+            = new List<BonusFieldCardModel>[Model.FieldDeck.Count];
+
+        for (int i = 0; i < bonusCardsAtindex.Length; i++)
+            bonusCardsAtindex[i] = new List<BonusFieldCardModel>();
+
+        for (int i = 0; i < bonusModels.Length; i++)
         {
-            FieldCardModel model = Model.FieldDeck[i];
-            wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(model));
+            BonusFieldCardModel bonusCardModel = bonusModels[i];
+            int overrideIndex = bonusCardModel.OverrideCardIndex;
+            bonusCardsAtindex[overrideIndex].Add(bonusCardModel);
+        }
+
+        for (int i = 0; i < Model.FieldDeck.Count; i++)
+        {
+            List<BonusFieldCardModel> currenBonusCards = bonusCardsAtindex[i];
+            if (currenBonusCards.Count != 0)
+            {
+                BonusFieldCardModel cardToUse = currenBonusCards[0];
+                for (int j = 1; j < currenBonusCards.Count; j++)
+                {
+                    if (currenBonusCards[j].Priority > cardToUse.Priority)
+                        cardToUse = currenBonusCards[j];
+                }
+                wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(cardToUse.Card));
+            }
+            else
+            {
+                wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(Model.FieldDeck[i]));
+            }
         }
 
         deck = wrappedDeck;
+        Shuffle();
     }
 
     public void Shuffle()
