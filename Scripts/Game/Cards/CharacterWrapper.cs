@@ -16,8 +16,8 @@ public class CharacterWrapper : BaseCardWrapper
             Card.Front.GetNode<IconCounter>("LifeCounter").SetMax(value.HitPoint);
             Card.Front.GetNode<IconCounter>("PowerCounter").SetMax(value.Power);
 
-            combatDeckManager = new CombatDeckManager(value.CombatDeck);
-            fieldDeckManager = new FieldDeckManager(value.FieldDeck);
+            combatDeckManager = new CombatDeckManager(this, value.CombatDeck);
+            fieldDeckManager = new FieldDeckManager(this, value.FieldDeck);
             UpdateBonusDeckCards();
         }
     }
@@ -30,7 +30,7 @@ public class CharacterWrapper : BaseCardWrapper
             if (combatDeckManager == null)
             {
                 combatDeckManager = DeckFactory.CreateCombatDeckManagerFromModel(
-                    model.CombatDeck);
+                    this, model.CombatDeck);
             }
             return combatDeckManager;
         }
@@ -45,7 +45,7 @@ public class CharacterWrapper : BaseCardWrapper
             if (fieldDeckManager == null)
             {
                 fieldDeckManager = DeckFactory.CreateFieldDeckManagerFromModel(
-                    model.FieldDeck);
+                    this, model.FieldDeck);
             }
             return fieldDeckManager;
         }

@@ -10,4 +10,11 @@ public abstract class BaseDeckManager
     public abstract BaseDeckModel BaseModel { get; }
     public abstract List<BaseBonusCardWrapper> GetBonusCards();
     public abstract List<BaseCardWrapper> GetSortedBaseDeck();
+
+    public CharacterWrapper parentCharacter;
+
+    public BaseDeckManager(CharacterWrapper character)
+    {
+        parentCharacter = character;
+    }
 }

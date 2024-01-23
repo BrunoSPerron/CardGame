@@ -1,4 +1,5 @@
 using Godot;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -57,7 +58,7 @@ public class Game : Node2D
     /// Flip cards out of the screen
     /// </summary>
     /// <param name="card">Card with no godot parent</param>
-    public void CleanCard(Card card)
+    public void CleanCard(Card card, bool preserveCard = false)
     {
         card.ClearAnimations();
         if (cardCleaner == null)
@@ -67,10 +68,11 @@ public class Game : Node2D
             cardCleaner.Position = new Vector2(0, 0);
         }
         var instanceId = card.GetInstanceId();
-        bool preserveCard = locationsByCardId.ContainsKey(instanceId)
+        bool preserveCardOverride = preserveCard
+            ||locationsByCardId.ContainsKey(instanceId)
             || charactersByCardId.ContainsKey(instanceId);
 
-        cardCleaner.AddCardToClean(card, preserveCard);
+        cardCleaner.AddCardToClean(card, preserveCardOverride);
     }
 
     public CardCleanResponse RemoveFromCleaner(Card card)

@@ -84,7 +84,6 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         foreach (BaseCardWrapper wrapper in this)
         {
             RemoveChild(wrapper.Card);
-            Game.CleanCard(wrapper.Card);
         }
     }
 

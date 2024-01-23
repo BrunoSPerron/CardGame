@@ -5,13 +5,13 @@ using System.Linq;
 
 public static class DeckFactory
 {
-    public static CombatDeckManager CreateBadCombatDeckManager()
+    public static CombatDeckManager CreateBadCombatDeckManager(CharacterWrapper parent)
     {
         CombatDeckModel deckInfo = new CombatDeckModel
         {
             CombatDeck = CreateBadCombatDeck()
         };
-        return new CombatDeckManager(deckInfo);
+        return new CombatDeckManager(parent, deckInfo);
     }
 
     public static List<CombatCardModel> CreateBadCombatDeck(int deckSize = 20)
@@ -22,13 +22,13 @@ public static class DeckFactory
         return baseDeck;
     }
 
-    public static FieldDeckManager CreateBadFieldDeckManager()
+    public static FieldDeckManager CreateBadFieldDeckManager(CharacterWrapper parent)
     {
         FieldDeckModel deckInfo = new FieldDeckModel
         {
             FieldDeck = CreateBadFieldDeck()
         };
-        return new FieldDeckManager(deckInfo);
+        return new FieldDeckManager(parent, deckInfo);
     }
 
     public static List<FieldCardModel> CreateBadFieldDeck(int deckSize = 20)
@@ -49,29 +49,31 @@ public static class DeckFactory
         return new FieldCardModel();
     }
 
-    public static FieldDeckManager CreateFieldDeckManagerFromModel(FieldDeckModel fieldDeck)
+    public static FieldDeckManager CreateFieldDeckManagerFromModel(
+        CharacterWrapper parent, FieldDeckModel fieldDeck)
     {
         if (fieldDeck.BaseDeck == null || fieldDeck.BaseDeck.Count < 5)
         {
             GD.PrintErr(
                 "Deck Factory error: Field deck missing, a generic one will be used. Mod: '"
                 + fieldDeck.Mod + "' - At : " + fieldDeck.JsonFilePath);
-            return CreateBadFieldDeckManager();
+            return CreateBadFieldDeckManager(parent);
         }
 
-        return new FieldDeckManager(fieldDeck);
+        return new FieldDeckManager(parent, fieldDeck);
     }
 
-    public static CombatDeckManager CreateCombatDeckManagerFromModel(CombatDeckModel combatDeck)
+    public static CombatDeckManager CreateCombatDeckManagerFromModel(
+        CharacterWrapper parent, CombatDeckModel combatDeck)
     {
         if (combatDeck.CombatDeck == null || combatDeck.CombatDeck.Count < 5)
         {
             GD.PrintErr(
                 "Deck Factory error: Combat deck missing, a generic one will be used. Mod: '"
                 + combatDeck.Mod + "' - At : " + combatDeck.JsonFilePath);
-            return CreateBadCombatDeckManager();
+            return CreateBadCombatDeckManager(parent);
         }
 
-        return new CombatDeckManager(combatDeck);
+        return new CombatDeckManager(parent, combatDeck);
     }
 }

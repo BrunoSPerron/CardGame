@@ -15,7 +15,8 @@ public class FieldDeckManager : BaseDeckManager
     private readonly List<FieldCardWrapper> hand = new List<FieldCardWrapper>();
     private readonly List<FieldCardWrapper> discardPile = new List<FieldCardWrapper>();
 
-    public FieldDeckManager(FieldDeckModel deckInfo)
+    public FieldDeckManager(CharacterWrapper character, FieldDeckModel deckInfo)
+        : base(character)
     {
         Model = deckInfo;
     }
@@ -39,11 +40,14 @@ public class FieldDeckManager : BaseDeckManager
     public void Clear()
     {
         foreach (FieldCardWrapper wrapper in deck)
-            wrapper.Card.QueueFree();
+            if (!wrapper.Card.IsInsideTree())
+                wrapper.Card.QueueFree();
         foreach (FieldCardWrapper wrapper in hand)
-            wrapper.Card.QueueFree();
+            if (!wrapper.Card.IsInsideTree())
+                wrapper.Card.QueueFree();
         foreach (FieldCardWrapper wrapper in discardPile)
-            wrapper.Card.QueueFree();
+            if (!wrapper.Card.IsInsideTree())
+                wrapper.Card.QueueFree();
 
         deck.Clear();
         hand.Clear();
@@ -66,8 +70,8 @@ public class FieldDeckManager : BaseDeckManager
         }
 
         hand.Add(deck[0]);
-        FieldCardWrapper wrapper = deck[0];
         deck.RemoveAt(0);
+        FieldCardWrapper wrapper = deck[0];
         return wrapper;
     }
 

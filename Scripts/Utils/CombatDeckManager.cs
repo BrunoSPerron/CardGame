@@ -8,7 +8,8 @@ public class CombatDeckManager : BaseDeckManager
     public override BaseDeckModel BaseModel => Model;
 
     public CombatDeckModel Model { get; private set; }
-    public CombatDeckManager(CombatDeckModel deckInfo)
+    public CombatDeckManager(CharacterWrapper character, CombatDeckModel deckInfo)
+        : base(character)
     {
         Model = deckInfo;
     }

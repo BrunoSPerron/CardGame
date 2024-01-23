@@ -144,6 +144,7 @@ public class DeckPanel : Node2D
 
     public void DealOnBoard(Card card, Vector2 target)
     {
+        GameScreen.Game.RemoveFromCleaner(card);
         card.MoveToPosition(target);
         if (cardDealer == null || cardDealer.IsQueuedForDeletion())
         {
