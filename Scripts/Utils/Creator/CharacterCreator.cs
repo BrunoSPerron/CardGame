@@ -5,7 +5,6 @@ using System.Reflection;
 
 public static class CharacterCreator
 {
-
     /// <summary>
     /// Create a character by calling the 'AssemblyLine' methods Listed in an array of string
     /// </summary>
@@ -45,9 +44,8 @@ public static class CharacterCreator
     }
 
 
-
     // Methods in this class must be public and use lowercase names to be invokable.
-    // They must accept a single argument, which is an array of string.
+    // They accept a single argument, which must be an array of string.
     public class AssemblyLine
     {
         #pragma warning disable IDE1006

@@ -132,6 +132,7 @@ public static class CardFactory
         AddCounter(card, "ActionCounter", actionCounterPosition, CardIcon.TIME);
 
         CardButtonBase combatDeckButton = DeckIconScene.Instance<CardButtonBase>();
+        combatDeckButton.Name = "CombatDeckButton";
         cardFront.AddChild(combatDeckButton);
         combatDeckButton.Connect("OnClick", card, "OnCombatDeckClicked");
         combatDeckButton.Position = cardFront.GetNode<Position2D>(
@@ -140,6 +141,7 @@ public static class CardFactory
         CardButtonBase restDeckButton = DeckIconScene.Instance<CardButtonBase>();
         restDeckButton.ButtonTextureOnReady = DeckIconTexture_rest;
         cardFront.AddChild(restDeckButton);
+        restDeckButton.Name = "FieldDeckButton";
         restDeckButton.Connect("OnClick", card, "OnFieldDeckClicked");
         restDeckButton.Position = cardFront.GetNode<Position2D>(
             "RestDeckPosition").Position;

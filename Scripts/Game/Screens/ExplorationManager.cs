@@ -54,6 +54,7 @@ public class ExplorationManager : BaseGameScreen
             {
                 character.Card.IsDraggable = false;
                 character.Card.SetAlpha(alpha);
+                character.DisableButtons();
             }
 
             if (currentScreen.SurviveTarget != null)
@@ -92,6 +93,7 @@ public class ExplorationManager : BaseGameScreen
             {
                 character.Card.IsDraggable = true;
                 character.Card.SetAlpha(1f);
+                character.EnableButtons();
             }
 
             if (currentScreen.SurviveTarget != null)

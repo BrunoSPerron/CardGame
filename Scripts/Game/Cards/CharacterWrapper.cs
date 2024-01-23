@@ -128,6 +128,26 @@ public class CharacterWrapper : BaseCardWrapper
         UpdateBonusDeckCards();
     }
 
+    public override void DisableButtons()
+    {
+        base.DisableButtons();
+        CardButtonBase button = Card.Front.GetNode<CardButtonBase>("CombatDeckButton");
+        button.Disable();
+
+        button = Card.Front.GetNode<CardButtonBase>("FieldDeckButton");
+        button.Disable();
+    }
+
+    public override void EnableButtons()
+    {
+        base.EnableButtons();
+        CardButtonBase button = Card.Front.GetNode<CardButtonBase>("CombatDeckButton");
+        button.Enable();
+
+        button = Card.Front.GetNode<CardButtonBase>("FieldDeckButton");
+        button.Enable();
+    }
+
     private void UpdateBonusDeckCards()
     {
         fieldDeckManager.UpdateBonusCards(Items);
