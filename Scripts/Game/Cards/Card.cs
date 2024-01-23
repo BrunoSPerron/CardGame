@@ -115,6 +115,9 @@ public class Card : Area2D
         for (int i = animations.Count - 1; i > 0; i--)
             animations[i].ForceEnd();
         animations.Clear();
+        foreach (Node child in GetChildren())
+            if (child is AudioStreamPlayer)
+                child.QueueFree();
     }
 
     public override void _PhysicsProcess(float delta)
@@ -146,7 +149,7 @@ public class Card : Area2D
     {
         AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
             "res://Audio/Fx/cardFlip.mp3");
-        AudioHelper.PlaySoundOnNode(this, sound, .7f);
+        AudioHelper.PlaySoundOnCard(this, sound, .7f);
         IsFaceDown = !IsFaceDown;
         bool isFlippingAlready = false;
         foreach (CardAnimationBase animation in animations)
@@ -184,7 +187,7 @@ public class Card : Area2D
         {
             AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
                 "res://Audio/Fx/cardFlip.mp3");
-            AudioHelper.PlaySoundOnNode(this, sound, .7f);
+            AudioHelper.PlaySoundOnCard(this, sound, .7f);
             IsFaceDown = !IsFaceDown;
             animations.Add(new CardFlipToTarget(this));
         }
