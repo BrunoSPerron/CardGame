@@ -167,6 +167,15 @@ public class ExplorationManager : BaseGameScreen
         SetCurrentScreen(worldPosition);
     }
 
+    public void OnCharacterActionOver()
+    {
+        foreach (CharacterWrapper character in Game.Survivors)
+            if (character.CurrentActionPoint != 0)
+                return;
+
+        Game.NextPhase();
+    }
+
     public void OnLeftNavigationButtonPress()
     {
         int i = 0;

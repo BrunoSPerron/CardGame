@@ -148,27 +148,11 @@ public class Game : Node2D
         if (nextPhase > 5)
         {
             State.Turn++;
-            State.PhaseOfDay = Phase.DAWN;
+            nextPhase = 0;
         }
-        switch (State.PhaseOfDay)
-        {
-            case Phase.DAWN:
-            case Phase.NOON:
-            case Phase.DUSK:
-                StartFieldPhase();
-                break;
-            case Phase.MORNING:
-            case Phase.AFTERNOON:
-                StartExplorationPhase();
-                break;
-            case Phase.NIGHT:
-                //TODO Night Phase
-                NextPhase();
-                break;
-            default:
-                GD.PrintErr("Game error: Phase unknown");
-                break;
-        }
+
+        State.PhaseOfDay = (Phase)nextPhase;
+        StartPhase();
         TurnCounter.UpdateFromGameState(State);
     }
 
@@ -196,6 +180,29 @@ public class Game : Node2D
         currentScene?.OpenInventoryScreen(wrapper);
     }
 
+    private void StartPhase()
+    {
+        switch (State.PhaseOfDay)
+        {
+            case Phase.DAWN:
+            case Phase.NOON:
+            case Phase.DUSK:
+                StartFieldPhase();
+                break;
+            case Phase.MORNING:
+            case Phase.AFTERNOON:
+                StartExplorationPhase();
+                break;
+            case Phase.NIGHT:
+                //TODO Night Phase
+                NextPhase();
+                break;
+            default:
+                GD.PrintErr("Game error: Phase unknown");
+                break;
+        }
+    }
+
     public void StartExplorationPhase()
     {
         currentScene?.Destroy();
@@ -212,6 +219,6 @@ public class Game : Node2D
     public void StartNew()
     {
         InitializeScenario("BaseGame", "Endless");
-        NextPhase();
+        StartPhase();
     }
 }

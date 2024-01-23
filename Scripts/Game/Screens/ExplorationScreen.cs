@@ -341,6 +341,7 @@ public class ExplorationScreen : BaseGameScreen
     {
         EnableScreen();
         StackSurvivors();
+        Manager.OnCharacterActionOver();
     }
 
     public void SurvivorEvent_Move(CharacterWrapper character, LocationWrapper destination)
@@ -350,6 +351,7 @@ public class ExplorationScreen : BaseGameScreen
             character.CurrentActionPoint -= destination.Model.TravelCost;
             character.WorldPosition = destination.WorldPosition.Coord;
             Manager.MoveToHex(destination.WorldPosition.Coord);
+            Manager.OnCharacterActionOver();
         }
         else
         {
