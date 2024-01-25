@@ -4,8 +4,7 @@ using System;
 
 public abstract class BaseModel
 {
-    public string ID = Guid.NewGuid().ToString();
-    public string Mod = "";
-    public string JsonFilePath;
+    public virtual string ID { get; set; } = Guid.NewGuid().ToString();
+    public virtual string JsonFilePath { get; set; }
+    public virtual string Mod { get; set; } = "";
 }
-    

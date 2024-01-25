@@ -27,6 +27,18 @@ public static class JsonLoader
         return model;
     }
 
+    public static CombatDeckCreationModel GetCombatDeckCreationModel(string modName,
+                                                                     string jsonFileName)
+    {
+        string path = Path.Combine(PATHS.ModFolderPath,
+            modName + "\\Data\\CombatDeckCreation\\" + jsonFileName);
+        CombatDeckCreationModel model =
+            GetOfType<CombatDeckCreationModel>.FromJson(path)
+            ?? new CombatDeckCreationModel();
+        model.Mod = modName;
+        return model;
+    }
+
     public static EncounterModel GetEncounterModel(string modName, string jsonFileName)
     {
         string path = Path.Combine(PATHS.ModFolderPath,

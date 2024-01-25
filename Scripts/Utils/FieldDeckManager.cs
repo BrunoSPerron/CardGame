@@ -1,9 +1,6 @@
 ﻿using Godot;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 public class FieldDeckManager : BaseDeckManager
 {
@@ -29,7 +26,7 @@ public class FieldDeckManager : BaseDeckManager
             FieldCardModel cardModel = JsonLoader.GetFieldCardModel(item.Mod, cardName);
             Model.BonusCards.Add(new BonusFieldCardModel()
             {
-                Card = cardModel,
+                FieldCard = cardModel,
                 ItemSourceId = item.ID,
                 OverrideCardIndex = 0,
                 Priority = i
@@ -59,7 +56,7 @@ public class FieldDeckManager : BaseDeckManager
         if (deck == null)
         {
             GD.PrintErr("Deck manager error: Tried to draw from a non-existing deck");
-            return CardFactory.CreateCardFromFieldCardModel(new FieldCardModel());
+            return CardFactory.CreateCardFrom(new FieldCardModel());
         }
 
         if (deck.Count == 0)
@@ -78,13 +75,8 @@ public class FieldDeckManager : BaseDeckManager
     public List<FieldCardWrapper> DrawMultiple(int amount)
     {
         List<FieldCardWrapper> wrappers = new List<FieldCardWrapper>();
-        int i = 0;
-        while (i < amount)
-        {
+        for (int i = 0; i < amount; i++)
             wrappers.Add(Draw());
-            i++;
-        }
-
         return wrappers;
     }
 
@@ -93,7 +85,7 @@ public class FieldDeckManager : BaseDeckManager
         List<BaseBonusCardWrapper> wrappers = new List<BaseBonusCardWrapper>();
         foreach (BonusFieldCardModel cardModel in Model.BonusCards)
         {
-            BaseBonusCardWrapper wrapper = CardFactory.CreateCardFromBonusFieldCard(cardModel);
+            BaseBonusCardWrapper wrapper = CardFactory.CreateCardFrom(cardModel);
             wrappers.Add(wrapper);
         }
         return wrappers;
@@ -102,10 +94,8 @@ public class FieldDeckManager : BaseDeckManager
     public override List<BaseCardWrapper> GetSortedBaseDeck()
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
-
         foreach (FieldCardModel model in Model.FieldDeck)
-            wrappers.Add(CardFactory.CreateCardFromFieldCardModel(model));
-
+            wrappers.Add(CardFactory.CreateCardFrom(model));
         return wrappers;
     }
 
@@ -150,11 +140,11 @@ public class FieldDeckManager : BaseDeckManager
                     if (currenBonusCards[j].Priority > cardToUse.Priority)
                         cardToUse = currenBonusCards[j];
                 }
-                wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(cardToUse.Card));
+                wrappedDeck.Add(CardFactory.CreateCardFrom(cardToUse.FieldCard));
             }
             else
             {
-                wrappedDeck.Add(CardFactory.CreateCardFromFieldCardModel(Model.FieldDeck[i]));
+                wrappedDeck.Add(CardFactory.CreateCardFrom(Model.FieldDeck[i]));
             }
         }
 

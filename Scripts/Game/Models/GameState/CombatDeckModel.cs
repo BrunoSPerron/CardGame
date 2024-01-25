@@ -5,8 +5,8 @@ public class CombatDeckModel : BaseDeckModel
 {
     public override List<BaseCardModel> BaseDeck
         => CombatDeck.Cast<BaseCardModel>().ToList();
-    public override List<BonusFieldCardModel> BaseBonusCards
-        => BonusCards.Cast<BonusFieldCardModel>().ToList();
+    public override List<BaseBonusCardModel> BaseBonusCards
+        => BonusCards.Cast<BaseBonusCardModel>().ToList();
 
 
     public List<BonusCombatCardModel> BonusCards = new List<BonusCombatCardModel>();

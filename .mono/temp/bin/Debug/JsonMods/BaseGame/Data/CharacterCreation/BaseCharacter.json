@@ -1,6 +1,7 @@
 {
+	"CombatDeck": "BaseDeck",
+	"FieldDeck": "BaseDeck",
 	"Instructions": [
-		"rename random",
-		"use field deck -> BaseDeck"
+		"rename random"
 	]
 }

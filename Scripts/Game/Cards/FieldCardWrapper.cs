@@ -14,9 +14,9 @@ public class FieldCardWrapper : BaseCardWrapper
         }
     }
 
-    public FieldCardWrapper(Card card, FieldCardModel cardInfo)
+    public FieldCardWrapper(Card card, FieldCardModel model)
     {
         Card = card;
-        Model = cardInfo;
+        Model = model;
     }
 }

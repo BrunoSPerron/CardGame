@@ -3,5 +3,7 @@
 
 public class BonusFieldCardModel : BaseBonusCardModel
 {
-    public new FieldCardModel Card;
+    public override BaseCardModel Card => FieldCard;
+
+    public FieldCardModel FieldCard;
 }

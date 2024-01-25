@@ -1,9 +1,9 @@
 ﻿using System;
 
 
-public class BaseBonusCardModel
+public abstract class BaseBonusCardModel
 {
-    public BaseCardModel Card;
+    public abstract BaseCardModel Card { get; }
 
     public string ItemSourceId;
     public int OverrideCardIndex;

@@ -54,7 +54,7 @@ public static class CardFactory
         }
     }
 
-    public static BaseBonusCardWrapper CreateCardFromBonusFieldCard(BonusFieldCardModel cardModel)
+    public static BaseBonusCardWrapper CreateCardFrom(BonusCombatCardModel cardModel)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -63,23 +63,70 @@ public static class CardFactory
         PixelText cost = pixelText.Instance<PixelText>();
         cost.Name = "CardCostLabel";
         cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
-        cost.SetLabel(cardModel.Card.Cost.ToString());
+        cost.SetLabel(cardModel.CombatCard.Cost.ToString());
         card.Front.AddChild(cost);
 
         PixelText textBox = pixelText.Instance<PixelText>();
-        textBox.SetLabel(cardModel.Card.TextBox);
+        textBox.SetLabel(cardModel.CombatCard.TextBox);
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        string mod = cardModel.Card.Mod;
-        string[] splittedImageName = cardModel.Card.Image.Split(
-            new string[] { "__" }, StringSplitOptions.None);
-        string cardName = splittedImageName[0];
-        if (splittedImageName.Length > 1)
+        (string cardName, string mod) = PathHelper.GetNameAndMod(cardModel.Card.Image,
+                                                                 cardModel.Card);
+
+        if (mod == "core")
         {
-            mod = splittedImageName[0];
-            cardName = splittedImageName[1];
+            switch (cardName)
+            {
+                case "punch":
+                    Texture texturePath = ResourceLoader.Load<Texture>(
+                        "res://Art/Cards/Images/punch.png");
+                    card.Front.GetNode<Sprite>("Image").Texture = texturePath;
+                    break;
+                default:
+                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    break;
+            }
         }
+        else
+        {
+            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+                mod + "\\Images\\Cards\\Box\\" + cardModel.Card.Image);
+
+            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+            if (System.IO.File.Exists(pathWithExtension))
+            {
+                card.Front.GetNode<Sprite>("Image").Texture
+                    = TextureLoader.GetTextureFromPng(pathWithExtension);
+            }
+            else
+            {
+                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
+            }
+        }
+
+        return new BonusCombatCardWrapper(card, cardModel);
+    }
+
+    public static BaseBonusCardWrapper CreateCardFrom(BonusFieldCardModel cardModel)
+    {
+        Card card = CardScene.Instance<Card>();
+
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/PixelText.tscn");
+        PixelText cost = pixelText.Instance<PixelText>();
+        cost.Name = "CardCostLabel";
+        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
+        cost.SetLabel(cardModel.FieldCard.Cost.ToString());
+        card.Front.AddChild(cost);
+
+        PixelText textBox = pixelText.Instance<PixelText>();
+        textBox.SetLabel(cardModel.FieldCard.TextBox);
+        card.Front.AddChild(textBox);
+        textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
+
+        (string cardName, string mod) = PathHelper.GetNameAndMod(cardModel.Card.Image,
+                                                                 cardModel.Card);
 
         if (mod == "core")
         {
@@ -102,7 +149,7 @@ public static class CardFactory
             if (System.IO.File.Exists(pathWithExtension))
             {
                 card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+                    = TextureLoader.GetTextureFromPng(pathWithExtension);
             }
             else
             {
@@ -113,7 +160,7 @@ public static class CardFactory
         return new BonusFieldCardWrapper(card, cardModel);
     }
 
-    public static CharacterWrapper CreateCardFromCharacter(CharacterModel character)
+    public static CharacterWrapper CreateCardFrom(CharacterModel character)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -157,34 +204,7 @@ public static class CardFactory
         return new CharacterWrapper(card, character);
     }
 
-    public static CombatCardWrapper CreateCardFromCombatCardModel(CombatCardModel model)
-    {
-        Card card = CardScene.Instance<Card>();
-
-        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
-            "res://Assets/UI/PixelText.tscn");
-        PixelText cost = pixelText.Instance<PixelText>();
-        cost.Name = "CardCostLabel";
-        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
-        cost.SetLabel(model.Cost.ToString());
-        card.Front.AddChild(cost);
-
-        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-            model.Mod + "\\Images\\Cards\\Box\\" + model.Image);
-        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-        if (System.IO.File.Exists(pathWithExtension))
-        {
-            card.Front.GetNode<Sprite>("Image").Texture
-                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
-        }
-        else
-        {
-            GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
-        }
-        return new CombatCardWrapper(card, model);
-    }
-
-    public static FieldCardWrapper CreateCardFromFieldCardModel(FieldCardModel model)
+    public static CombatCardWrapper CreateCardFrom(CombatCardModel model)
     {
         Card card = CardScene.Instance<Card>();
         
@@ -201,15 +221,60 @@ public static class CardFactory
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        string mod = model.Mod;
-        string[] splittedImageName = model.Image.Split(
-            new string[] { "__" }, StringSplitOptions.None);
-        string cardName = splittedImageName[0];
-        if (splittedImageName.Length > 1)
+        (string cardName, string mod) = PathHelper.GetNameAndMod(model.Image, model);
+
+        if (mod == "core")
         {
-            mod = splittedImageName[0];
-            cardName = splittedImageName[1];
+            switch (cardName)
+            {
+                case "punch":
+                    Texture texturePath = ResourceLoader.Load<Texture>(
+                        "res://Art/Cards/Images/punch.png");
+                    card.Front.GetNode<Sprite>("Image").Texture = texturePath;
+                    break;
+                default:
+                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    break;
+            }
         }
+        else
+        {
+            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+                mod + "\\Images\\Cards\\Box\\" + model.Image);
+
+            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
+            if (System.IO.File.Exists(pathWithExtension))
+            {
+                card.Front.GetNode<Sprite>("Image").Texture
+                    = TextureLoader.GetTextureFromPng(pathWithExtension);
+            }
+            else
+            {
+                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
+            }
+        }
+
+        return new CombatCardWrapper(card, model);
+    }
+
+    public static FieldCardWrapper CreateCardFrom(FieldCardModel model)
+    {
+        Card card = CardScene.Instance<Card>();
+        
+        PackedScene pixelText = ResourceLoader.Load<PackedScene>(
+            "res://Assets/UI/PixelText.tscn");
+        PixelText cost = pixelText.Instance<PixelText>();
+        cost.Name = "CardCostLabel";
+        cost.Position = card.Front.GetNode<Position2D>("CardCostPosition").Position;
+        cost.SetLabel(model.Cost.ToString());
+        card.Front.AddChild(cost);
+
+        PixelText textBox = pixelText.Instance<PixelText>();
+        textBox.SetLabel(model.TextBox);
+        card.Front.AddChild(textBox);
+        textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
+
+        (string cardName, string mod) = PathHelper.GetNameAndMod(model.Image, model);
 
         if (mod == "core")
         {
@@ -232,7 +297,7 @@ public static class CardFactory
             if (System.IO.File.Exists(pathWithExtension))
             {
                 card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+                    = TextureLoader.GetTextureFromPng(pathWithExtension);
             }
             else
             {
@@ -243,8 +308,7 @@ public static class CardFactory
         return new FieldCardWrapper(card, model);
     }
 
-    public static LocationWrapper CreateCardFromLocation(
-    string mod, WorldHexModel location)
+    public static LocationWrapper CreateCardFrom(string mod, WorldHexModel location)
     {
         if (location.Location.Image == null)
             return CreateDefaultWrappedLocation();
@@ -260,7 +324,7 @@ public static class CardFactory
         if (System.IO.File.Exists(pathWithExtension))
         {
             card.Front.GetNode<Sprite>("Image").Texture
-                = TextureLoader.GetImageTextureFromPng(pathWithExtension);
+                = TextureLoader.GetTextureFromPng(pathWithExtension);
         }
         else
         {
@@ -380,11 +444,5 @@ public static class CardFactory
         };
         counter.SetMax(value);
         card.Front.AddChild(counter);
-    }
-
-    internal static BaseBonusCardWrapper CreateCardFromBonusCombatCard(BonusCombatCardModel cardModel)
-    {
-        //TODO same as CreateCardFromBonusFieldCard -> extract logic beforehand
-        throw new NotImplementedException();
     }
 }

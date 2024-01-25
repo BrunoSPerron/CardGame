@@ -1,5 +1,5 @@
 {
-	"FieldActionCost": 2,
+	"SurviveActionCost": 2,
 	"Image": "chasm",
 	"Name":"chasm",
 	"TravelCost": 1,

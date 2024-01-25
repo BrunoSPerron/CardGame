@@ -1,6 +1,6 @@
 ﻿
 public abstract class BaseCardModel : BaseModel
 {
-    public string Name = "NONAME";
-    public string Image = "";
+    public abstract string Name { get; set; }
+    public abstract string Image { get; set; }
 }

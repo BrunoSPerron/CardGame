@@ -103,7 +103,6 @@ public class Card : Area2D
             Back.Visible = false;
         }
 
-
         // TODO - Fix the problem with FlipToTarget cancel and remove this DuctTape
         Front.Scale = Vector2.One;
         Back.Scale = Vector2.One;

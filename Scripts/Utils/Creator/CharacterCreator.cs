@@ -15,6 +15,9 @@ public static class CharacterCreator
         assemblyLine.model.Mod = model.Mod;
         Type factoryType = assemblyLine.GetType();
 
+        SetCombatDeck(assemblyLine, model);
+        SetFieldDeck(assemblyLine, model);
+
         foreach (string instruction in model.Instructions)
         {
             string[] splittedInstruction = instruction.Split(
@@ -41,6 +44,32 @@ public static class CharacterCreator
         }
 
         return assemblyLine.model;
+    }
+
+    private static void SetCombatDeck(
+        AssemblyLine assemblyLine, CharacterCreationModel model)
+    {
+        string combatDeckToUse = model.CombatDeck;
+        if (model.CombatDeck == null || model.CombatDeck.Trim() == "")
+        {
+            GD.PrintErr("Character creator error: CombatDeck missing in file "
+                + model.JsonFilePath);
+            combatDeckToUse = "core__bad";
+        }
+        assemblyLine.replacecombatdeck(new string[] { combatDeckToUse });
+    }
+
+    private static void SetFieldDeck(
+    AssemblyLine assemblyLine, CharacterCreationModel model)
+    {
+        string fieldDeckToUse = model.FieldDeck;
+        if (model.CombatDeck == null || model.CombatDeck.Trim() == "")
+        {
+            GD.PrintErr("Character creator error: CombatDeck missing in file "
+                + model.JsonFilePath);
+            fieldDeckToUse = "core__bad";
+        }
+        assemblyLine.replacefielddeck(new string[] { fieldDeckToUse });
     }
 
 
@@ -79,14 +108,25 @@ public static class CharacterCreator
         }
 
         /// <param name="args">
+        /// 0: CombatDeckCreation FileName
+        /// </param>
+        public void replacecombatdeck(string[] args)
+        {
+            (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);
+            CombatDeckCreationModel combatModel = JsonLoader.GetCombatDeckCreationModel(
+                mod, name);
+            model.CombatDeck = CombatDeckCreator.CreateFromModel(combatModel);
+        }
+
+        /// <param name="args">
         /// 0: FieldDeckCreation FileName
         /// </param>
-        public void usefielddeck(string[] args)
+        public void replacefielddeck(string[] args)
         {
-            string fileName = args[0];
-            FieldDeckCreationModel creationModel = JsonLoader.GetFieldDeckCreationModel(
-                model.Mod, fileName);
-            model.FieldDeck = FieldDeckCreator.CreateFromModel(creationModel);
+            (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);
+            FieldDeckCreationModel fieldModel = JsonLoader.GetFieldDeckCreationModel(
+                mod, name);
+            model.FieldDeck = FieldDeckCreator.CreateFromModel(fieldModel);
         }
     }
 }

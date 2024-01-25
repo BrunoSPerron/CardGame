@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 public class CombatCardWrapper : BaseCardWrapper
 {
-    private CombatCardModel info;
-    public CombatCardModel Info
+    private CombatCardModel model;
+    public CombatCardModel Model
     {
-        get => info;
+        get => model;
         private set
         {
-            info = value;
+            model = value;
             Card.SetLabel(value.Name);
         }
     }
 
-    public CombatCardWrapper(Card card, CombatCardModel cardInfo)
+    public CombatCardWrapper(Card card, CombatCardModel model)
     {
         Card = card;
-        Info = cardInfo;
+        Model = model;
     }
 }

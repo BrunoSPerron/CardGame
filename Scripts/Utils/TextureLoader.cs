@@ -4,7 +4,7 @@ using System;
 
 public static class TextureLoader
 {
-    public static ImageTexture GetImageTextureFromPng(string filePath)
+    public static ImageTexture GetTextureFromPng(string filePath)
     {
         File file = new File();
         Image image = new Image();

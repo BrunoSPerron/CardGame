@@ -22,7 +22,7 @@ public class ExplorationScreen : BaseGameScreen
         AddLocation();
         if (Location.Model.Encounters.Count != 0)
             AddExploreOption();
-        AddFieldOption();
+        AddSurviveOption();
 
         AddDestinations();
         AddSurvivors();
@@ -91,7 +91,7 @@ public class ExplorationScreen : BaseGameScreen
 
         //TODO Placement based on window size
         DealOnBoard(ExploreTarget, new Vector2(450, 200), true);
-        ExploreTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
+        ExploreTarget.CostCounter.SetMax(Location.Model.SurviveActionCost);
     }
 
     private void AddLocation()
@@ -108,11 +108,11 @@ public class ExplorationScreen : BaseGameScreen
         }
     }
 
-    private void AddFieldOption()
+    private void AddSurviveOption()
     {
         SurviveTarget = CardFactory.CreateSurviveCard();
         DealOnBoard(SurviveTarget, new Vector2(226, 200), true);
-        SurviveTarget.CostCounter.SetMax(Location.Model.FieldActionCost);
+        SurviveTarget.CostCounter.SetMax(Location.Model.SurviveActionCost);
     }
 
     private void AddSurvivors()
@@ -319,9 +319,9 @@ public class ExplorationScreen : BaseGameScreen
 
     private void SurvivorEvent_Field(CharacterWrapper character)
     {
-        if (character.CurrentActionPoint >= Location.Model.FieldActionCost)
+        if (character.CurrentActionPoint >= Location.Model.SurviveActionCost)
         {
-            character.CurrentActionPoint -= Location.Model.FieldActionCost;
+            character.CurrentActionPoint -= Location.Model.SurviveActionCost;
             DisableScreen();
             eventScreen = new PlayFieldScreen() 
             {

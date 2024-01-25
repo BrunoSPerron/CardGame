@@ -3,14 +3,14 @@ using System;
 using System.Reflection;
 
 
-public static class FieldDeckCreator
+public static class CombatDeckCreator
 {
 
     /// <summary>
     /// Create a character by calling the 'AssemblyLine' methods Listed in an array of string
     /// </summary>
     /// <param name="instructions">format: "METHOD_NAME -> ARG1 / ARG2 /.."</param>
-    public static FieldDeckModel CreateFromModel(FieldDeckCreationModel model)
+    public static CombatDeckModel CreateFromModel(CombatDeckCreationModel model)
     {
         AssemblyLine assemblyLine = new AssemblyLine();
         assemblyLine.model.Mod = model.Mod;
@@ -38,7 +38,7 @@ public static class FieldDeckCreator
             catch
             {
                 GD.PrintErr(
-                    "Field deck creator error: Invalid instruction from json. \"" +
+                    "Combat deck creator error: Invalid instruction from json. \"" +
                     instruction + "\"");
             }
         }
@@ -53,7 +53,7 @@ public static class FieldDeckCreator
     {
         #pragma warning disable IDE1006
 
-        public FieldDeckModel model = new FieldDeckModel();
+        public CombatDeckModel model = new CombatDeckModel();
         public string JSONCreationPath;
 
         /// <param name="args">
@@ -62,13 +62,13 @@ public static class FieldDeckCreator
         /// </param>
         public void addcard(string[] args)
         {
-            string fullCardName = args.Length > 0 ? args[0] : "core__drool";
+            string fullCardName = args.Length > 0 ? args[0] : "core__punch";
             int amount = args.Length > 1 ? Int32.Parse(args[1]) : 1;
 
             string[] splittedCardName = fullCardName.Split(
                 new string[] { "__" }, StringSplitOptions.None);
 
-            FieldCardModel card = null;
+            CombatCardModel card = null;
             string cardName = splittedCardName[0];
             if (splittedCardName.Length > 1)
             {
@@ -79,37 +79,36 @@ public static class FieldDeckCreator
                 {
                     switch(cardName.ToLower())
                     {
-                        case "drool":
-                            card = new FieldCardModel();
+                        case "punch":
+                            card = new CombatCardModel();
                             break;
                         default:
-                            GD.PrintErr("Card not found in core: \"" + cardName
+                            GD.PrintErr("Card not found in core: \"" + cardName 
                                 + "\". Asked by " + model.JsonFilePath);
                             break;
                     } 
                 }
                 else
                 {
-                    card = JsonLoader.GetFieldCardModel(mod, cardName);
+                    card = JsonLoader.GetCombatCardModel(mod, cardName);
                 }
 
 
                 if (card == null)
                 {
                     GD.PrintErr(
-                        "Field deck creator warning: Failed to load card \"" + cardName
+                        "Combat deck creator warning: Failed to load card \"" + cardName
                         + "\" from mod dependency \"" + mod + "\" for mod \"" + model.Mod
                         + "\". Trying the mod fallback.");
                 }
             }
 
             if (card == null)
-                card = JsonLoader.GetFieldCardModel(model.Mod, cardName) ?? new FieldCardModel();
+                card = JsonLoader.GetCombatCardModel(model.Mod, cardName) ?? new CombatCardModel();
 
             for (int i = 0; i < amount; i++)
-            {
-                model.FieldDeck.Add(card.CloneViaJSON());
-            }
+                model.CombatDeck.Add(card.CloneViaJSON());
+
         }
     }
 }

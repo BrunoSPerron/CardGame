@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/punch.png-84717a9bf4dde5338f32d7ad34cd9e40.stex"
+path="res://.import/punch.png-16d62195b70e612f3cbf88731309dd22.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Cards/Images/CombatDeck/punch.png"
-dest_files=[ "res://.import/punch.png-84717a9bf4dde5338f32d7ad34cd9e40.stex" ]
+source_file="res://Art/Cards/Images/punch.png"
+dest_files=[ "res://.import/punch.png-16d62195b70e612f3cbf88731309dd22.stex" ]
 
 [params]
 

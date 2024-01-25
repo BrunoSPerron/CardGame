@@ -3,5 +3,7 @@
 
 public class BonusCombatCardModel : BaseBonusCardModel
 {
-    public new CombatCardModel Card;
+    public override BaseCardModel Card => CombatCard;
+
+    public CombatCardModel CombatCard;
 }

@@ -73,6 +73,7 @@ public abstract class BaseGameScreen : Node2D
     {
         EnableScreen();
     }
+
     public void OpenDeckModificationPanel(BaseDeckManager manager)
     {
         DisableScreen();

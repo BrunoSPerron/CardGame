@@ -11,10 +11,10 @@ public abstract class BaseDeckManager
     public abstract List<BaseBonusCardWrapper> GetBonusCards();
     public abstract List<BaseCardWrapper> GetSortedBaseDeck();
 
-    public CharacterWrapper parentCharacter;
+    public CharacterWrapper ParentCharacter;
 
     public BaseDeckManager(CharacterWrapper character)
     {
-        parentCharacter = character;
+        ParentCharacter = character;
     }
 }

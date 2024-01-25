@@ -185,7 +185,6 @@ public class DeckPanel : Node2D
 
         BaseCardWrapper stackWrapper = baseCardWrapperById[stackTarget.GetInstanceId()];
         int newIndex = Array.IndexOf(baseCards, stackWrapper);
-        GD.Print(newIndex);
         originWrapper.BaseModel.OverrideCardIndex = newIndex;
         bonusCardsAtIndex[newIndex].Add(originWrapper);
 
