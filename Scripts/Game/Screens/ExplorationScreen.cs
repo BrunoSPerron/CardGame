@@ -203,17 +203,8 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void Destroy()
     {
-        foreach (CharacterWrapper survivor in Survivors)
-        {
-            survivor.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
-            survivor.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
-            RemoveChild(survivor.Card);
-        }
 
-        foreach (LocationWrapper location in Destinations)
-            RemoveChild(location.Card);
-
-        RemoveChild(Location.Card);
+        Clean();
         QueueFree();
     }
 

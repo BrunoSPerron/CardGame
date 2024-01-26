@@ -9,8 +9,9 @@ public class PlayFieldScreen : BaseGameScreen
     public readonly List<FieldCardWrapper> CardsUsedAsPayment = new List<FieldCardWrapper>();
     public CharacterWrapper Character;
     public FieldDeckManager Deck;
-    public ExplorationScreen Parent;
     public Hand Hand;
+    public BaseGameScreen Parent;
+    public bool ResetDeckOnReady = true;
 
     private Card playTarget;
     private readonly Dictionary<ulong, FieldCardWrapper> wrapperByCardIds
@@ -31,8 +32,21 @@ public class PlayFieldScreen : BaseGameScreen
 
         playTarget = CardFactory.CreatePlayTarget();
         AddChild(playTarget);
-        Deck.Reset();
-        DrawNewHand();
+        if (ResetDeckOnReady)
+        {
+            Deck.Reset();
+            DrawNewHand();
+        }
+        else
+        {
+            UpdateHandFromManager();
+        }
+    }
+
+    private void UpdateHandFromManager()
+    {
+        Hand.Clear();
+        Hand.AddCards(Deck.GetHand());
     }
 
     public override void Destroy()

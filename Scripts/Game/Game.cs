@@ -216,6 +216,7 @@ public class Game : Node2D
     public void StartFieldPhase()
     {
         currentScene?.Destroy();
+        FieldPhaseManager explorationManager = new FieldPhaseManager() { Game = this };
     }
 
     public void StartNew()

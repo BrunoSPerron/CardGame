@@ -23,13 +23,9 @@ public class ExplorationManager : BaseGameScreen
         }
 
         if (Game.Survivors.Count > 0)
-        {
             SetCurrentScreen(Game.Survivors[0].WorldPosition);
-        }
         else
-        {
             GD.PrintErr("Exploration Manager Error: No survivors in game.");
-        }
     }
 
     public override void Destroy()
@@ -142,9 +138,8 @@ public class ExplorationManager : BaseGameScreen
             return;
         }
 
-        currentScreen.Clean();
 
-        List<bool> locationToKeepMask = new List<bool>(new bool[positionsWithSurvivor.Count]);
+        List<bool> maskOfLocationToKeep = new List<bool>(new bool[positionsWithSurvivor.Count]);
         for (int i = 0; i < Game.Survivors.Count; i++)
         {
             CharacterWrapper character = Game.Survivors[i];
@@ -152,20 +147,15 @@ public class ExplorationManager : BaseGameScreen
             if (!positionsWithSurvivor.Contains(position))
             {
                 positionsWithSurvivor.Add(position);
-                locationToKeepMask.Add(false);
+                maskOfLocationToKeep.Add(false);
             }
-            locationToKeepMask[positionsWithSurvivor.IndexOf(position)] = true;
+            maskOfLocationToKeep[positionsWithSurvivor.IndexOf(position)] = true;
         }
 
-        for (int i = locationToKeepMask.Count - 1; i > -1; i--)
-        {
-            if (!locationToKeepMask[i])
-            {
+        for (int i = maskOfLocationToKeep.Count - 1; i > -1; i--)
+            if (!maskOfLocationToKeep[i])
                 positionsWithSurvivor.RemoveAt(i);
-            }
-        }
 
-        currentScreen.QueueFree();
         SetCurrentScreen(worldPosition);
     }
 
@@ -219,6 +209,7 @@ public class ExplorationManager : BaseGameScreen
 
     public void SetCurrentScreen(Vector2Int position)
     {
+        currentScreen?.Destroy();
         currentScreen = new ExplorationScreen()
         {
             Game = Game,

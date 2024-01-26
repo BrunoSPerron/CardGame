@@ -96,4 +96,6 @@ public abstract class BaseGameScreen : Node2D
         };
         AddChild(panel);
     }
+
+    public virtual void SurvivorEvent_Field_End() { }
 }

@@ -25,12 +25,32 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
 
     public void AddCards(List<BaseCardWrapper> cardWrappers)
     {
+        AddCards(cardWrappers.ToArray());
+    }
+
+    public void AddCards(BaseCardWrapper[] cardWrappers)
+    {
         foreach (BaseCardWrapper cardWrapper in cardWrappers)
         {
             Cards.Add(cardWrapper);
             AddChild(cardWrapper.Card);
         }
         UpdateCardsPositions();
+    }
+
+    public void Clear()
+    {
+        foreach (BaseCardWrapper wrapper in this)
+        {
+            RemoveChild(wrapper.Card);
+            Game.CleanCard(wrapper.Card);
+        }
+    }
+
+    public void Destroy()
+    {
+        Clear();
+        QueueFree();
     }
 
     public List<BaseCardWrapper> DiscardHand()
@@ -79,13 +99,6 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         }
     }
 
-    public void Destroy()
-    {
-        foreach (BaseCardWrapper wrapper in this)
-        {
-            RemoveChild(wrapper.Card);
-        }
-    }
 
     public IEnumerator<BaseCardWrapper> GetEnumerator()
     {

@@ -91,6 +91,11 @@ public class FieldDeckManager : BaseDeckManager
         return wrappers;
     }
 
+    public FieldCardWrapper[] GetHand()
+    {
+        return hand.ToArray();
+    }
+
     public override List<BaseCardWrapper> GetSortedBaseDeck()
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
