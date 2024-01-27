@@ -77,7 +77,7 @@ public static class FieldDeckCreator
 
                 if (mod == "core")
                 {
-                    switch(cardName.ToLower())
+                    switch(cardName.ToLowerInvariant())
                     {
                         case "drool":
                             card = new FieldCardModel();

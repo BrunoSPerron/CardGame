@@ -86,7 +86,7 @@ public class ButtonControl : Node
     }
 
     public void OnMouseInputEvent(
-    Viewport viewport, InputEvent evt, int shapeIdx)
+        Viewport viewport, InputEvent evt, int shapeIdx)
     {
         if (isDisabled)
             return;

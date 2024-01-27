@@ -30,7 +30,8 @@ public class ExplorationManager : BaseGameScreen
 
     public override void Destroy()
     {
-        currentScreen.Destroy();
+        currentScreen?.Destroy();
+        QueueFree();
     }
 
     public override void DisableScreen()

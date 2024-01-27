@@ -43,8 +43,15 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
         foreach (BaseCardWrapper wrapper in this)
         {
             RemoveChild(wrapper.Card);
-            Game.CleanCard(wrapper.Card);
+
+            // TODO - FIXME memory leak?
+            //  The hand on destroy only clear the cards not on screens
+            //  Disposing of the card cause an error when the hand try to destroy the card
+            //  Not doing so mean cards still on screen arent destroyed as intended
+            // Proposed solution: Allow to modify that info via the cardcleaner 
+            Game.CleanCard(wrapper.Card, true);
         }
+        Cards.Clear();
     }
 
     public void Destroy()

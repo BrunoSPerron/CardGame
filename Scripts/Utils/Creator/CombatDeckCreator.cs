@@ -77,7 +77,7 @@ public static class CombatDeckCreator
 
                 if (mod == "core")
                 {
-                    switch(cardName.ToLower())
+                    switch(cardName.ToLowerInvariant())
                     {
                         case "punch":
                             card = new CombatCardModel();

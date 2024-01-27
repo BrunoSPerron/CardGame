@@ -203,7 +203,8 @@ public class ExplorationScreen : BaseGameScreen
 
     public override void Destroy()
     {
-
+        eventScreen?.Destroy();
+        eventScreen = null;
         Clean();
         QueueFree();
     }
@@ -328,8 +329,11 @@ public class ExplorationScreen : BaseGameScreen
         }
     }
 
-    public void SurvivorEvent_Field_End()
+    public override void SurvivorEvent_Field_End()
     {
+        base.SurvivorEvent_Field_End();
+        eventScreen?.Destroy();
+        eventScreen = null;
         EnableScreen();
         StackSurvivors();
         Manager.OnCharacterActionOver();

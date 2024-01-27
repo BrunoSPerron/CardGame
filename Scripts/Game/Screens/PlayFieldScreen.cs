@@ -45,16 +45,35 @@ public class PlayFieldScreen : BaseGameScreen
 
     private void UpdateHandFromManager()
     {
+        foreach (BaseCardWrapper wrapper in Hand)
+        {
+            wrapper.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
+            wrapper.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
+        }
+
         Hand.Clear();
         Hand.AddCards(Deck.GetHand());
+
+        foreach (FieldCardWrapper wrapper in Hand.Cast<FieldCardWrapper>())
+        {
+            wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
+            wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
+            wrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
+        }
     }
 
     public override void Destroy()
     {
         if (CardBeingPaidFor != null)
+        {
             RemoveChild(CardBeingPaidFor.Card);
+            Game.CleanCard(CardBeingPaidFor.Card, true);
+        }
         foreach (FieldCardWrapper wrapper in CardsUsedAsPayment)
+        {
             RemoveChild(wrapper.Card);
+            Game.CleanCard(wrapper.Card, true);
+        }
         Hand.Destroy();
         QueueFree();
     }
@@ -63,13 +82,13 @@ public class PlayFieldScreen : BaseGameScreen
 
     private void DrawNewHand()
     {
-        foreach (BaseCardWrapper wrapper in Hand.Cards)
+        foreach (BaseCardWrapper wrapper in Hand)
         {
             wrapper.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
             wrapper.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
         }
         Hand.DiscardHand();
-        List<FieldCardWrapper> cards = Deck.DrawMultiple(5);
+        List<FieldCardWrapper> cards = Deck.DrawMultiple(CONSTS.FIELD_HAND_SIZE);
 
         foreach (FieldCardWrapper wrapper in cards)
         {
@@ -167,7 +186,6 @@ public class PlayFieldScreen : BaseGameScreen
     public void OnCardEffectOver()
     {
         //TODO Check if another card can be played
-        Destroy();
         Parent.SurvivorEvent_Field_End();
     }
 }

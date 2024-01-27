@@ -146,6 +146,11 @@ public class Game : Node2D
 
     public void NextPhase()
     {
+        foreach (CharacterWrapper survivor in Survivors)
+        {
+            survivor.CurrentActionPoint = survivor.MaxActionPoint;
+        }
+
         int nextPhase = (int)State.PhaseOfDay + 1;
         if (nextPhase > 5)
         {
@@ -216,7 +221,9 @@ public class Game : Node2D
     public void StartFieldPhase()
     {
         currentScene?.Destroy();
-        FieldPhaseManager explorationManager = new FieldPhaseManager() { Game = this };
+        FieldPhaseManager fieldPhaseManager = new FieldPhaseManager() { Game = this };
+        currentScene = fieldPhaseManager;
+        AddChild(fieldPhaseManager);
     }
 
     public void StartNew()
