@@ -45,10 +45,11 @@ public class Hand: Node2D, IEnumerable<BaseCardWrapper>
             RemoveChild(wrapper.Card);
 
             // TODO - FIXME memory leak?
-            //  The hand on destroy only clear the cards not on screens
+            //  The hand on destroy only clear the cards not in the tree
             //  Disposing of the card cause an error when the hand try to destroy the card
             //  Not doing so mean cards still on screen arent destroyed as intended
-            // Proposed solution: Allow to modify that info via the cardcleaner 
+            // Proposed solution:
+            //   - Add a `Preserve` bool attribute on the card and use that instead
             Game.CleanCard(wrapper.Card, true);
         }
         Cards.Clear();

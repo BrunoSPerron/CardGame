@@ -95,6 +95,11 @@ public class CharacterWrapper : BaseCardWrapper
         }
     }
 
+    public string Name
+    {
+        get { return model.Name; }
+    }
+
     public int Power
     {
         get => model.Power;
@@ -136,6 +141,9 @@ public class CharacterWrapper : BaseCardWrapper
 
         button = Card.Front.GetNode<CardButtonBase>("FieldDeckButton");
         button.Disable();
+
+        button = Card.Front.GetNode<CardButtonBase>("InventoryButton");
+        button.Disable();
     }
 
     public override void EnableButtons()
@@ -145,6 +153,9 @@ public class CharacterWrapper : BaseCardWrapper
         button.Enable();
 
         button = Card.Front.GetNode<CardButtonBase>("FieldDeckButton");
+        button.Enable();
+
+        button = Card.Front.GetNode<CardButtonBase>("InventoryButton");
         button.Enable();
     }
 

@@ -5,7 +5,10 @@ using System.Collections.Generic;
 
 public class Game : Node2D
 {
+    public SettingsModel Settings = new SettingsModel();
+
     public GameStateModel State { get; private set; }
+
     public TurnCounter TurnCounter { get; private set; }
 
     private CardCleaner cardCleaner;

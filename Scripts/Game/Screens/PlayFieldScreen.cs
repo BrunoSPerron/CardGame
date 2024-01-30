@@ -43,25 +43,6 @@ public class PlayFieldScreen : BaseGameScreen
         }
     }
 
-    private void UpdateHandFromManager()
-    {
-        foreach (BaseCardWrapper wrapper in Hand)
-        {
-            wrapper.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
-            wrapper.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
-        }
-
-        Hand.Clear();
-        Hand.AddCards(Deck.GetHand());
-
-        foreach (FieldCardWrapper wrapper in Hand.Cast<FieldCardWrapper>())
-        {
-            wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
-            wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
-            wrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
-        }
-    }
-
     public override void Destroy()
     {
         if (CardBeingPaidFor != null)
@@ -136,6 +117,43 @@ public class PlayFieldScreen : BaseGameScreen
         AddChild(wrapper.Card);
     }
 
+    private void UpdateHandFromManager()
+    {
+        foreach (BaseCardWrapper wrapper in Hand)
+        {
+            wrapper.Card.Disconnect("OnDragEnd", this, "OnCarddragEnd");
+            wrapper.Card.Disconnect("OnDragStart", this, "OnCarddragStart");
+        }
+
+        Hand.Clear();
+        Hand.AddCards(Deck.GetHand());
+
+        foreach (FieldCardWrapper wrapper in Hand.Cast<FieldCardWrapper>())
+        {
+            wrapperByCardIds.Add(wrapper.Card.GetInstanceId(), wrapper);
+            wrapper.Card.Connect("OnDragEnd", this, "OnCarddragEnd");
+            wrapper.Card.Connect("OnDragStart", this, "OnCarddragStart");
+        }
+    }
+
+    private void UseCardInHand(FieldCardWrapper wrapper)
+    {
+        if (CardBeingPaidFor == null && wrapper.Model.Cost < Hand.Size)
+        {
+            CardBeingPaidFor = wrapper;
+            TakeCardFromHand(CardBeingPaidFor);
+            CardBeingPaidFor.Card.MoveToPosition(new Vector2(200, 150));
+        }
+        else
+        {
+            CardsUsedAsPayment.Add(wrapper);
+            TakeCardFromHand(wrapper);
+            wrapper.Card.MoveToPosition(new Vector2(450, 200));
+            if (CardsUsedAsPayment.Count >= CardBeingPaidFor.Model.Cost)
+                PlayCardBeingPaid();
+        }
+    }
+
     //===Triggers===
 
     public void OnCarddragEnd(Card OriginCard, Card StackTarget)
@@ -146,40 +164,37 @@ public class PlayFieldScreen : BaseGameScreen
         if (StackTarget == playTarget)
         {
             FieldCardWrapper wrapper = wrapperByCardIds[OriginCard.GetInstanceId()];
-            if (CardBeingPaidFor == null && wrapper.Model.Cost < Hand.Size)
-            {
-                CardBeingPaidFor = wrapper;
-                TakeCardFromHand(CardBeingPaidFor);
-                CardBeingPaidFor.Card.MoveToPosition(new Vector2(200, 150));
-            }
-            else
-            {
-                CardsUsedAsPayment.Add(wrapper);
-                TakeCardFromHand(wrapper);
-                wrapper.Card.MoveToPosition(new Vector2(450, 200));
-                if (CardsUsedAsPayment.Count >= CardBeingPaidFor.Model.Cost)
-                    PlayCardBeingPaid();
-            }
+            UseCardInHand(wrapper);
         }
     }
 
     public void OnCarddragStart(Card card)
     {
-        if (CardBeingPaidFor?.Card == card)
+        FieldCardWrapper wrapper = wrapperByCardIds[card.GetInstanceId()];
+        if (CardBeingPaidFor == null)
+        {
+            if (Game.Settings.ClickToPlay)
+            {
+                CardHandlingControl.StopDragging(false);
+                UseCardInHand(wrapper);
+            }
+        }
+        else if (CardBeingPaidFor.Card == card)
         {
             CardHandlingControl.StopDragging(false);
             ReturnCardBeingPaidForToHand();
             ReturnCardsUsedAsCostToHand();
         }
-        else
+        else if (CardsUsedAsPayment.Contains(wrapper))
         {
-            FieldCardWrapper wrapper = wrapperByCardIds[card.GetInstanceId()];
-            if (CardsUsedAsPayment.Contains(wrapper))
-            {
-                CardHandlingControl.StopDragging(false);
-                ReturnCardToHand(wrapper);
-                CardsUsedAsPayment.Remove(wrapper);
-            }
+            CardHandlingControl.StopDragging(false);
+            ReturnCardToHand(wrapper);
+            CardsUsedAsPayment.Remove(wrapper);
+        }
+        else if (Game.Settings.ClickToPay)
+        {
+            CardHandlingControl.StopDragging(false);
+            UseCardInHand(wrapper);
         }
     }
 

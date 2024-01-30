@@ -1,7 +1,10 @@
 ﻿using Godot;
+using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 public class EventPlayer: BaseGameScreen
 {
@@ -29,20 +32,13 @@ public class EventPlayer: BaseGameScreen
     public override void _Process(float delta)
     {
         if (!waitingForInput)
-        {
             FollowNextInstruction();
-        }
     }
 
     public override void _Input(InputEvent @event)
     {
-        if (waitingForInput)
-        {
-            if (!(@event is InputEventMouseMotion))
-            {
-                waitingForInput = false;
-            }
-        }
+        if (waitingForInput && !(@event is InputEventMouseMotion))
+            waitingForInput = false;
     }
 
     public override void Destroy()
@@ -88,6 +84,27 @@ public class EventPlayer: BaseGameScreen
         instructionIndex++;
     }
 
+    public string ReplaceRegex(string text)
+    {
+        string replaced = text;
+        MatchCollection matches = Regex.Matches(text, @"\[~.*?\]");
+        foreach (Match match in matches)
+        {
+            switch(match.Value)
+            {
+                case "[~character]":
+                    replaced = replaced.Replace(match.Value, backStage.Characters[0].Name);
+                    break;
+                default:
+                    GD.PrintErr("Event player error: Tag " + match.Value
+                        + " not valid, in message \"" + text
+                        + "\" from " + originModel.JsonFilePath);
+                    break;
+            }
+        }
+        return replaced;
+    }
+
     public void WaitForInput()
     {
         waitingForInput = true;
@@ -96,21 +113,35 @@ public class EventPlayer: BaseGameScreen
 
     // Methods in these class must be public and use lowercase names to be invokable.
     // They must accept a single argument, which is an array of string.
-    public class Backstage_base{ }
+    public abstract class Backstage_base
+    {
+        public abstract CharacterWrapper[] Characters { get; }
+
+        protected readonly string mod;
+        protected readonly EventPlayer player;
+
+        public Backstage_base(EventPlayer player, string mod)
+        {
+            this.player = player;
+            this.mod = mod;
+        }
+    }
 
     public class BackStage_Solo : Backstage_base
     {
         #pragma warning disable IDE1006
 
-        private readonly EventPlayer player;
+        public override CharacterWrapper[] Characters => new CharacterWrapper[]
+        {
+            character
+        };
+
         private readonly CharacterWrapper character;
-        private readonly string mod;
 
         public BackStage_Solo(EventPlayer player, CharacterWrapper character, string mod)
+            : base(player, mod)
         {
-            this.player = player;
             this.character = character;
-            this.mod = mod;
         }
 
         /// <param name="args">
@@ -125,6 +156,9 @@ public class EventPlayer: BaseGameScreen
             }
         }
 
+        /// <param name="args">
+        /// 0+: Line to display
+        /// </param>
         public void display(string[] args)
         {
             string path = "res://Assets/UI/PixelText.tscn";
@@ -135,8 +169,8 @@ public class EventPlayer: BaseGameScreen
             {
                 PixelText text = packedScene.Instance<PixelText>();
                 player.AddChild(text);
-                text.Position = new Vector2(100, 100 + offsetY * i);
-                text.SetLabel(args[i]);
+                text.Position = new Vector2(225, 100 + offsetY * i);
+                text.SetLabel(player.ReplaceRegex(args[i]));
             }
             player.WaitForInput();
         }

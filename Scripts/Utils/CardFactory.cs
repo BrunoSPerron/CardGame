@@ -197,6 +197,7 @@ public static class CardFactory
         inventoryButton.ButtonTextureOnReady = ResourceLoader.Load<Texture>
             ("res://Art/Cards/Icons/inventory.png"); ;
         cardFront.AddChild(inventoryButton);
+        inventoryButton.Name = "InventoryButton";
         inventoryButton.Connect("OnClick", card, "OnInventoryClicked");
         inventoryButton.Position = cardFront.GetNode<Position2D>(
             "InventoryPosition").Position;

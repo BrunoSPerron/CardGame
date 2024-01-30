@@ -1,6 +1,6 @@
 {
 	"Steps": [
-		"display -> You find an old knife",
+		"display -> [~character] find an old knife",
 		"add item -> knife"
 	]
 }
