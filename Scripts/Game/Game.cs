@@ -145,6 +145,7 @@ public class Game : Node2D
 
         TurnCounter = GetNode<TurnCounter>("TurnCounter");
         TurnCounter.UpdateFromGameState(State);
+        StartPhase();
     }
 
     public void NextPhase()
@@ -227,11 +228,5 @@ public class Game : Node2D
         FieldPhaseManager fieldPhaseManager = new FieldPhaseManager() { Game = this };
         currentScene = fieldPhaseManager;
         AddChild(fieldPhaseManager);
-    }
-
-    public void StartNew()
-    {
-        InitializeScenario("BaseGame", "Endless");
-        StartPhase();
     }
 }

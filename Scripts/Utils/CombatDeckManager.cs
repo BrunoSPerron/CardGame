@@ -1,6 +1,7 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CombatDeckManager : BaseDeckManager
 {
@@ -22,14 +23,40 @@ public class CombatDeckManager : BaseDeckManager
     {
         for (int i = 0; i < item.CombatCards.Length; i++)
         {
+            int placementIndex = Model.CombatDeck.Count - 1;
+            int overridePriority = 0;
+            bool overridePositionFound = false;
+            if (placementIndex == -1)
+            {
+                placementIndex = 0;
+            }
+            else
+            {
+                while (!overridePositionFound)
+                {
+                    placementIndex--;
+                    if (placementIndex < 0)
+                    {
+                        placementIndex = Model.CombatDeck.Count - 1;
+                        overridePriority++;
+                    }
+                    if (Model.BonusCards
+                        .Where((c) => { return c.OverrideCardIndex == placementIndex; })
+                        .Count() < overridePriority)
+                    {
+                        overridePositionFound = true;
+                    }
+                }
+            }
+
             string cardName = item.CombatCards[i];
             CombatCardModel cardModel = JsonLoader.GetCombatCardModel(item.Mod, cardName);
             Model.BonusCards.Add(new BonusCombatCardModel()
             {
                 CombatCard = cardModel,
                 ItemSourceId = item.ID,
-                OverrideCardIndex = 0,
-                Priority = i
+                OverrideCardIndex = placementIndex,
+                Priority = overridePriority
             });
         }
     }

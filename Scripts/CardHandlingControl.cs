@@ -197,32 +197,34 @@ public class CardHandlingControl : Node
 
     private static void UpdateStackTargets()
     {
-        if (isDragging)
-        {
-            Vector2 mousePosition = rootNode.GetViewport().GetMousePosition();
-            Card nearestCard = null;
-            float nearestCardSquareDistance = float.MaxValue;
-            foreach (Card card in stackTargets)
-            {
-                float squaredDistance = card.Position.DistanceSquaredTo(
-                    mousePosition);
-                if (squaredDistance < nearestCardSquareDistance)
-                {
-                    nearestCard = card;
-                    nearestCardSquareDistance = squaredDistance;
-                }
-            }
-            foreach (Card card in stackTargets)
-            {
-                card.SetBackgroundState(card == nearestCard
-                    ? PressableState.OVER
-                    : PressableState.STAND_BY);
-            }
-            currentStackTarget = nearestCard;
-        }
-        else
+
+        if (!isDragging)
         {
             ClearStackTargets();
+            return;
         }
+
+        Vector2 mousePosition = rootNode.GetViewport().GetMousePosition();
+        Card nearestCard = null;
+        float nearestCardSquareDistance = float.MaxValue;
+        foreach (Card card in stackTargets)
+        {
+            float squaredDistance = card.Position.DistanceSquaredTo(
+                mousePosition);
+            if (squaredDistance < nearestCardSquareDistance)
+            {
+                nearestCard = card;
+                nearestCardSquareDistance = squaredDistance;
+            }
+        }
+        foreach (Card card in stackTargets)
+        {
+            card.SetBackgroundState(card == nearestCard
+                ? PressableState.OVER
+                : PressableState.STAND_BY);
+        }
+        currentStackTarget = nearestCard;
     }
+
 }
+

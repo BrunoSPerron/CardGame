@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -54,6 +55,11 @@ public static class CardFactory
         }
     }
 
+    public static Card CreateBlankSurvivor()
+    {
+        return CardScene.Instance<Card>();
+    }
+
     public static BaseBonusCardWrapper CreateCardFrom(BonusCombatCardModel cardModel)
     {
         Card card = CardScene.Instance<Card>();
@@ -91,7 +97,7 @@ public static class CardFactory
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\Box\\" + cardModel.Card.Image);
+                mod + "\\Images\\Cards\\" + cardModel.Card.Image);
 
             string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
             if (System.IO.File.Exists(pathWithExtension))
@@ -143,7 +149,7 @@ public static class CardFactory
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\Box\\" + cardModel.Card.Image);
+                mod + "\\Images\\Cards\\" + cardModel.Card.Image);
 
             string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
             if (System.IO.File.Exists(pathWithExtension))
@@ -241,7 +247,7 @@ public static class CardFactory
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\Box\\" + model.Image);
+                mod + "\\Images\\Cards\\" + model.Image);
 
             string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
             if (System.IO.File.Exists(pathWithExtension))
@@ -292,7 +298,7 @@ public static class CardFactory
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\Box\\" + model.Image);
+                mod + "\\Images\\Cards\\" + model.Image);
 
             string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
             if (System.IO.File.Exists(pathWithExtension))
@@ -320,7 +326,7 @@ public static class CardFactory
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, location.Location.TravelCost);
         string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-            mod + "\\Images\\Cards\\Full\\" + location.Location.Image);
+            mod + "\\Images\\Cards\\" + location.Location.Image);
         string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
         if (System.IO.File.Exists(pathWithExtension))
         {
@@ -351,12 +357,8 @@ public static class CardFactory
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, 0);
-        string path = "res://Art/Cards/Images/Locations/" + location.Image;
-        if (ResourceLoader.Exists(path))
-            card.Front.GetNode<Sprite>(
-                "Image").Texture = ResourceLoader.Load<Texture>(path);
-        else
-            GD.PrintErr("Card factory error: Resource missing at " + path);
+        string path = "res://Art/Cards/Images/Locations/desolation.png";
+        card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
         WorldHexModel hexlocation = new WorldHexModel() {
             Location=location
         };
@@ -377,6 +379,19 @@ public static class CardFactory
         string path = "res://Art/Cards/Images/Actions/Explore.png";
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
         AddActionCostCounter(card, 1);
+        return card;
+    }
+
+    public static Card CreateNewGameTarget()
+    {
+        Card card = CardScene.Instance<Card>();
+        card.IsDraggable = false;
+        card.IsStackTarget = true;
+        card.Background.Texture = FullArtBackground;
+        card.SetLabel("new game");
+        string path = "res://Art/Cards/Images/newgame.png";
+        card.Front.GetNode<Sprite>(
+            "Image").Texture = ResourceLoader.Load<Texture>(path);
         return card;
     }
 
@@ -402,6 +417,44 @@ public static class CardFactory
         card.IsStackTarget = true;
         card.IsDraggable = false;
         return card;
+    }
+
+    public static List<ScenarioTarget> CreateScenarioTargets()
+    {
+        List<ScenarioTarget> targets = new List<ScenarioTarget>();
+
+
+        List<string> filesindirectory = PathHelper.GetTopDirectoriesInFolder(
+            PATHS.ModFolderPath);
+
+        foreach (string modPath in filesindirectory)
+        {
+            string scenariosPath = System.IO.Path.Combine(modPath, "Data\\Scenarios");
+            List<string> scenarios = PathHelper.GetTopDirectoriesInFolder(scenariosPath);
+            foreach (string scenarioPath in scenarios)
+            {
+                string scenarioName = System.IO.Path.GetFileName(scenarioPath);
+                string modName = System.IO.Path.GetFileName(modPath);
+                string imagePath = System.IO.Path.Combine(scenarioPath, "Image.png");
+                Texture texture = TextureLoader.GetTextureFromPng(imagePath);
+
+                Card card = CardScene.Instance<Card>();
+                card.Front.GetNode<Sprite>("Image").Texture = texture;
+                card.IsDraggable = false;
+                card.IsStackTarget = true;
+                card.Background.Texture = FullArtBackground;
+                card.SetLabel(scenarioName);
+
+                targets.Add(new ScenarioTarget()
+                {
+                    Card = card,
+                    Mod = modName,
+                    Scenario = scenarioName
+                });
+            }
+        }
+
+        return targets;
     }
 
     public static Card CreateSurviveCard()

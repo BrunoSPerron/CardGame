@@ -10,15 +10,22 @@ public class NavigationManager : Node2D
 
     public override void _Ready()
     {
-        StartNewGame();
+        LoadMainMenu();
     }
 
-    public void StartNewGame()
+    public void LoadMainMenu()
+    {
+        currentScreen?.QueueFree();
+        currentScreen = new MainMenu() { NavigationManager = this };
+        AddChild(currentScreen);
+    }
+
+    public void StartNewGame(string mod, string scenario)
     {
         currentScreen?.QueueFree();
         Game newGameScreen = GameScene.Instance<Game>();
         currentScreen = newGameScreen;
         AddChild(newGameScreen);
-        newGameScreen.StartNew();
+        newGameScreen.InitializeScenario(mod, scenario);
     }
 }

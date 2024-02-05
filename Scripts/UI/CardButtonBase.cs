@@ -53,6 +53,7 @@ public abstract class CardButtonBase : Area2D
 
     public void Enable()
     {
+        SetImage(PressableState.STAND_BY);
         isDisabled = false;
     }
 
@@ -86,15 +87,14 @@ public abstract class CardButtonBase : Area2D
 
     // ===== Mouse events methods =====
     // To manage overlaps these methods are called by the CardHandlingControl
-    //      instead of connecting to signals.
+    //      class instead of connecting to signals.
 
     public void OnMouseDown()
     {
-        if (!isDisabled)
-        {
-            currentButtonState = PressableState.DOWN;
-            UpdateSpriteRect();
-        }
+        if (isDisabled) return;
+
+        currentButtonState = PressableState.DOWN;
+        UpdateSpriteRect();
     }
 
     public void OnMouseUp()
@@ -113,21 +113,19 @@ public abstract class CardButtonBase : Area2D
 
     public void OnMouseEnter(InputEventMouseMotion mouseMotion)
     {
-        if (!isDisabled)
-        {
-            currentButtonState = PressableState.OVER;
-            UpdateSpriteRect();
-            mouseEnteredDown = mouseMotion.IsPressed();
-        }
+        if (isDisabled) return;
+
+        currentButtonState = PressableState.OVER;
+        UpdateSpriteRect();
+        mouseEnteredDown = mouseMotion.IsPressed();
     }
 
     public void OnMouseExit()
     {
-        if (!isDisabled)
-        {
-            currentButtonState = PressableState.STAND_BY;
-            UpdateSpriteRect();
-        }
+        if (isDisabled) return;
+
+        currentButtonState = PressableState.STAND_BY;
+        UpdateSpriteRect();
     }
 }
 

@@ -37,6 +37,7 @@ public abstract class BaseGameScreen : Node2D
                 Position = new Vector2(-card.GetSize().x / 2, card.GetSize().y / 2)
             };
 
+            cardDealer.Connect("tree_exiting", this, "OnDealerFreeing");
             cardDealer.AddCard(card, false);
             AddChild(cardDealer);
         }
@@ -63,17 +64,6 @@ public abstract class BaseGameScreen : Node2D
             button.Visible = true;
     }
 
-
-    public void OnDeckPanelClosed()
-    {
-        EnableScreen();
-    }
-
-    public void OnInventoryScreenClosed()
-    {
-        EnableScreen();
-    }
-
     public void OpenDeckModificationPanel(BaseDeckManager manager)
     {
         DisableScreen();
@@ -95,6 +85,23 @@ public abstract class BaseGameScreen : Node2D
             CharacterWrapper = wrapper
         };
         AddChild(panel);
+    }
+
+    // === Signals ===
+
+    public void OnDeckPanelClosed()
+    {
+        EnableScreen();
+    }
+
+    public void OnDealerFreeing()
+    {
+        cardDealer = null;
+    }
+
+    public void OnInventoryScreenClosed()
+    {
+        EnableScreen();
     }
 
     public virtual void SurvivorEvent_Field_End() { }

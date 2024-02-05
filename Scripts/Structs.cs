@@ -40,3 +40,10 @@ public struct Vector2Int
         return hashCode;
     }
 }
+
+public struct ScenarioTarget
+{
+    public string Mod;
+    public string Scenario;
+    public Card Card;
+}

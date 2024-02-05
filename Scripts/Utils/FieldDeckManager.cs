@@ -1,6 +1,7 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class FieldDeckManager : BaseDeckManager
 {
@@ -22,14 +23,40 @@ public class FieldDeckManager : BaseDeckManager
     {
         for (int i = 0; i < item.FieldCards.Length; i++)
         {
+            int placementIndex = Model.FieldDeck.Count - 1;
+            int overridePriority = 0;
+            bool overridePositionFound = false;
+            if (placementIndex == -1)
+            {
+                placementIndex = 0;
+            }
+            else
+            {
+                while (!overridePositionFound)
+                {
+                    placementIndex--;
+                    if (placementIndex < 0)
+                    {
+                        placementIndex = Model.FieldDeck.Count - 1;
+                        overridePriority++;
+                    }
+                    if (Model.BonusCards
+                        .Where((c) => { return c.OverrideCardIndex == placementIndex; })
+                        .Count() < overridePriority)
+                    {
+                        overridePositionFound = true;
+                    }  
+                }
+            }
+
             string cardName = item.FieldCards[i];
             FieldCardModel cardModel = JsonLoader.GetFieldCardModel(item.Mod, cardName);
             Model.BonusCards.Add(new BonusFieldCardModel()
             {
                 FieldCard = cardModel,
                 ItemSourceId = item.ID,
-                OverrideCardIndex = 0,
-                Priority = i
+                OverrideCardIndex = placementIndex,
+                Priority = overridePriority
             });
         }
     }

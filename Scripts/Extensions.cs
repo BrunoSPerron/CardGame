@@ -13,7 +13,9 @@ public static class Extensions
         return JsonConvert.SerializeObject(source);
     }
 
-    /// <summary> Based on Fisher-Yates. </summary>
+    /// <summary>
+    /// Based on Fisher-Yates. https://stackoverflow.com/a/22668974
+    /// </summary>
     public static void Shuffle<T>(this IList<T> list)
     {
         int index = list.Count;

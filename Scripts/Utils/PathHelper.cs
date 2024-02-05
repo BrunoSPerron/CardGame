@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 
 public static class PathHelper
@@ -20,5 +18,17 @@ public static class PathHelper
         }
         return new Tuple<string, string>(cardName, mod);
     }
-}
 
+    public static List<string> GetTopDirectoriesInFolder(string folderPath)
+    {
+        string[] unfiltered = Directory.GetDirectories(
+            folderPath, "*", SearchOption.TopDirectoryOnly);
+        List<string> filtered = new List<string>();
+
+        foreach (string s in unfiltered)
+            if(!s.StartsWith("__"))
+                filtered.Add(s);
+
+        return filtered;
+    }
+}
