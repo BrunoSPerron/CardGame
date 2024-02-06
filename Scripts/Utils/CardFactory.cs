@@ -98,17 +98,8 @@ public static class CardFactory
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
                 mod + "\\Images\\Cards\\" + cardModel.Card.Image);
-
-            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-            if (System.IO.File.Exists(pathWithExtension))
-            {
-                card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetTextureFromPng(pathWithExtension);
-            }
-            else
-            {
-                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
-            }
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetTextureFromPng(texturePath);
         }
 
         return new BonusCombatCardWrapper(card, cardModel);
@@ -150,17 +141,8 @@ public static class CardFactory
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
                 mod + "\\Images\\Cards\\" + cardModel.Card.Image);
-
-            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-            if (System.IO.File.Exists(pathWithExtension))
-            {
-                card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetTextureFromPng(pathWithExtension);
-            }
-            else
-            {
-                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
-            }
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetTextureFromPng(texturePath);
         }
 
         return new BonusFieldCardWrapper(card, cardModel);
@@ -214,7 +196,7 @@ public static class CardFactory
     public static CombatCardWrapper CreateCardFrom(CombatCardModel model)
     {
         Card card = CardScene.Instance<Card>();
-        
+
         PackedScene pixelText = ResourceLoader.Load<PackedScene>(
             "res://Assets/UI/PixelText.tscn");
         PixelText cost = pixelText.Instance<PixelText>();
@@ -248,17 +230,8 @@ public static class CardFactory
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
                 mod + "\\Images\\Cards\\" + model.Image);
-
-            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-            if (System.IO.File.Exists(pathWithExtension))
-            {
-                card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetTextureFromPng(pathWithExtension);
-            }
-            else
-            {
-                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
-            }
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetTextureFromPng(texturePath);
         }
 
         return new CombatCardWrapper(card, model);
@@ -267,7 +240,7 @@ public static class CardFactory
     public static FieldCardWrapper CreateCardFrom(FieldCardModel model)
     {
         Card card = CardScene.Instance<Card>();
-        
+
         PackedScene pixelText = ResourceLoader.Load<PackedScene>(
             "res://Assets/UI/PixelText.tscn");
         PixelText cost = pixelText.Instance<PixelText>();
@@ -299,17 +272,8 @@ public static class CardFactory
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
                 mod + "\\Images\\Cards\\" + model.Image);
-
-            string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-            if (System.IO.File.Exists(pathWithExtension))
-            {
-                card.Front.GetNode<Sprite>("Image").Texture
-                    = TextureLoader.GetTextureFromPng(pathWithExtension);
-            }
-            else
-            {
-                GD.PrintErr("CardFactoryError: Image not found at: " + pathWithExtension);
-            }
+            card.Front.GetNode<Sprite>("Image").Texture
+                = TextureLoader.GetTextureFromPng(texturePath);
         }
 
         return new FieldCardWrapper(card, model);
@@ -327,17 +291,9 @@ public static class CardFactory
         AddActionCostCounter(card, location.Location.TravelCost);
         string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
             mod + "\\Images\\Cards\\" + location.Location.Image);
-        string pathWithExtension = System.IO.Path.ChangeExtension(texturePath, "png");
-        if (System.IO.File.Exists(pathWithExtension))
-        {
-            card.Front.GetNode<Sprite>("Image").Texture
-                = TextureLoader.GetTextureFromPng(pathWithExtension);
-        }
-        else
-        {
-            GD.PrintErr("Card factory error: Resource missing at " + pathWithExtension);
-            return CreateDefaultWrappedLocation();
-        }
+
+        card.Front.GetNode<Sprite>("Image").Texture
+            = TextureLoader.GetTextureFromPng(texturePath);
 
         LocationWrapper locationWrapper = new LocationWrapper(card, location);
         locationWrapper.PopulateEncounters();
@@ -359,8 +315,9 @@ public static class CardFactory
         AddActionCostCounter(card, 0);
         string path = "res://Art/Cards/Images/Locations/desolation.png";
         card.Front.GetNode<Sprite>("Image").Texture = ResourceLoader.Load<Texture>(path);
-        WorldHexModel hexlocation = new WorldHexModel() {
-            Location=location
+        WorldHexModel hexlocation = new WorldHexModel()
+        {
+            Location = location
         };
         LocationWrapper locationWrapper = new LocationWrapper(card, hexlocation);
         return locationWrapper;
@@ -410,7 +367,7 @@ public static class CardFactory
         {
             Extents = new Vector2(CONSTS.SCREEN_CENTER.x, CONSTS.SCREEN_CENTER.y - 70),
         };
-        collider.Position = new Vector2 (0f, -70f);
+        collider.Position = new Vector2(0f, -70f);
         card.Position = CONSTS.SCREEN_CENTER;
         card.MoveToPosition(CONSTS.SCREEN_CENTER);
 
