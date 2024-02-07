@@ -83,7 +83,7 @@ public class FieldDeckManager : BaseDeckManager
         if (deck == null)
         {
             GD.PrintErr("Deck manager error: Tried to draw from a non-existing deck");
-            return CardFactory.CreateCardFrom(new FieldCardModel());
+            return CardFactory.CreateFrom(new FieldCardModel());
         }
 
         if (deck.Count == 0)
@@ -112,7 +112,7 @@ public class FieldDeckManager : BaseDeckManager
         List<BaseBonusCardWrapper> wrappers = new List<BaseBonusCardWrapper>();
         foreach (BonusFieldCardModel cardModel in Model.BonusCards)
         {
-            BaseBonusCardWrapper wrapper = CardFactory.CreateCardFrom(cardModel);
+            BaseBonusCardWrapper wrapper = CardFactory.CreateFrom(cardModel);
             wrappers.Add(wrapper);
         }
         return wrappers;
@@ -127,7 +127,7 @@ public class FieldDeckManager : BaseDeckManager
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
         foreach (FieldCardModel model in Model.FieldDeck)
-            wrappers.Add(CardFactory.CreateCardFrom(model));
+            wrappers.Add(CardFactory.CreateFrom(model));
         return wrappers;
     }
 
@@ -172,11 +172,11 @@ public class FieldDeckManager : BaseDeckManager
                     if (currenBonusCards[j].Priority > cardToUse.Priority)
                         cardToUse = currenBonusCards[j];
                 }
-                wrappedDeck.Add(CardFactory.CreateCardFrom(cardToUse.FieldCard));
+                wrappedDeck.Add(CardFactory.CreateFrom(cardToUse.FieldCard));
             }
             else
             {
-                wrappedDeck.Add(CardFactory.CreateCardFrom(Model.FieldDeck[i]));
+                wrappedDeck.Add(CardFactory.CreateFrom(Model.FieldDeck[i]));
             }
         }
 

@@ -13,10 +13,12 @@ public static class CharacterCreator
     {
         AssemblyLine assemblyLine = new AssemblyLine();
         assemblyLine.model.Mod = model.Mod;
+
         Type factoryType = assemblyLine.GetType();
 
         SetCombatDeck(assemblyLine, model);
         SetFieldDeck(assemblyLine, model);
+        SetInitialValues(assemblyLine.model, model);
 
         foreach (string instruction in model.Instructions)
         {
@@ -60,7 +62,7 @@ public static class CharacterCreator
     }
 
     private static void SetFieldDeck(
-    AssemblyLine assemblyLine, CharacterCreationModel model)
+        AssemblyLine assemblyLine, CharacterCreationModel model)
     {
         string fieldDeckToUse = model.FieldDeck;
         if (model.CombatDeck == null || model.CombatDeck.Trim() == "")
@@ -72,18 +74,76 @@ public static class CharacterCreator
         assemblyLine.replacefielddeck(new string[] { fieldDeckToUse });
     }
 
+    public static void SetInitialValues(
+        CharacterModel target, CharacterCreationModel origin)
+    {
+        target.ActionPoint = origin.ActionPoint;
+        target.CurrentActionPoint = origin.CurrentActionPoint == -1
+            ? origin.ActionPoint : origin.CurrentActionPoint;
+
+        target.HitPoint = origin.HitPoint;
+        target.CurrentHitPoint = origin.CurrentHitPoint == -1
+            ? origin.HitPoint : origin.CurrentHitPoint;
+
+        target.Power = origin.Power;
+    }
+
+
 
     // Methods in this class must be public and use lowercase names to be invokable.
-    // They accept a single argument, which must be an array of string.
+    // They take a single argument, which is an array of string.
     public class AssemblyLine
     {
-        #pragma warning disable IDE1006
-        #pragma warning disable IDE0060
+#pragma warning disable IDE1006
+#pragma warning disable IDE0060
         public CharacterModel model = new CharacterModel();
 
-        /// <param name="args">
-        /// 0: Name or Command
-        /// </param>
+        /// <param name="args"> 0: card image name </param>
+        public void addimagelayers(string[] args)
+        {
+            string imageFolderPath = System.IO.Path.Combine(
+                PATHS.ModFolderPath, model.Mod, "Images\\Cards");
+
+            foreach (string s in args)
+            {
+                string filePath = System.IO.Path.Combine(imageFolderPath, s);
+                if (System.IO.Directory.Exists(filePath))
+                {
+                    string[] files = System.IO.Directory.GetFiles(filePath, "*.png");
+                    filePath = files[RANDOM.rand.Next(files.Length)];
+                }
+                model.ImageLayers.Add(filePath);
+            }
+        }
+
+        /// <param name="args"> 0: amount </param>
+        public void addrandomstats(string[] args)
+        {
+            int amount = args[0].ToInt();
+
+            for (int i = 0; i < amount; i++)
+            {
+                int randomValue = RANDOM.rand.Next(0, 3);
+                switch (randomValue)
+                {
+                    case 0:
+                        model.Power++;
+                        break;
+                    case 1:
+                        model.HitPoint++;
+                        model.CurrentHitPoint++;
+                        break;
+                    case 2:
+                        model.ActionPoint++;
+                        model.CurrentActionPoint++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /// <param name="args"> 0: Name or Command </param>
         public void rename(string[] args)
         {
             if (args.Length > 0)
@@ -92,24 +152,25 @@ public static class CharacterCreator
                 renamerandom(args);
         }
 
+        /// <param name="args"> N/A </param>
         public void renamerandom(string[] args)
         {
             model.Name = NameGenerator.GetRandomName();
         }
 
+        /// <param name="args"> N/A </param>
         public void renamerandomfemale(string[] args)
         {
             model.Name = NameGenerator.GetRandomFemaleName();
         }
 
+        /// <param name="args"> N/A </param>
         public void renamerandommale(string[] args)
         {
             model.Name = NameGenerator.GetRandomMaleName();
         }
 
-        /// <param name="args">
-        /// 0: CombatDeckCreation FileName
-        /// </param>
+        /// <param name="args"> 0: CombatDeckCreation FileName </param>
         public void replacecombatdeck(string[] args)
         {
             (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);
@@ -118,9 +179,7 @@ public static class CharacterCreator
             model.CombatDeck = CombatDeckCreator.CreateFromModel(combatModel);
         }
 
-        /// <param name="args">
-        /// 0: FieldDeckCreation FileName
-        /// </param>
+        /// <param name="args"> 0: FieldDeckCreation FileName </param>
         public void replacefielddeck(string[] args)
         {
             (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);

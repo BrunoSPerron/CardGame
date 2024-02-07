@@ -60,7 +60,7 @@ public static class CardFactory
         return CardScene.Instance<Card>();
     }
 
-    public static BaseBonusCardWrapper CreateCardFrom(BonusCombatCardModel cardModel)
+    public static BaseBonusCardWrapper CreateFrom(BonusCombatCardModel cardModel)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -105,7 +105,7 @@ public static class CardFactory
         return new BonusCombatCardWrapper(card, cardModel);
     }
 
-    public static BaseBonusCardWrapper CreateCardFrom(BonusFieldCardModel cardModel)
+    public static BaseBonusCardWrapper CreateFrom(BonusFieldCardModel cardModel)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -148,7 +148,7 @@ public static class CardFactory
         return new BonusFieldCardWrapper(card, cardModel);
     }
 
-    public static CharacterWrapper CreateCardFrom(CharacterModel character)
+    public static CharacterWrapper CreateFrom(CharacterModel character)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -190,10 +190,26 @@ public static class CardFactory
         inventoryButton.Position = cardFront.GetNode<Position2D>(
             "InventoryPosition").Position;
 
+        Sprite baseImage = cardFront.GetNode<Sprite>("Image");
+
+        foreach (string s in character.ImageLayers)
+        {
+            string texturePath = System.IO.Path.Combine(
+                PATHS.ModFolderPath, character.Mod, "Images\\Cards", s);
+
+            Sprite sprite = new Sprite() { 
+                Texture = TextureLoader.GetTextureFromPng(texturePath)};
+
+            sprite.Centered = false;
+            sprite.Position = baseImage.Position;
+            cardFront.AddChild(sprite);
+        }
+        baseImage.Visible = false;
+
         return new CharacterWrapper(card, character);
     }
 
-    public static CombatCardWrapper CreateCardFrom(CombatCardModel model)
+    public static CombatCardWrapper CreateFrom(CombatCardModel model)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -237,7 +253,7 @@ public static class CardFactory
         return new CombatCardWrapper(card, model);
     }
 
-    public static FieldCardWrapper CreateCardFrom(FieldCardModel model)
+    public static FieldCardWrapper CreateFrom(FieldCardModel model)
     {
         Card card = CardScene.Instance<Card>();
 
@@ -279,7 +295,7 @@ public static class CardFactory
         return new FieldCardWrapper(card, model);
     }
 
-    public static LocationWrapper CreateCardFrom(string mod, WorldHexModel location)
+    public static LocationWrapper CreateFrom(string mod, WorldHexModel location)
     {
         if (location.Location.Image == null)
             return CreateDefaultWrappedLocation();

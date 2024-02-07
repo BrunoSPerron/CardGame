@@ -67,6 +67,19 @@ public class CharacterWrapper : BaseCardWrapper
         }
     }
 
+    public int CurrentHitPoint
+    {
+        get => model.CurrentHitPoint;
+        set
+        {
+            if (model.CurrentHitPoint != value)
+            {
+                Card.Front.GetNode<IconCounter>("LifeCounter").SetCurrent(value);
+                model.CurrentHitPoint = value;
+            }
+        }
+    }
+
     public List<ItemModel> Items => model.Items;
 
     public int MaxActionPoint
@@ -85,7 +98,7 @@ public class CharacterWrapper : BaseCardWrapper
     public int MaxHitPoint
     {
         get => model.HitPoint;
-        private set
+        set
         {
             if (model.HitPoint != value)
             {
@@ -103,7 +116,7 @@ public class CharacterWrapper : BaseCardWrapper
     public int Power
     {
         get => model.Power;
-        private set
+        set
         {
             if (model.Power != value)
             {

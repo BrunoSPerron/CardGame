@@ -1,7 +1,16 @@
 {
+	"ActionPoint": 1,
+	"CurrentActionPoint": 1,
+	"CurrentHitPoint": 1,
+	"HitPoint": 1,
+	"Power": 1,
+	
 	"CombatDeck": "BaseDeck",
 	"FieldDeck": "BaseDeck",
+	
 	"Instructions": [
-		"rename random"
+		"rename random",
+		"add image layers -> Heads / Bodies / Hairs / Eyes",
+		"add random stats -> 3",
 	]
 }

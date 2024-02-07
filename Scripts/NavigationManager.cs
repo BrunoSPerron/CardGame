@@ -11,6 +11,7 @@ public class NavigationManager : Node2D
     public override void _Ready()
     {
         LoadMainMenu();
+        //LoadTestScreen();
     }
 
     public void LoadMainMenu()
@@ -27,5 +28,12 @@ public class NavigationManager : Node2D
         currentScreen = newGameScreen;
         AddChild(newGameScreen);
         newGameScreen.InitializeScenario(mod, scenario);
+    }
+
+    public void LoadTestScreen()
+    {
+        currentScreen?.QueueFree();
+        currentScreen = new TestScreen();
+        AddChild(currentScreen);
     }
 }

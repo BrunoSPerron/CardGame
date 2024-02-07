@@ -28,8 +28,6 @@ public static class NameGenerator
         }
     }
 
-    private static readonly Random rand = new Random();
-
     private static bool Initialize()
     {
         maleCharWeights = new Dictionary<char, Dictionary<char, int>>();
@@ -61,7 +59,7 @@ public static class NameGenerator
 
     public static string GetRandomName()
     {
-        return GenerateName(rand.Next(0, 2) % 1 == 1);
+        return GenerateName(RANDOM.rand.Next(0, 2) % 1 == 1);
     }
 
     public static string GetRandomMaleName()
@@ -84,7 +82,7 @@ public static class NameGenerator
         int nameLength = averageNameLength;
 
         for (var i = 0; i < nameLengthVariance; i++)
-            nameLength += rand.Next(-1, 2);
+            nameLength += RANDOM.rand.Next(-1, 2);
 
         char precedentChar = ' ';
         char nextChar = '@';
@@ -113,7 +111,7 @@ public static class NameGenerator
             ? MaleCharWeights[currentChar]
             : FemaleCharWeights[currentChar])
             TotalWeight += kvp.Value;
-        int rollValue = rand.Next(0, TotalWeight);
+        int rollValue = RANDOM.rand.Next(0, TotalWeight);
 
         foreach (KeyValuePair<char, int> kvp in forMaleName
             ? MaleCharWeights[currentChar]

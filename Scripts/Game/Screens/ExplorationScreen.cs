@@ -296,9 +296,8 @@ public class ExplorationScreen : BaseGameScreen
         {
             DisableScreen();
             character.CurrentActionPoint -= Location.Model.ExploreCost;
-            Random rand = new Random();
             List<EncounterModel> encounters = Location.Model.Encounters;
-            EncounterModel encounter = encounters[rand.Next(0, encounters.Count)];
+            EncounterModel encounter = encounters[RANDOM.rand.Next(0, encounters.Count)];
             EventPlayer eventPlayer = new EventPlayer(character, encounter.Steps, encounter);
             eventPlayer.Connect("OnEventEnd", this, "SurvivorEvent_Field_End");
             AddChild(eventPlayer);

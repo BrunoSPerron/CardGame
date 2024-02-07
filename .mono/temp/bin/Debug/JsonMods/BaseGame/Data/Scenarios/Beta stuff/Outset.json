@@ -4,6 +4,8 @@
 		"y": 50
 	},
 	"StartingCharacters": [
+		"BaseCharacter",
+		"BaseCharacter",
 		"BaseCharacter"
 	],
 	"World": "Endless"

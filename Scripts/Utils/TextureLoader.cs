@@ -8,9 +8,8 @@ public static class TextureLoader
     {
         if (System.IO.Directory.Exists(filePath))
         {
-            Random rand = new Random();
             string[] files = System.IO.Directory.GetFiles(filePath, "*.png");
-            filePath = files[rand.Next(files.Length)];
+            filePath = files[RANDOM.rand.Next(files.Length)];
         }
         filePath = System.IO.Path.ChangeExtension(filePath, "png");
         File file = new File();

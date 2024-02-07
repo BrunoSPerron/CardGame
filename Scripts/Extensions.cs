@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public static class Extensions
 {
-    private readonly static Random rng = new Random();
 
     ///<returns>The object serialized in a Json encoded string.</returns>
     public static string Serialize<T>(this T source)
@@ -22,7 +21,7 @@ public static class Extensions
         while (index > 1)
         {
             index--;
-            int newIndex = rng.Next(index + 1);
+            int newIndex = RANDOM.rand.Next(index + 1);
             (list[index], list[newIndex]) = (list[newIndex], list[index]);
         }
     }

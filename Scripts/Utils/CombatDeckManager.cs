@@ -83,7 +83,7 @@ public class CombatDeckManager : BaseDeckManager
         if (deck == null)
         {
             GD.PrintErr("Deck manager error: Tried to draw from a non-existing deck");
-            return CardFactory.CreateCardFrom(new CombatCardModel());
+            return CardFactory.CreateFrom(new CombatCardModel());
         }
 
         if (deck.Count == 0)
@@ -112,7 +112,7 @@ public class CombatDeckManager : BaseDeckManager
         List<BaseBonusCardWrapper> wrappers = new List<BaseBonusCardWrapper>();
         foreach (BonusCombatCardModel cardModel in Model.BonusCards)
         {
-            BaseBonusCardWrapper wrapper = CardFactory.CreateCardFrom(cardModel);
+            BaseBonusCardWrapper wrapper = CardFactory.CreateFrom(cardModel);
             wrappers.Add(wrapper);
         }
         return wrappers;
@@ -122,7 +122,7 @@ public class CombatDeckManager : BaseDeckManager
     {
         List<BaseCardWrapper> wrappers = new List<BaseCardWrapper>();
         foreach (CombatCardModel model in Model.CombatDeck)
-            wrappers.Add(CardFactory.CreateCardFrom(model));
+            wrappers.Add(CardFactory.CreateFrom(model));
         return wrappers;
     }
 
@@ -167,11 +167,11 @@ public class CombatDeckManager : BaseDeckManager
                     if (currenBonusCards[j].Priority > cardToUse.Priority)
                         cardToUse = currenBonusCards[j];
                 }
-                wrappedDeck.Add(CardFactory.CreateCardFrom(cardToUse.CombatCard));
+                wrappedDeck.Add(CardFactory.CreateFrom(cardToUse.CombatCard));
             }
             else
             {
-                wrappedDeck.Add(CardFactory.CreateCardFrom(Model.CombatDeck[i]));
+                wrappedDeck.Add(CardFactory.CreateFrom(Model.CombatDeck[i]));
             }
         }
 

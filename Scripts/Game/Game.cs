@@ -30,7 +30,7 @@ public class Game : Node2D
 
     public void AddSurvivor(CharacterModel model)
     {
-        CharacterWrapper wrapper = CardFactory.CreateCardFrom(model);
+        CharacterWrapper wrapper = CardFactory.CreateFrom(model);
         Survivors.Add(wrapper);
         charactersByCardId.Add(wrapper.Card.GetInstanceId(), wrapper);
         wrapper.Card.Connect("OnCombatDeckClick", this, "OnCombatDeckClick");
@@ -44,7 +44,7 @@ public class Game : Node2D
         LocationWrapper wrapper = null;
         if (location != null)
         {
-            wrapper = CardFactory.CreateCardFrom(State.Mod, hexLocation);
+            wrapper = CardFactory.CreateFrom(State.Mod, hexLocation);
             Locations.Add(wrapper);
             ulong instanceId = wrapper.Card.GetInstanceId();
             if (!locationsByCardId.ContainsKey(instanceId))
