@@ -43,6 +43,10 @@ public static class FieldDeckCreator
             }
         }
 
+
+        while (assemblyLine.model.FieldDeck.Count < 4)
+            assemblyLine.addcard(new string[0]);
+
         return assemblyLine.model;
     }
 
@@ -65,51 +69,11 @@ public static class FieldDeckCreator
             string fullCardName = args.Length > 0 ? args[0] : "core__drool";
             int amount = args.Length > 1 ? Int32.Parse(args[1]) : 1;
 
-            string[] splittedCardName = fullCardName.Split(
-                new string[] { "__" }, StringSplitOptions.None);
-
-            FieldCardModel card = null;
-            string cardName = splittedCardName[0];
-            if (splittedCardName.Length > 1)
-            {
-                string mod = splittedCardName[0];
-                cardName = splittedCardName[1];
-
-                if (mod == "core")
-                {
-                    switch(cardName.ToLowerInvariant())
-                    {
-                        case "drool":
-                            card = new FieldCardModel();
-                            break;
-                        default:
-                            GD.PrintErr("Card not found in core: \"" + cardName
-                                + "\". Asked by " + model.JsonFilePath);
-                            break;
-                    } 
-                }
-                else
-                {
-                    card = JsonLoader.GetFieldCardModel(mod, cardName);
-                }
-
-
-                if (card == null)
-                {
-                    GD.PrintErr(
-                        "Field deck creator warning: Failed to load card \"" + cardName
-                        + "\" from mod dependency \"" + mod + "\" for mod \"" + model.Mod
-                        + "\". Trying the mod fallback.");
-                }
-            }
-
-            if (card == null)
-                card = JsonLoader.GetFieldCardModel(model.Mod, cardName) ?? new FieldCardModel();
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(fullCardName, model);
+            FieldCardModel card = JsonLoader.GetFieldCardModel(fileToLoad);
 
             for (int i = 0; i < amount; i++)
-            {
                 model.FieldDeck.Add(card.CloneViaJSON());
-            }
         }
     }
 }

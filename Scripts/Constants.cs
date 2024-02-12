@@ -4,6 +4,7 @@ using System.Reflection;
 
 public static class CONSTS
 {
+    public const int COMBAT_HAND_SIZE = 5;
     public const int FIELD_HAND_SIZE = 5;
 
     // TODO Get the actual setting from GODOT

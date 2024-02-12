@@ -16,9 +16,7 @@ public static class CharacterCreator
 
         Type factoryType = assemblyLine.GetType();
 
-        SetCombatDeck(assemblyLine, model);
-        SetFieldDeck(assemblyLine, model);
-        SetInitialValues(assemblyLine.model, model);
+        SetInitialValues(assemblyLine, model);
 
         foreach (string instruction in model.Instructions)
         {
@@ -56,7 +54,7 @@ public static class CharacterCreator
         {
             GD.PrintErr("Character creator error: CombatDeck missing in file "
                 + model.JsonFilePath);
-            combatDeckToUse = "core__bad";
+            combatDeckToUse = "core__simple";
         }
         assemblyLine.replacecombatdeck(new string[] { combatDeckToUse });
     }
@@ -69,14 +67,20 @@ public static class CharacterCreator
         {
             GD.PrintErr("Character creator error: CombatDeck missing in file "
                 + model.JsonFilePath);
-            fieldDeckToUse = "core__bad";
+            fieldDeckToUse = "core__simple";
         }
         assemblyLine.replacefielddeck(new string[] { fieldDeckToUse });
     }
 
     public static void SetInitialValues(
-        CharacterModel target, CharacterCreationModel origin)
+        AssemblyLine assemblyLine, CharacterCreationModel origin)
     {
+
+        SetCombatDeck(assemblyLine, origin);
+        SetFieldDeck(assemblyLine, origin);
+        CharacterModel target = assemblyLine.model;
+        target.Name = origin.Name;
+
         target.ActionPoint = origin.ActionPoint;
         target.CurrentActionPoint = origin.CurrentActionPoint == -1
             ? origin.ActionPoint : origin.CurrentActionPoint;
@@ -86,8 +90,10 @@ public static class CharacterCreator
             ? origin.HitPoint : origin.CurrentHitPoint;
 
         target.Power = origin.Power;
-    }
 
+        if (origin.Image != null)
+            assemblyLine.addimagelayers(new string[] { origin.Image });
+    }
 
 
     // Methods in this class must be public and use lowercase names to be invokable.
@@ -173,18 +179,18 @@ public static class CharacterCreator
         /// <param name="args"> 0: CombatDeckCreation FileName </param>
         public void replacecombatdeck(string[] args)
         {
-            (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(args[0], model);
             CombatDeckCreationModel combatModel = JsonLoader.GetCombatDeckCreationModel(
-                mod, name);
+                fileToLoad);
             model.CombatDeck = CombatDeckCreator.CreateFromModel(combatModel);
         }
 
         /// <param name="args"> 0: FieldDeckCreation FileName </param>
         public void replacefielddeck(string[] args)
         {
-            (string name, string mod) = PathHelper.GetNameAndMod(args[0], model);
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(args[0], model);
             FieldDeckCreationModel fieldModel = JsonLoader.GetFieldDeckCreationModel(
-                mod, name);
+                fileToLoad);
             model.FieldDeck = FieldDeckCreator.CreateFromModel(fieldModel);
         }
     }

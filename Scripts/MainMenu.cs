@@ -9,7 +9,7 @@ public class MainMenu : BaseGameScreen
     public Card Survivor;
 
     private CardCleaner cardCleaner;
-    private Dictionary<ulong, ScenarioTarget> scenarioTargets
+    private readonly Dictionary<ulong, ScenarioTarget> scenarioTargets
         = new Dictionary<ulong, ScenarioTarget>();
 
     public override void _Ready()
@@ -19,6 +19,8 @@ public class MainMenu : BaseGameScreen
         DealOnBoard(Survivor, CONSTS.SCREEN_CENTER + Vector2.Down * 75);
 
         AddTopLevelTargets();
+
+        AddButton("test screen", "NavigateToTestScreen", Cardinal.SW, new Vector2(5, -5));
     }
 
     private void AddScenarioTargets()
@@ -56,12 +58,6 @@ public class MainMenu : BaseGameScreen
         cardCleaner.AddCardToClean(card);
     }
 
-    private void RemoveTopLevelTargets()
-    {
-        CleanCard(NewGameTarget);
-        NewGameTarget = null;
-    }
-
     public override void Destroy()
     {
         CleanCard(Survivor);
@@ -89,7 +85,19 @@ public class MainMenu : BaseGameScreen
             NewGameTarget.IsStackTarget = true;
     }
 
+    public void NavigateToTestScreen()
+    {
+        NavigationManager.LoadTestScreen();
+    }
+
+    private void RemoveTopLevelTargets()
+    {
+        CleanCard(NewGameTarget);
+        NewGameTarget = null;
+    }
+
     // === Signals Listened ===
+#pragma warning disable IDE0060
 
     public void OnCarddragEnd(Card originCard, Card stackTarget)
     {

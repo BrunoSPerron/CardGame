@@ -61,10 +61,10 @@ public static class WorldCreator
         /// </param>
         public void addlocation(string[] args)
         {
-            string locationName = args.Length > 0 ? args[0] : null;
+            string locationName = args.Length > 0 ? args[0] : "core__desolation";
             int x = args.Length > 1 ? int.Parse(args[1]) : 0;
             int y = args.Length > 2 ? int.Parse(args[2]) : 0;
-
+            FileToLoad worldToLoad = PathHelper.GetFileToLoadInfo(locationName, model.Mod);
             Vector2Int positionVector = new Vector2Int(x, y);
             bool newLocation = true;
             for (int i = 0; i < model.Locations.Count; i++)
@@ -72,7 +72,7 @@ public static class WorldCreator
                 WorldHexModel location = model.Locations[i];
                 if (location.Coord == positionVector)
                 {
-                    location.Location = JsonLoader.GetLocationModel(model.Mod, locationName);
+                    location.Location = JsonLoader.GetLocationModel(worldToLoad);
                     newLocation = false;
                     break;
                 }
@@ -82,7 +82,7 @@ public static class WorldCreator
             {
                 model.Locations.Add(new WorldHexModel
                 {
-                    Location = JsonLoader.GetLocationModel(model.Mod, locationName),
+                    Location = JsonLoader.GetLocationModel(worldToLoad),
                     Coord = positionVector
                 });
             }

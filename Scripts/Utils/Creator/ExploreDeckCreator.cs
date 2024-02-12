@@ -68,27 +68,8 @@ public static class ExploreDeckCreator
         {
             foreach (string arg in args)
             {
-                string[] splittedEncounterName = arg.Split(
-                    new string[] { "__" }, StringSplitOptions.None);
-                EncounterModel model = null;
-                string encounterName = splittedEncounterName[0];
-                if (splittedEncounterName.Length > 1)
-                {
-                    string mod = splittedEncounterName[0];
-                    encounterName = splittedEncounterName[1];
-                    model = JsonLoader.GetEncounterModel(mod, encounterName);
-
-                    if (model == null)
-                    {
-                        GD.PrintErr(
-                            "Explore deck creator warning: Failed to load encounter \"" + encounterName
-                            + "\" from mod dependency \"" + mod + "\" for mod \"" + model.Mod
-                            + "\". Trying the mod fallback.");
-                    }
-                }
-                if (model == null)
-                    model = JsonLoader.GetEncounterModel(mod, encounterName);
-                
+                FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(arg, mod);
+                EncounterModel model = JsonLoader.GetEncounterModel(fileToLoad);
                 models.Add(model);
             }
         }

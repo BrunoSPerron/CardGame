@@ -129,7 +129,8 @@ public class EventPlayer: BaseGameScreen
 
     public class BackStage_Solo : Backstage_base
     {
-        #pragma warning disable IDE1006
+#pragma warning disable IDE0060
+#pragma warning disable IDE1006
 
         public override CharacterWrapper[] Characters => new CharacterWrapper[]
         {
@@ -151,7 +152,8 @@ public class EventPlayer: BaseGameScreen
         {
             foreach (string itemName in args)
             {
-                ItemModel item = JsonLoader.GetItemModel(mod, itemName);
+                FileToLoad fileToload = PathHelper.GetFileToLoadInfo(itemName, mod);
+                ItemModel item = JsonLoader.GetItemModel(fileToload);
                 character.AddItem(item);
             }
         }
@@ -173,6 +175,15 @@ public class EventPlayer: BaseGameScreen
                 text.SetLabel(player.ReplaceRegex(args[i]));
             }
             player.WaitForInput();
+        }
+
+        /// <param name="args">
+        /// 0+: Opponent (Character creation logic file name)
+        /// </param>
+        public void fight(string[] args)
+        {
+            CombatScreen screen = new CombatScreen();
+            player.AddChild(screen);
         }
     }
 }

@@ -50,7 +50,8 @@ public class FieldDeckManager : BaseDeckManager
             }
 
             string cardName = item.FieldCards[i];
-            FieldCardModel cardModel = JsonLoader.GetFieldCardModel(item.Mod, cardName);
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(cardName, item);
+            FieldCardModel cardModel = JsonLoader.GetFieldCardModel(fileToLoad);
             Model.BonusCards.Add(new BonusFieldCardModel()
             {
                 FieldCard = cardModel,
@@ -94,8 +95,8 @@ public class FieldDeckManager : BaseDeckManager
         }
 
         hand.Add(deck[0]);
-        deck.RemoveAt(0);
         FieldCardWrapper wrapper = deck[0];
+        deck.RemoveAt(0);
         return wrapper;
     }
 

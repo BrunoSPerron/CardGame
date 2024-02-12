@@ -52,7 +52,7 @@ public static class DeckFactory
     public static FieldDeckManager CreateFieldDeckManagerFromModel(
         CharacterWrapper parent, FieldDeckModel fieldDeck)
     {
-        if (fieldDeck.BaseDeck == null || fieldDeck.BaseDeck.Count < 5)
+        if (fieldDeck.FieldDeck == null || fieldDeck.FieldDeck.Count == 0)
         {
             GD.PrintErr(
                 "Deck Factory error: Field deck missing, a generic one will be used. Mod: '"
@@ -66,7 +66,7 @@ public static class DeckFactory
     public static CombatDeckManager CreateCombatDeckManagerFromModel(
         CharacterWrapper parent, CombatDeckModel combatDeck)
     {
-        if (combatDeck.CombatDeck == null || combatDeck.CombatDeck.Count < 5)
+        if (combatDeck.CombatDeck == null || combatDeck.CombatDeck.Count == 0)
         {
             GD.PrintErr(
                 "Deck Factory error: Combat deck missing, a generic one will be used. Mod: '"

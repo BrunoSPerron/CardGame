@@ -122,8 +122,10 @@ public class Game : Node2D
         };
         OutsetModel outsetInfo = JsonLoader.GetOnsetModel(mod, scenario);
 
+        FileToLoad worldToLoad = PathHelper.GetFileToLoadInfo(
+            outsetInfo.World, State);
         WorldCreationModel worldCreationModel = JsonLoader.GetWorldCreationModel(
-            mod, outsetInfo.World);
+            worldToLoad);
         State.Map = WorldCreator.CreateFromModel(worldCreationModel);
 
         foreach (WorldHexModel hexLocation in State.Map.Locations)
@@ -131,8 +133,10 @@ public class Game : Node2D
 
         foreach (string characterCreatorLogic in outsetInfo.StartingCharacters)
         {
-            CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(
-                State.Mod, characterCreatorLogic);
+
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(
+                characterCreatorLogic, State);
+            CharacterCreationModel model = JsonLoader.GetCharacterCreationModel(fileToLoad);
             CharacterModel character = CharacterCreator.CreateFromModel(model);
             character.CurrentActionPoint = Mathf.Clamp(
                 character.CurrentActionPoint, 1, character.ActionPoint);

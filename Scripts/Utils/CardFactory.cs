@@ -77,12 +77,12 @@ public static class CardFactory
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        (string cardName, string mod) = PathHelper.GetNameAndMod(cardModel.Card.Image,
+        FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(cardModel.Card.Image,
                                                                  cardModel.Card);
 
-        if (mod == "core")
+        if (fileToLoad.Mod == "core")
         {
-            switch (cardName)
+            switch (fileToLoad.FileName)
             {
                 case "punch":
                     Texture texturePath = ResourceLoader.Load<Texture>(
@@ -90,14 +90,14 @@ public static class CardFactory
                     card.Front.GetNode<Sprite>("Image").Texture = texturePath;
                     break;
                 default:
-                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    GD.PrintErr("Card not found in core: \"" + fileToLoad.FileName + "\"");
                     break;
             }
         }
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\" + cardModel.Card.Image);
+                fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
         }
@@ -122,25 +122,25 @@ public static class CardFactory
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        (string cardName, string mod) = PathHelper.GetNameAndMod(cardModel.Card.Image,
+        FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(cardModel.Card.Image,
                                                                  cardModel.Card);
 
-        if (mod == "core")
+        if (fileToLoad.Mod == "core")
         {
-            switch (cardName)
+            switch (fileToLoad.FileName)
             {
                 case "drool":
                     //TODO default image
                     break;
                 default:
-                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    GD.PrintErr("Card not found in core: \"" + fileToLoad.FileName + "\"");
                     break;
             }
         }
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\" + cardModel.Card.Image);
+                fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
         }
@@ -197,11 +197,12 @@ public static class CardFactory
             string texturePath = System.IO.Path.Combine(
                 PATHS.ModFolderPath, character.Mod, "Images\\Cards", s);
 
-            Sprite sprite = new Sprite() { 
-                Texture = TextureLoader.GetTextureFromPng(texturePath)};
-
-            sprite.Centered = false;
-            sprite.Position = baseImage.Position;
+            Sprite sprite = new Sprite
+            {
+                Texture = TextureLoader.GetTextureFromPng(texturePath),
+                Centered = false,
+                Position = baseImage.Position
+            };
             cardFront.AddChild(sprite);
         }
         baseImage.Visible = false;
@@ -226,11 +227,11 @@ public static class CardFactory
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        (string cardName, string mod) = PathHelper.GetNameAndMod(model.Image, model);
+        FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(model.Image, model);
 
-        if (mod == "core")
+        if (fileToLoad.Mod == "core")
         {
-            switch (cardName)
+            switch (fileToLoad.FileName)
             {
                 case "punch":
                     Texture texturePath = ResourceLoader.Load<Texture>(
@@ -238,14 +239,14 @@ public static class CardFactory
                     card.Front.GetNode<Sprite>("Image").Texture = texturePath;
                     break;
                 default:
-                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    GD.PrintErr("Card not found in core: \"" + fileToLoad.FileName + "\"");
                     break;
             }
         }
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\" + model.Image);
+                fileToLoad.Mod + "\\Images\\Cards\\" + model.Image);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
         }
@@ -270,24 +271,24 @@ public static class CardFactory
         card.Front.AddChild(textBox);
         textBox.Position = card.Front.GetNode<Position2D>("TextBoxPosition").Position;
 
-        (string cardName, string mod) = PathHelper.GetNameAndMod(model.Image, model);
+        FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(model.Image, model);
 
-        if (mod == "core")
+        if (fileToLoad.Mod == "core")
         {
-            switch (cardName)
+            switch (fileToLoad.FileName)
             {
                 case "drool":
                     //TODO default image
                     break;
                 default:
-                    GD.PrintErr("Card not found in core: \"" + cardName + "\"");
+                    GD.PrintErr("Card not found in core: \"" + fileToLoad.FileName + "\"");
                     break;
             }
         }
         else
         {
             string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
-                mod + "\\Images\\Cards\\" + model.Image);
+                fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
         }

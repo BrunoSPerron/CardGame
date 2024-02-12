@@ -105,4 +105,6 @@ public abstract class BaseGameScreen : Node2D
     }
 
     public virtual void SurvivorEvent_Field_End() { }
+
+    public virtual void SurvivorEvent_Combat_End() { }
 }

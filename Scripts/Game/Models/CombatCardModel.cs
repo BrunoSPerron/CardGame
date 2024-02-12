@@ -5,7 +5,7 @@
 
     public int Cost = 3;
 
-    public int FlatDamageModifier = 0;
+    public string[] Effects = new string[0];
+
     public string TextBox = "";
-    public CombatAction Type = CombatAction.ATTACK;
 }

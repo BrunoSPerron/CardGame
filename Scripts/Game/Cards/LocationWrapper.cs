@@ -31,8 +31,9 @@ public class LocationWrapper : BaseCardWrapper
     {
         if (Model?.ExploreDeck != null) 
         {
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(Model.ExploreDeck, Model);
             ExploreDeckCreationModel creationModel = JsonLoader.GetExploreDeckCreationModel(
-                Model.Mod, Model.ExploreDeck);
+                fileToLoad);
             Model.Encounters = ExploreDeckCreator.CreateFromModel(creationModel);
         }
     }

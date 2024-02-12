@@ -6,7 +6,7 @@
 	"StartingCharacters": [
 		"BaseCharacter",
 		"BaseCharacter",
-		"BaseCharacter"
+		"shroom"
 	],
 	"World": "Endless"
 }

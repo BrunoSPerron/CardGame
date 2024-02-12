@@ -47,3 +47,10 @@ public struct ScenarioTarget
     public string Scenario;
     public Card Card;
 }
+
+public struct FileToLoad
+{
+    public string FileName;
+    public string Mod;
+    public string FallbackMod;
+}

@@ -43,6 +43,9 @@ public static class CombatDeckCreator
             }
         }
 
+        while (assemblyLine.model.CombatDeck.Count < 4)
+            assemblyLine.addcard(new string[] { "core__punch", "1" });
+
         return assemblyLine.model;
     }
 
@@ -65,46 +68,8 @@ public static class CombatDeckCreator
             string fullCardName = args.Length > 0 ? args[0] : "core__punch";
             int amount = args.Length > 1 ? Int32.Parse(args[1]) : 1;
 
-            string[] splittedCardName = fullCardName.Split(
-                new string[] { "__" }, StringSplitOptions.None);
-
-            CombatCardModel card = null;
-            string cardName = splittedCardName[0];
-            if (splittedCardName.Length > 1)
-            {
-                string mod = splittedCardName[0];
-                cardName = splittedCardName[1];
-
-                if (mod == "core")
-                {
-                    switch(cardName.ToLowerInvariant())
-                    {
-                        case "punch":
-                            card = new CombatCardModel();
-                            break;
-                        default:
-                            GD.PrintErr("Card not found in core: \"" + cardName 
-                                + "\". Asked by " + model.JsonFilePath);
-                            break;
-                    } 
-                }
-                else
-                {
-                    card = JsonLoader.GetCombatCardModel(mod, cardName);
-                }
-
-
-                if (card == null)
-                {
-                    GD.PrintErr(
-                        "Combat deck creator warning: Failed to load card \"" + cardName
-                        + "\" from mod dependency \"" + mod + "\" for mod \"" + model.Mod
-                        + "\". Trying the mod fallback.");
-                }
-            }
-
-            if (card == null)
-                card = JsonLoader.GetCombatCardModel(model.Mod, cardName) ?? new CombatCardModel();
+            FileToLoad fileToLoad = PathHelper.GetFileToLoadInfo(fullCardName, model);
+            CombatCardModel card = JsonLoader.GetCombatCardModel(fileToLoad);
 
             for (int i = 0; i < amount; i++)
                 model.CombatDeck.Add(card.CloneViaJSON());

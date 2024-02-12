@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Art/cards/images/Characters/survivor.png" type="Texture" id=1]
 [ext_resource path="res://Art/cards/card_background.png" type="Texture" id=2]
@@ -8,6 +8,18 @@
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 43, 62 )
+
+[sub_resource type="OpenSimplexNoise" id=2]
+seed = -1
+octaves = 4
+period = 23.8
+persistence = 0.993
+lacunarity = 2.74
+
+[sub_resource type="NoiseTexture" id=3]
+width = 90
+height = 128
+noise = SubResource( 2 )
 
 [node name="Card" type="Area2D"]
 self_modulate = Color( 0.603922, 0.0509804, 0.0509804, 1 )
@@ -38,10 +50,10 @@ centered = false
 position = Vector2( -36, -55 )
 
 [node name="CombatDeckPosition" type="Position2D" parent="Front"]
-position = Vector2( 26.6667, -31.3333 )
+position = Vector2( 27, -31 )
 
 [node name="RestDeckPosition" type="Position2D" parent="Front"]
-position = Vector2( -26.6667, -30.6667 )
+position = Vector2( -27, -31 )
 
 [node name="CardCostPosition" type="Position2D" parent="Front"]
 position = Vector2( -36, -42 )
@@ -69,6 +81,14 @@ position = Vector2( -36, 47 )
 
 [node name="CounterFivePosition" type="Position2D" parent="Front"]
 position = Vector2( -36, 56 )
+
+[node name="Noise" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.756863 )
+self_modulate = Color( 0.67451, 0.521569, 0.447059, 0.0862745 )
+position = Vector2( -43, -62 )
+scale = Vector2( 0.955556, 0.96875 )
+texture = SubResource( 3 )
+centered = false
 
 [node name="Back" type="Node2D" parent="."]
 visible = false

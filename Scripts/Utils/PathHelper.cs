@@ -5,9 +5,14 @@ using System.IO;
 
 public static class PathHelper
 {
-    public static Tuple<string, string> GetNameAndMod(string name, BaseModel model)
+    public static FileToLoad GetFileToLoadInfo(string name, BaseModel model)
     {
-        string mod = model.Mod;
+        return GetFileToLoadInfo(name, model.Mod);
+    }
+
+    public static FileToLoad GetFileToLoadInfo(string name, string baseMod)
+    {
+        string mod = baseMod;
         string[] splittedName = name.Split(
             new string[] { "__" }, StringSplitOptions.None);
         string cardName = splittedName[0];
@@ -16,7 +21,15 @@ public static class PathHelper
             mod = splittedName[0];
             cardName = splittedName[1];
         }
-        return new Tuple<string, string>(cardName, mod);
+        FileToLoad fileToLoad = new FileToLoad()
+        {
+            FileName = cardName,
+            Mod = mod
+        };
+        if (mod != baseMod)
+            fileToLoad.FallbackMod = baseMod;
+
+        return fileToLoad;
     }
 
     public static List<string> GetTopDirectoriesInFolder(string folderPath)

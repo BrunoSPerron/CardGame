@@ -19,7 +19,7 @@ public class DeckPanel : Node2D
 
     private BaseBonusCardWrapper[] bonusCards;
     private List<BaseBonusCardWrapper>[] bonusCardsAtIndex;
-    private Dictionary<ulong, BaseBonusCardWrapper> bonusCardWrapperById
+    private readonly Dictionary<ulong, BaseBonusCardWrapper> bonusCardWrapperById
         = new Dictionary<ulong, BaseBonusCardWrapper>();
 
     private readonly List<Button> buttons = new List<Button>();
@@ -65,7 +65,7 @@ public class DeckPanel : Node2D
     private void DealBaseDeck()
     {
         //TODO Placement based on available space
-        cardSizeMultiplier = 0.75f;
+        cardSizeMultiplier = 0.8f;
 
         Vector2 panelSize = panel.GetSize() - new Vector2(
             INNER_PADDING_X * 2, INNER_PADDING_Y * 2);

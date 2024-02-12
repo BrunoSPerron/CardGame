@@ -50,7 +50,8 @@ public class CombatDeckManager : BaseDeckManager
             }
 
             string cardName = item.CombatCards[i];
-            CombatCardModel cardModel = JsonLoader.GetCombatCardModel(item.Mod, cardName);
+            FileToLoad combatCardToLoad = PathHelper.GetFileToLoadInfo(cardName, item);
+            CombatCardModel cardModel = JsonLoader.GetCombatCardModel(combatCardToLoad);
             Model.BonusCards.Add(new BonusCombatCardModel()
             {
                 CombatCard = cardModel,
@@ -94,8 +95,8 @@ public class CombatDeckManager : BaseDeckManager
         }
 
         hand.Add(deck[0]);
-        deck.RemoveAt(0);
         CombatCardWrapper wrapper = deck[0];
+        deck.RemoveAt(0);
         return wrapper;
     }
 
@@ -116,6 +117,10 @@ public class CombatDeckManager : BaseDeckManager
             wrappers.Add(wrapper);
         }
         return wrappers;
+    }
+    public CombatCardWrapper[] GetHand()
+    {
+        return hand.ToArray();
     }
 
     public override List<BaseCardWrapper> GetSortedBaseDeck()
