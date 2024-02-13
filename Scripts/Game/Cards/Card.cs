@@ -144,8 +144,12 @@ public class Card : Area2D
         animations.Clear();
     }
 
-    public void Flip(float animationTimeInSec = 0.4f)
+    public void Flip(float animationTimeInSec = -1)
     {
+        if (animationTimeInSec == -1)
+        {
+
+        }
         AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
             "res://Audio/Fx/cardFlip.mp3");
         AudioHelper.PlaySoundOnCard(this, sound, .7f);

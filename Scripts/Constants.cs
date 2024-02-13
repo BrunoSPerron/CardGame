@@ -18,12 +18,6 @@ public static class CONSTS
     public static readonly Color PALE_BROWN = new Color(0.6117647059f, 0.3686274510f, 0.2823529412f);
 }
 
-public static class PATHS
-{
-    public static string ModFolderPath { get; } = System.IO.Path.Combine(
-        System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "JsonMods");
-}
-
 public static class RANDOM
 {
     public static Random rand = new Random();

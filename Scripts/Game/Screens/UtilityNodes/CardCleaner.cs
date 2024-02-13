@@ -1,13 +1,18 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Runtime;
 
 public class CardCleaner : Position2D
 {
-    public float SecondsBetweenClean = 0.05f;
+    public float SecondsBetweenClean => Settings.Current.CleaningDelay;
     private readonly List<CleaningInfo> cardsToClean = new List<CleaningInfo>();
     private readonly List<CleaningInfo> cardsBeingCleaned = new List<CleaningInfo>();
     private float timer = 0f;
+
+    public CardCleaner()
+    {
+    }
 
     public override void _Process(float delta)
     {

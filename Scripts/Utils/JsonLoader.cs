@@ -14,14 +14,14 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\CharacterCreation\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path)) {
             Godot.GD.PrintErr("Json loader warning: Dependency file not find at " + path
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\CharacterCreation\\" + nameWithExtension);
         }
 
@@ -41,7 +41,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\CombatCards\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -49,7 +49,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\CombatCards\\" + nameWithExtension);
         }
 
@@ -68,7 +68,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\CombatDeckCreation\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -76,7 +76,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\CombatDeckCreation\\" + nameWithExtension);
         }
 
@@ -96,7 +96,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\Encounters\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -104,7 +104,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\Encounters\\" + nameWithExtension);
         }
 
@@ -123,7 +123,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\ExploreDeckCreation\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -131,7 +131,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\ExploreDeckCreation\\" + nameWithExtension);
         }
 
@@ -150,7 +150,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\FieldCards\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -158,7 +158,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\FieldCards\\" + nameWithExtension);
         }
 
@@ -177,7 +177,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\FieldDeckCreation\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -185,7 +185,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\FieldDeckCreation\\" + nameWithExtension);
         }
 
@@ -205,7 +205,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\Items\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -213,7 +213,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\Items\\" + nameWithExtension);
         }
 
@@ -231,7 +231,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\Locations\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -239,7 +239,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\Locations\\" + nameWithExtension);
         }
 
@@ -251,7 +251,7 @@ public static class JsonLoader
 
     public static OutsetModel GetOnsetModel(string modName, string scenario)
     {
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\Scenarios\\" + scenario + "\\Outset.json");
         OutsetModel model = GetOfType<OutsetModel>.FromJson(path) ?? new OutsetModel();
         model.Mod = modName;
@@ -267,7 +267,7 @@ public static class JsonLoader
 
         string nameWithExtension = Path.ChangeExtension(fileToLoad.FileName, "json");
         string modName = fileToLoad.Mod;
-        string path = Path.Combine(PATHS.ModFolderPath,
+        string path = Path.Combine(PathHelper.ModFolder,
             modName + "\\Data\\World\\" + nameWithExtension);
         if (fileToLoad.FallbackMod != null && !File.Exists(path))
         {
@@ -275,7 +275,7 @@ public static class JsonLoader
                 + " requested by mod \"" + fileToLoad.FallbackMod
                 + "\". Using fallback provided by that mod, if any.");
             modName = fileToLoad.FallbackMod;
-            path = Path.Combine(PATHS.ModFolderPath,
+            path = Path.Combine(PathHelper.ModFolder,
                 modName + "\\Data\\World\\" + nameWithExtension);
         }
 

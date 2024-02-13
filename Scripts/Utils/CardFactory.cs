@@ -96,7 +96,7 @@ public static class CardFactory
         }
         else
         {
-            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            string texturePath = System.IO.Path.Combine(PathHelper.ModFolder,
                 fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
@@ -139,7 +139,7 @@ public static class CardFactory
         }
         else
         {
-            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            string texturePath = System.IO.Path.Combine(PathHelper.ModFolder,
                 fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
@@ -195,7 +195,7 @@ public static class CardFactory
         foreach (string s in character.ImageLayers)
         {
             string texturePath = System.IO.Path.Combine(
-                PATHS.ModFolderPath, character.Mod, "Images\\Cards", s);
+                PathHelper.ModFolder, character.Mod, "Images\\Cards", s);
 
             Sprite sprite = new Sprite
             {
@@ -245,7 +245,7 @@ public static class CardFactory
         }
         else
         {
-            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            string texturePath = System.IO.Path.Combine(PathHelper.ModFolder,
                 fileToLoad.Mod + "\\Images\\Cards\\" + model.Image);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
@@ -287,7 +287,7 @@ public static class CardFactory
         }
         else
         {
-            string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+            string texturePath = System.IO.Path.Combine(PathHelper.ModFolder,
                 fileToLoad.Mod + "\\Images\\Cards\\" + fileToLoad.FileName);
             card.Front.GetNode<Sprite>("Image").Texture
                 = TextureLoader.GetTextureFromPng(texturePath);
@@ -306,7 +306,7 @@ public static class CardFactory
         card.IsStackTarget = true;
         card.Background.Texture = FullArtBackground;
         AddActionCostCounter(card, location.Location.TravelCost);
-        string texturePath = System.IO.Path.Combine(PATHS.ModFolderPath,
+        string texturePath = System.IO.Path.Combine(PathHelper.ModFolder,
             mod + "\\Images\\Cards\\" + location.Location.Image);
 
         card.Front.GetNode<Sprite>("Image").Texture
@@ -399,7 +399,7 @@ public static class CardFactory
 
 
         List<string> filesindirectory = PathHelper.GetTopDirectoriesInFolder(
-            PATHS.ModFolderPath);
+            PathHelper.ModFolder);
 
         foreach (string modPath in filesindirectory)
         {

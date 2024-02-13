@@ -4,10 +4,18 @@ using System.Collections.Generic;
 
 public class CardDealer : Position2D
 {
-    public Node2D cardsParent;
-    public float SecondsBetweenDraws = 0.15f;
     public float timer = 0f;
+
     private readonly List<CardAndTarget> cards = new List<CardAndTarget>();
+    private readonly Node2D cardsParent;
+    private float SecondsBetweenDraws => Settings.Current.DealingDelay;
+
+
+    public CardDealer(Node2D parent, Vector2 position)
+    {
+        cardsParent = parent;
+        Position = position;
+    }
 
     public override void _Ready()
     {

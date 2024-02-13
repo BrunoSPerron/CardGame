@@ -85,6 +85,9 @@ public class ButtonControl : Node
         }
     }
 
+    // === Signals ===
+#pragma warning disable IDE0060
+
     public void OnMouseInputEvent(
         Viewport viewport, InputEvent evt, int shapeIdx)
     {

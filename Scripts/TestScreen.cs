@@ -71,7 +71,7 @@ public class TestScreen : BaseGameScreen
         {
             List<string> newLayer = new List<string>();
             string folderPath = System.IO.Path.Combine(
-                PATHS.ModFolderPath, mod, "Images\\Cards", layers[i]);
+                PathHelper.ModFolder, mod, "Images\\Cards", layers[i]);
 
             if (System.IO.Directory.Exists(folderPath))
                 newLayer = System.IO.Directory.GetFiles(folderPath, "*.png").ToList();
@@ -110,7 +110,7 @@ public class TestScreen : BaseGameScreen
                 else
                 {
                     string folderPath = System.IO.Path.Combine(
-                        PATHS.ModFolderPath, mod, "Images\\Cards", layers[i]);
+                        PathHelper.ModFolder, mod, "Images\\Cards", layers[i]);
 
                     string[] files = System.IO.Directory.GetFiles(folderPath, "*.png");
                     string texturePath = files[RANDOM.rand.Next(files.Length)];
@@ -161,7 +161,7 @@ public class TestScreen : BaseGameScreen
     private Texture GetLatestTexture(string folder)
     {
         string Folder = System.IO.Path.Combine(
-            PATHS.ModFolderPath, "BaseGame\\Images\\Cards", folder);
+            PathHelper.ModFolder, "BaseGame\\Images\\Cards", folder);
         var files = new System.IO.DirectoryInfo(Folder).GetFiles("*.png");
         string latestfile = "";
 

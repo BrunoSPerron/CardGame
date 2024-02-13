@@ -108,7 +108,7 @@ public static class CharacterCreator
         public void addimagelayers(string[] args)
         {
             string imageFolderPath = System.IO.Path.Combine(
-                PATHS.ModFolderPath, model.Mod, "Images\\Cards");
+                PathHelper.ModFolder, model.Mod, "Images\\Cards");
 
             foreach (string s in args)
             {

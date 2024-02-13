@@ -148,12 +148,8 @@ public class DeckPanel : Node2D
         card.MoveToPosition(target);
         if (cardDealer == null || cardDealer.IsQueuedForDeletion())
         {
-            cardDealer = new CardDealer()
-            {
-                cardsParent = this,
-                Position = Position - new Vector2(card.GetSize().x / 2, 300),
-                SecondsBetweenDraws = 0.03f
-            };
+            cardDealer = new CardDealer(
+                this, Position - new Vector2(card.GetSize().x / 2, 300));
 
             cardDealer.AddCard(card, false);
             AddChild(cardDealer);

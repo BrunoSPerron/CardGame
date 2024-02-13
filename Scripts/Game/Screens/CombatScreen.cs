@@ -173,7 +173,7 @@ public class CombatScreen : BaseGameScreen
         CombatCardWrapper wrapper = wrapperByCardIds[card.GetInstanceId()];
         if (CardBeingPaidFor == null)
         {
-            if (Game.Settings.ClickToPlay)
+            if (Settings.Current.ClickToPlay)
             {
                 CardHandlingControl.StopDragging(false);
                 UseCardInHand(wrapper);
@@ -191,7 +191,7 @@ public class CombatScreen : BaseGameScreen
             ReturnCardToHand(wrapper);
             CardsUsedAsPayment.Remove(wrapper);
         }
-        else if (Game.Settings.ClickToPay)
+        else if (Settings.Current.ClickToPay)
         {
             CardHandlingControl.StopDragging(false);
             UseCardInHand(wrapper);

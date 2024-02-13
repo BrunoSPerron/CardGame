@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Reflection;
 
 public static class PathHelper
 {
+    public static string ModFolder { get; } = Path.Combine(
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "JsonMods");
+
     public static FileToLoad GetFileToLoadInfo(string name, BaseModel model)
     {
         return GetFileToLoadInfo(name, model.Mod);

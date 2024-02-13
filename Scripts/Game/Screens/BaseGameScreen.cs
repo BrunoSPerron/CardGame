@@ -31,11 +31,8 @@ public abstract class BaseGameScreen : Node2D
         card.MoveToPosition(target);
         if (cardDealer == null || cardDealer.IsQueuedForDeletion())
         {
-            cardDealer = new CardDealer()
-            {
-                cardsParent = this,
-                Position = new Vector2(-card.GetSize().x / 2, card.GetSize().y / 2)
-            };
+            cardDealer = new CardDealer(this,
+                new Vector2(-card.GetSize().x / 2, card.GetSize().y / 2));
 
             cardDealer.Connect("tree_exiting", this, "OnDealerFreeing");
             cardDealer.AddCard(card, false);

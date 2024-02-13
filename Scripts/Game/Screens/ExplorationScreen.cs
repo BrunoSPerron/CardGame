@@ -20,12 +20,12 @@ public class ExplorationScreen : BaseGameScreen
     public override void _Ready()
     {
         AddLocation();
+        AddSurvivors();
+        AddSurviveOption();
         if (Location.Model.Encounters.Count != 0)
             AddExploreOption();
-        AddSurviveOption();
 
         AddDestinations();
-        AddSurvivors();
     }
 
     private void AddDestinations()
@@ -76,12 +76,12 @@ public class ExplorationScreen : BaseGameScreen
         if (Game.RemoveFromCleaner(location.Card) == CardCleanResponse.RECENT)
         {
             AddChild(location.Card);
-            location.Card.LerpDeltaMultiplier = 3;
+            location.Card.LerpDeltaMultiplier = Settings.Current.DealingSpeed;
             location.Card.MoveToPosition(position);
         }
         else
         {
-            DealOnBoard(location.Card, position, true);
+            DealOnBoard(location.Card, position);
         }
     }
 
@@ -90,7 +90,7 @@ public class ExplorationScreen : BaseGameScreen
         ExploreTarget = CardFactory.CreateExploreCard();
 
         //TODO Placement based on window size
-        DealOnBoard(ExploreTarget, new Vector2(450, 200), true);
+        DealOnBoard(ExploreTarget, new Vector2(450, 200));
         ExploreTarget.CostCounter.SetMax(Location.Model.SurviveActionCost);
     }
 
@@ -98,8 +98,10 @@ public class ExplorationScreen : BaseGameScreen
     {
         if (Game.RemoveFromCleaner(Location.Card) == CardCleanResponse.RECENT)
         {
+            GD.Print("UH?");
+            Location.Card.ClearAnimations();
             AddChild(Location.Card);
-            Location.Card.LerpDeltaMultiplier = 3;
+            Location.Card.LerpDeltaMultiplier = Settings.Current.DealingSpeed;
             Location.Card.MoveToPosition(CONSTS.SCREEN_CENTER);
         }
         else
@@ -111,7 +113,7 @@ public class ExplorationScreen : BaseGameScreen
     private void AddSurviveOption()
     {
         SurviveTarget = CardFactory.CreateSurviveCard();
-        DealOnBoard(SurviveTarget, new Vector2(226, 200), true);
+        DealOnBoard(SurviveTarget, new Vector2(226, 200));
         SurviveTarget.CostCounter.SetMax(Location.Model.SurviveActionCost);
     }
 
