@@ -45,7 +45,10 @@ public class TestScreen : BaseGameScreen
     private void Clear()
     {
         foreach (Node n in GetChildren())
+        {
             n.QueueFree();
+            n.Disconnect("OnDragStart", this, "OnShowCarddragStart");
+        }
     }
 
 
@@ -124,6 +127,7 @@ public class TestScreen : BaseGameScreen
                 }
             }
 
+            wrapper.Card.Connect("OnDragStart", this, "OnShowCarddragStart");
             DealOnBoard(wrapper.Card,
                 new Vector2(50 + iteration % 7 * 92, 70 + (iteration / 7 * 130)));
             iteration++;
@@ -153,6 +157,14 @@ public class TestScreen : BaseGameScreen
         }
 
         DealOnBoard(wrapper.Card, new Vector2(350, 150));
+    }
+
+    // == Signals ==
+
+    public void OnShowCarddragStart(Card card)
+    {
+        CardHandlingControl.StopDragging(false);
+        card.AddTrauma(0.5f);
     }
 
     // === private stuff ===

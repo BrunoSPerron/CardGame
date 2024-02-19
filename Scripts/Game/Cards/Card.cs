@@ -23,6 +23,7 @@ public class Card : Area2D
     public bool IsBeingDragged { get; internal set; } = false;
     public bool IsStackTarget = false;
     public bool DownStateOnHover = false;
+
     public float LerpDeltaMultiplier = 6;
 
     [Export]
@@ -41,6 +42,17 @@ public class Card : Area2D
                 base.ZIndex = value;
                 CardManager.OnCardZIndexModified(this);
             }
+        }
+    }
+
+    private Node animation;
+    public Node Animations
+    {
+        get
+        {
+            if (animation == null)
+                animation = GetNode<Node>("Animations");
+            return animation;
         }
     }
 
@@ -81,9 +93,7 @@ public class Card : Area2D
 
     public IconCounter CostCounter => Front.GetNode<IconCounter>("ActionCostCounter");
 
-    private readonly List<CardAnimationBase> animations = new List<CardAnimationBase>();
-
-    public bool IsFaceDown { get; private set; } = true;
+    public bool IsFaceDown = true;
     public bool IsMoving { get; private set; } = true;
 
     // ===== GD Methods Override =====
@@ -111,9 +121,7 @@ public class Card : Area2D
     public override void _ExitTree()
     {
         CardManager.RemoveCard(this);
-        for (int i = animations.Count - 1; i > 0; i--)
-            animations[i].ForceEnd();
-        animations.Clear();
+        ClearAnimations();
         foreach (Node child in GetChildren())
             if (child is AudioStreamPlayer)
                 child.QueueFree();
@@ -122,7 +130,6 @@ public class Card : Area2D
     public override void _PhysicsProcess(float delta)
     {
         ProcessMovement(delta);
-        ProcessAnimation(delta);
     }
 
     public string Serialize()
@@ -137,63 +144,58 @@ public class Card : Area2D
 
     // ===== Methods unique to this class =====
 
-    public void ClearAnimations()
+    /// <summary>Shake the card for a given amount of time. Simulating getting hit or something similar.</summary>
+    /// <param name="trauma">extra trauma, recomended: 0.2 ~ 0.5, max: 1</param>
+    public void AddTrauma(float trauma)
     {
-        for (int i = animations.Count - 1; i > 0; i--)
-            animations[i].ForceEnd();
-        animations.Clear();
+        Godot.Collections.Array animations = Animations.GetChildren();
+        foreach (CardAnimationBase animation in animations)
+            if (animation is CardShake cardShake)
+            {
+                cardShake.AddTrauma(trauma);
+                return;
+            }
+
+        AddChild(new CardShake(this, trauma));
     }
 
-    public void Flip(float animationTimeInSec = -1)
+    public void ClearAnimations()
     {
-        if (animationTimeInSec == -1)
-        {
+        Godot.Collections.Array animations = Animations.GetChildren();
+        for (int i = animations.Count - 1; i > 0; i--)
+            (animations[i] as CardAnimationBase).Destroy();
+    }
 
-        }
-        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
-            "res://Audio/Fx/cardFlip.mp3");
-        AudioHelper.PlaySoundOnCard(this, sound, .7f);
-        IsFaceDown = !IsFaceDown;
-        bool isFlippingAlready = false;
-        foreach (CardAnimationBase animation in animations)
-        {
-            if (animation is CardFlip cardFlip)
+    public void Flip()
+    {
+        Godot.Collections.Array animations = Animations.GetChildren();
+        for (int i = 0; i < animations.Count; i++)
+            if (animations[i] is CardFlip cardFlip)
             {
-                isFlippingAlready = true;
                 cardFlip.Reverse();
+                return;
             }
-        }
-        if (!isFlippingAlready)
-        {
-            animations.Add(new CardFlip(this, animationTimeInSec));
-        }
+
+        AddChild(new CardFlip(this));
     }
 
     public void FlipToPosition(Vector2 newTarget)
     {
         MoveToPosition(newTarget);
+
+        Godot.Collections.Array animations = Animations.GetChildren();
         bool alreadyFlipping = false;
         for (int i = animations.Count - 1; i >= 0; i--)
-        {
             if (animations[i] is CardFlipToTarget)
             {
                 alreadyFlipping = true;
                 animations.RemoveAt(i);
             }
-        }
 
         if (alreadyFlipping || newTarget.DistanceSquaredTo(GlobalPosition) < 144)
-        {
             Flip();
-        }
         else
-        {
-            AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
-                "res://Audio/Fx/cardFlip.mp3");
-            AudioHelper.PlaySoundOnCard(this, sound, .7f);
-            IsFaceDown = !IsFaceDown;
-            animations.Add(new CardFlipToTarget(this));
-        }
+            AddChild(new CardFlipToTarget(this));
     }
 
     public string GetLabel()
@@ -210,18 +212,6 @@ public class Card : Area2D
     {
         Target = globalPosition;
         IsMoving = true;
-    }
-
-    private void ProcessAnimation(float delta)
-    {
-        List<CardAnimationBase> toRemove = new List<CardAnimationBase>();
-
-        foreach (CardAnimationBase animation in animations)
-            if (animation.Process(delta))
-                toRemove.Add(animation);
-
-        foreach (CardAnimationBase animation in toRemove)
-            animations.Remove(animation);
     }
 
     private void ProcessMovement(float delta)

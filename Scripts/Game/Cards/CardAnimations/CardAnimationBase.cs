@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public abstract class CardAnimationBase
+public abstract class CardAnimationBase : Node
 {
     protected Card Card { get; private set; }
     protected bool reversed = false;
@@ -10,10 +10,7 @@ public abstract class CardAnimationBase
         Card = card;
     }
 
-    /// <returns>Whether the animation is over.</returns>
-    internal abstract bool Process(float delta);
-
-    public abstract void ForceEnd();
+    public abstract void Destroy();
 
     public void Reverse()
     {

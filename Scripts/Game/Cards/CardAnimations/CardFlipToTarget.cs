@@ -1,6 +1,5 @@
 ﻿using Godot;
 using System;
-using System.Drawing;
 
 
 internal class CardFlipToTarget : CardAnimationBase
@@ -8,36 +7,20 @@ internal class CardFlipToTarget : CardAnimationBase
     private readonly float halfFlipDistance;
     private bool halfFlipUpdated = false;
 
-    internal CardFlipToTarget(Card card) : base(card)
+    public CardFlipToTarget(Card card) : base(card)
     {
         Vector2 globalPosition = card.GlobalPosition;
         halfFlipDistance = (globalPosition - card.Target).Length() / 2f;
     }
 
-    public override void ForceEnd()
-    {
-        ScaleToOne();
-        if (Card.IsFaceDown)
-        {
-            Card.Front.Visible = false;
-            Card.Back.Visible = true;
-        }
-        else
-        {
-            Card.Front.Visible = true;
-            Card.Back.Visible = false;
-        }
-    }
-
-    internal override bool Process(float delta)
+    public override void _Process(float delta)
     {
         if (Card.IsBeingDragged)
         {
-            ScaleToOne();
-            return true;
+            Destroy();
+            return;
         }
 
-        //TODO implement reversed?
         Vector2 globalPos = Card.GlobalPosition;
         float distance = (Card.Target - globalPos).Length();
         if (distance > halfFlipDistance)
@@ -78,10 +61,40 @@ internal class CardFlipToTarget : CardAnimationBase
 
             if (deltaDistance < 0.001f)
             {
-                ScaleToOne();
-                return true;
+                Destroy();
             }
         }
-        return false;
+    }
+
+    public override void _Ready()
+    {
+        Card.IsFaceDown = !Card.IsFaceDown;
+
+        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
+            "res://Audio/Fx/cardFlip.mp3");
+
+        AudioStreamPlayer player = new AudioStreamPlayer
+        {
+            Stream = sound,
+            PitchScale = .7f
+        };
+        AddChild(player);
+        player.Play();
+    }
+
+    public override void Destroy()
+    {
+        if (Card.IsFaceDown)
+        {
+            Card.Front.Visible = false;
+            Card.Back.Visible = true;
+        }
+        else
+        {
+            Card.Front.Visible = true;
+            Card.Back.Visible = false;
+        }
+        ScaleToOne();
+        QueueFree();
     }
 }

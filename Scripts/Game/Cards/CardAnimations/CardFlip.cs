@@ -1,6 +1,5 @@
 ﻿using Godot;
 using System;
-using System.Drawing;
 
 
 internal class CardFlip : CardAnimationBase
@@ -17,15 +16,31 @@ internal class CardFlip : CardAnimationBase
         halfFlipTime = timeInSeconds / 2;
     }
 
-    internal override bool Process(float delta)
+    public override void _Process(float delta)
     {
         if (reversed)
-            return ReverseProcess(delta);
+            ReverseProcess(delta);
         else
-            return RegularProcess(delta);
+            RegularProcess(delta);
     }
 
-    private bool RegularProcess(float delta)
+    public override void _EnterTree()
+    {
+        Card.IsFaceDown = !Card.IsFaceDown;
+
+        AudioStreamMP3 sound = ResourceLoader.Load<AudioStreamMP3>(
+            "res://Audio/Fx/cardFlip.mp3");
+
+        AudioStreamPlayer player = new AudioStreamPlayer
+        {
+            Stream = sound,
+            PitchScale = .7f
+        };
+        AddChild(player);
+        player.Play();
+    }
+
+    private void RegularProcess(float delta)
     {
         if (timer > halfFlipTime)
         {
@@ -57,14 +72,10 @@ internal class CardFlip : CardAnimationBase
 
         timer += delta;
         if (flipTime < timer)
-        {
-            ScaleToOne();
-            return true;
-        }
-        return false;
+            Destroy();
     }
 
-    private bool ReverseProcess(float delta)
+    private void ReverseProcess(float delta)
     {
         if (timer > halfFlipTime)
         {
@@ -96,20 +107,12 @@ internal class CardFlip : CardAnimationBase
 
         timer -= delta;
         if (timer < 0)
-        {
-            ScaleToOne();
-            return true;
-        }
-
-        return false;
+            Destroy();
     }
 
-    public override void ForceEnd()
+    public override void Destroy()
     {
-        if (reversed)
-            timer = 0;
-        else
-            timer = flipTime;
-        Process(0f);
+        ScaleToOne();
+        QueueFree();
     }
 }

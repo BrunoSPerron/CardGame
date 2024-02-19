@@ -98,7 +98,6 @@ public class ExplorationScreen : BaseGameScreen
     {
         if (Game.RemoveFromCleaner(Location.Card) == CardCleanResponse.RECENT)
         {
-            GD.Print("UH?");
             Location.Card.ClearAnimations();
             AddChild(Location.Card);
             Location.Card.LerpDeltaMultiplier = Settings.Current.DealingSpeed;

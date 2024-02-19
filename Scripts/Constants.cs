@@ -21,4 +21,9 @@ public static class CONSTS
 public static class RANDOM
 {
     public static Random rand = new Random();
+
+    public static float GetNegOneToOne()
+    {
+        return (float)rand.NextDouble() * 2 - 1;
+    }
 }

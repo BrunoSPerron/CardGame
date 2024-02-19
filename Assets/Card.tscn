@@ -96,5 +96,7 @@ visible = false
 [node name="CardBackgroundDown" type="Sprite" parent="Back"]
 texture = ExtResource( 4 )
 
+[node name="Animations" type="Node" parent="."]
+
 [connection signal="area_entered" from="." to="." method="OnCardOverlap"]
 [connection signal="area_exited" from="." to="." method="OnOverlapEnd"]
